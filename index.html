@@ -353,7 +353,7 @@ en:{
  regTitle:'Create your account', regLead:'One click with Google. Your file saves as you go.',
  google:'Continue with Google', orEmail:'or use your email', name:'Full name', email:'Email', createAcc:'Create account',
  noGoogle:'No Google account? Use your email', gNotSet:'Google sign-in is not connected yet. Use your email below for now.', gFail:'Google sign-in could not load. Use your email instead.',
- almost:'Almost done', createFile:'Create my file', welcomeBack:'Welcome back, {name}. Here is your file.', signOut:'Sign out', or:'or',
+ almost:'Almost done', createFile:'Create my file', privacy:'Privacy notice', welcomeBack:'Welcome back, {name}. Here is your file.', signOut:'Sign out', or:'or',
  reauthT:'Please sign in again', reauthB:'Your Google sign-in has expired. Sign in again to continue.',
  cTerms:'I agree to the Terms of use and the Privacy notice.',
  cShare:'I agree that my file is shared with every law firm on the panel: {firms}. The firms pay the platform a fixed fee to be on the panel, whichever firm I choose.',
@@ -426,7 +426,7 @@ ru:{
  regTitle:'Создайте аккаунт', regLead:'Один клик через Google. Досье сохраняется автоматически.',
  google:'Продолжить с Google', orEmail:'или по email', name:'Полное имя', email:'Email', createAcc:'Создать аккаунт',
  noGoogle:'Нет аккаунта Google? Используйте email', gNotSet:'Вход через Google ещё не подключён. Пока используйте email ниже.', gFail:'Не удалось загрузить вход через Google. Используйте email.',
- almost:'Почти готово', createFile:'Создать досье', welcomeBack:'С возвращением, {name}. Вот ваше досье.', signOut:'Выйти', or:'или',
+ almost:'Почти готово', createFile:'Создать досье', privacy:'Политика конфиденциальности', welcomeBack:'С возвращением, {name}. Вот ваше досье.', signOut:'Выйти', or:'или',
  reauthT:'Войдите ещё раз', reauthB:'Срок входа через Google истёк. Войдите снова, чтобы продолжить.',
  cTerms:'Я принимаю Условия использования и Политику конфиденциальности.',
  cShare:'Я согласен(на), что моё досье получат все юридические фирмы панели: {firms}. Фирмы платят платформе фиксированный взнос за участие в панели, независимо от моего выбора.',
@@ -513,7 +513,7 @@ const spin = (dark) => `<span class="spin${dark ? ' dark' : ''}" aria-hidden="tr
 
 /* ---------- Connections. Public values only: secret keys live in Cloudflare, never in this page ---------- */
 const CONFIG = {
-  googleClientId: '',  // Google OAuth Client ID, ends with .apps.googleusercontent.com
+  googleClientId: '1010444376534-5ifcn1but8vbv74abiok3vumr73162el.apps.googleusercontent.com',  // Google OAuth Client ID (public)
   apiBase: ''          // Cloudflare Worker address, for example https://gtc-api.yourname.workers.dev
 };
 function cfg(k){ return String(lsGet('gtc_cfg_' + k) || CONFIG[k] || '').trim().replace(/\/+$/, ''); }
@@ -547,6 +547,7 @@ async function api(path, body, retried){
 
 /* ---------- Google sign-in (Google Identity Services) ---------- */
 const GIS_SRC = 'https://accounts.google.com/gsi/client';
+const PRIVACY_URL = 'https://hylaspart.github.io/gtc-platform/privacy.html';
 let gisInit = null;
 function jwtPayload(tok){ try { const b = String(tok).split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b + '==='.slice((b.length + 3) % 4)), c => c.charCodeAt(0)))); } catch(e) { return null; } }
 function gAuth(){ if (S.gauth === undefined) { try { S.gauth = JSON.parse(lsGet('gtc_gauth') || 'null'); } catch(e) { S.gauth = null; } } return S.gauth; }
@@ -924,7 +925,7 @@ function viewHome(){
     <div class="grid">
       ${[1,2,3,4].map(i => `<div class="item"><span class="k">0${i}</span><h3>${esc(t('how' + i))}</h3><p class="muted">${esc(t('how' + i + 't'))}</p></div>`).join('')}
     </div>
-    <p class="disclaimer" style="margin-top:22px">${esc(t('disclaimer'))}</p>
+    <p class="disclaimer" style="margin-top:22px">${esc(t('disclaimer'))} <a href="${PRIVACY_URL}${S.lang === 'ru' ? '#ru' : ''}" target="_blank" rel="noopener">${esc(t('privacy'))}</a></p>
   </div></section>`;
 }
 
@@ -968,6 +969,7 @@ function afterSignIn(p){
       <label class="check"><input type="checkbox" id="c_share"><span>${esc(t('cShare', {firms}))}<span class="req">${esc(t('required'))}</span></span></label>
       <label class="check"><input type="checkbox" id="c_news"><span>${esc(t('cNews'))}<span class="req">${esc(t('optional'))}</span></span></label>
     </div>
+    <p class="small" style="margin-top:12px"><a href="${PRIVACY_URL}${S.lang === 'ru' ? '#ru' : ''}" target="_blank" rel="noopener">${esc(t('privacy'))}</a></p>
     <p class="err" id="r_err" role="alert"></p>
     <div class="navrow"><button class="btn" data-act="regBack">${esc(t('back'))}</button><button class="btn primary" data-act="createFile">${esc(t('createFile'))}</button></div>
   </div>`);
