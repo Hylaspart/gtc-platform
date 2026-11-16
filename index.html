@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Global Talent Club Platform Trial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Plan: graphite + bold blue, as on tlnt.one. Unbounded for display, Manrope for everything else.
+   Layout: a thin trial bar on top, then one of three surfaces: client platform, law firm portal, CRM. Single light theme by choice. */
+:root{
+  --graphite:#4b4c52;
+  --graphite-deep:#2b2c31;
+  --ink:#1f2129;
+  --ink-2:#31343f;
+  --muted:#6a6e7b;
+  --line:#e2e4ea;
+  --paper:#f5f6f9;
+  --card:#ffffff;
+  --blue:#0942ed;
+  --blue-soft:#5b86f5;
+  --blue-tint:rgba(9,66,237,.08);
+  --good:#178a4c;
+  --good-tint:#e5f5ec;
+  --warn:#a86b00;
+  --warn-tint:#fdf2dc;
+  --bad:#c93434;
+  --bad-tint:#fbe7e7;
+  --display:'Unbounded','Arial Black',system-ui,sans-serif;
+  --body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --radius:18px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:22px}
+h3{font-size:16px}
+p{margin:0}
+a{color:var(--blue)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid rgba(9,66,237,.45);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tabnum{font-variant-numeric:tabular-nums}
+
+/* Trial bar */
+.trialbar{position:sticky;top:0;z-index:40;background:var(--graphite-deep);color:#fff;font-size:13px}
+.trialbar .wrap{display:flex;align-items:center;gap:14px;min-height:44px;flex-wrap:wrap}
+.trialtag{background:rgba(255,255,255,.12);border-radius:999px;padding:3px 10px;font-weight:700;letter-spacing:.02em}
+.trialbar nav{display:flex;gap:4px;flex-wrap:wrap}
+.trialbar nav a{color:rgba(255,255,255,.75);text-decoration:none;padding:6px 12px;border-radius:999px;font-weight:600}
+.trialbar nav a.on{background:#fff;color:var(--ink)}
+.trialbar nav a:hover:not(.on){color:#fff;background:rgba(255,255,255,.08)}
+.dbstate{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.75)}
+.dot{width:8px;height:8px;border-radius:50%;background:#999;display:inline-block}
+.dot.ok{background:#3ccf7f}.dot.wait{background:#f0b429}.dot.bad{background:#f05252}
+
+/* Client header */
+.chead{background:#fff;border-bottom:1px solid var(--line)}
+.chead .wrap{display:flex;align-items:center;gap:16px;min-height:64px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand .mark{width:34px;height:34px;border-radius:50%;border:3px solid currentColor;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:14px}
+.brand .words{font-weight:800;font-size:13px;line-height:1.05;text-transform:lowercase}
+.brand .sub{font-size:11px;color:var(--muted);font-weight:600;text-transform:none}
+.langs{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.langs button{border:0;background:none;padding:6px 12px;font-weight:700;font-size:12px;cursor:pointer}
+.langs button.on{background:var(--ink);color:#fff}
+.who{font-size:13px;color:var(--muted)}
+
+/* Hero */
+.hero{background:radial-gradient(120% 140% at 15% 0%,#6d6e74 0%,#4f5056 45%,#3a3b40 100%);color:#fff;padding:64px 0 56px}
+.hero .wrap{display:grid;grid-template-columns:1.25fr .9fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(34px,5.4vw,64px);letter-spacing:-.02em}
+.hero h1 .blue{background:linear-gradient(90deg,#7ea0ff,#2f5cf3 60%,#0942ed);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{font-size:18px;color:rgba(255,255,255,.88);margin-top:18px;max-width:560px}
+.hero .ctas{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.glass{background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.28);border-radius:28px;padding:26px;box-shadow:0 20px 50px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3);backdrop-filter:blur(8px)}
+.glass ul{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.glass li{display:flex;gap:12px;align-items:flex-start}
+.glass .n{font-family:var(--display);font-size:13px;background:#fff;color:var(--blue);border-radius:50%;width:28px;height:28px;display:grid;place-items:center;flex:none}
+.how{padding:48px 0}
+.how h2{font-size:28px;margin-bottom:20px}
+.how .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.how .item{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.how .item .k{font-family:var(--display);color:var(--blue);font-size:13px}
+.how .item h3{margin:8px 0 6px}
+.disclaimer{border-left:3px solid var(--blue);padding:10px 14px;background:#fff;border-radius:0 12px 12px 0;color:var(--ink-2);font-size:14px;max-width:820px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:999px;padding:11px 20px;font-weight:700;cursor:pointer;text-decoration:none;background:#fff;color:var(--ink);border-color:var(--line);transition:transform .08s ease,background .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.light{background:#fff;color:var(--ink);border-color:#fff}
+.btn.ghost{background:transparent;border-color:rgba(255,255,255,.5);color:#fff}
+.btn.link{border:0;background:none;padding:6px 8px;color:var(--blue)}
+.btn.sm{padding:7px 14px;font-size:13px}
+.btn.danger{color:var(--bad);border-color:#f0c4c4}
+.btn.block{width:100%}
+
+/* App */
+.appwrap{padding:28px 0 64px}
+.stepper{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.step{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:700;font-size:13px;cursor:pointer;color:var(--muted)}
+.step .num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--paper);font-family:var(--display);font-size:12px}
+.step.on{border-color:var(--blue);color:var(--ink)}
+.step.on .num{background:var(--blue);color:#fff}
+.step.done .num{background:var(--good-tint);color:var(--good)}
+.step[disabled]{cursor:not-allowed;opacity:.6}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:0 1px 2px rgba(20,22,40,.04)}
+.card.tint{background:var(--blue-tint);border-color:rgba(9,66,237,.18)}
+.card h2 + .lead,.card h3 + p{margin-top:6px}
+.lead{color:var(--ink-2)}
+.field{display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.field label,.field legend{font-weight:700;font-size:13px}
+fieldset.field{border:0;padding:0;margin-inline:0}
+input[type=text],input[type=url],input[type=email],input[type=month],input[type=date],input[type=number],select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 0 3px rgba(9,66,237,.15)}
+.hint{font-size:12.5px;color:var(--muted)}
+.hint.ok{color:var(--good)}
+.err{color:var(--bad);font-size:13px;margin-top:8px}
+.drop{display:flex;align-items:center;gap:12px;border:1.5px dashed #c7cbd6;border-radius:14px;padding:16px;background:#fafbfd;cursor:pointer}
+.drop input{max-width:100%}
+.radios{display:flex;gap:16px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.check input{margin-top:3px;width:18px;height:18px;accent-color:var(--blue);flex:none}
+.req{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-left:4px}
+details summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--blue);margin-top:14px}
+details textarea{margin-top:8px}
+.navrow{display:flex;justify-content:space-between;gap:12px;margin-top:20px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12.5px}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;margin-top:12px;font-size:14px}
+.kv dt{color:var(--muted);font-weight:600}
+.kv dd{margin:0}
+.routebox{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.routebox .big{font-family:var(--display);font-size:20px}
+.list{display:grid;gap:10px;margin-top:12px}
+.ritem{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.ritem .body{flex:1;min-width:0}
+.ritem .title{font-weight:700}
+.ritem .meta{font-size:13px;color:var(--muted)}
+.checks{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:8px}
+.checks li{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.ic{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+.ic.ok{background:var(--good-tint);color:var(--good)}
+.ic.no{background:var(--warn-tint);color:var(--warn)}
+.rules{margin:10px 0 0;padding-left:18px;display:grid;gap:6px;font-size:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.green{background:var(--good-tint);color:var(--good)}
+.pill.yellow{background:var(--warn-tint);color:var(--warn)}
+.pill.red{background:var(--bad-tint);color:var(--bad)}
+.pill.grey,.pill.pending{background:var(--paper);color:var(--muted)}
+.pill.blue{background:var(--blue-tint);color:var(--blue)}
+.pill.plain::before{display:none}
+.evrow{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff;display:grid;gap:8px}
+.evrow .top{display:flex;gap:10px;align-items:flex-start}
+.evrow .checksline{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:start;font-size:13px}
+.req-card{display:flex;gap:12px;align-items:center;border:1px dashed rgba(9,66,237,.35);border-radius:14px;padding:12px 14px;background:#fff}
+.req-card p{flex:1;font-size:14px}
+.side .card + .card{margin-top:16px}
+.timeline{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:0}
+.timeline li{display:flex;gap:12px;align-items:flex-start;position:relative;padding-bottom:14px}
+.timeline li:not(:last-child)::after{content:"";position:absolute;left:9px;top:22px;bottom:0;width:2px;background:var(--line)}
+.timeline .ic{z-index:1}
+.timeline .ic.cur{background:var(--blue);color:#fff}
+.timeline .ic.todo{background:var(--paper);color:var(--muted)}
+.offers{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:12px}
+.offer{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff;display:flex;flex-direction:column;gap:10px}
+.offer.chosen{border-color:var(--blue);box-shadow:0 0 0 3px rgba(9,66,237,.12)}
+.offer .fee{font-family:var(--display);font-size:24px}
+.success{text-align:left;background:linear-gradient(135deg,#0942ed,#3a6af5);color:#fff;border:0}
+.success h2{color:#fff}
+.success p{color:rgba(255,255,255,.92)}
+.banner{background:var(--warn-tint);color:#6b4700;border-radius:12px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+
+/* Modal + drawer */
+.backdrop{position:fixed;inset:0;background:rgba(20,22,32,.45);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px;overflow:auto}
+.modal{background:#fff;border-radius:22px;max-width:560px;width:100%;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.modal.wide{max-width:760px}
+.modal h2{font-size:20px}
+.sso{display:grid;gap:10px;margin-top:18px}
+.sso .btn{justify-content:flex-start;padding:13px 18px;border-color:#d5d8e0}
+.sso .ico{width:22px;height:22px;border-radius:6px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:18px 0 4px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.drawer-bg{position:fixed;inset:0;background:rgba(20,22,32,.35);z-index:50}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(640px,100%);background:#fff;z-index:51;overflow:auto;box-shadow:-20px 0 60px rgba(0,0,0,.2)}
+.drawer .head{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:18px 22px;display:flex;gap:12px;align-items:center;z-index:2}
+.drawer .sec{padding:18px 22px;border-bottom:1px solid var(--line)}
+.drawer .sec h3{font-size:14px;margin-bottom:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:90vw}
+
+/* CRM + firm portal */
+.ophead{padding:26px 0 8px}
+.ophead h1{font-size:28px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:18px 0}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.kpi .v{font-family:var(--display);font-size:26px}
+.kpi .l{font-size:12.5px;color:var(--muted);font-weight:600}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tabs button{border:0;background:none;padding:10px 14px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--ink);border-color:var(--blue)}
+.tablewrap{background:#fff;border:1px solid var(--line);border-radius:16px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafbfd;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover td{background:#f7f9ff}
+td select{padding:6px 8px;border-radius:8px;font-size:13px;width:auto}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.filters input,.filters select{width:auto;min-width:200px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mail{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}
+.mail .subj{font-weight:700}
+.mail pre{white-space:pre-wrap;font-family:var(--body);font-size:13px;margin:8px 0 0;color:var(--ink-2)}
+.firmlist{display:grid;gap:10px}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
+.spin.dark{border-color:rgba(0,0,0,.15);border-top-color:var(--blue)}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}.btn{transition:none}}
+@media (max-width:900px){
+  .hero .wrap,.cols{grid-template-columns:1fr}
+  .how .grid{grid-template-columns:1fr 1fr}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+}
+@media (max-width:520px){
+  .how .grid,.grid2{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kv{grid-template-columns:1fr}
+  .card{padding:18px}
+}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<main id="view"></main>
+<div id="modal"></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ---------- Constants ---------- */
+const ROUTES = {
+  tech:{min:3, en:{name:'Digital technology', body:'Tech Nation'}, ru:{name:'Цифровые технологии', body:'Tech Nation'}, rules:'tech', checks:['orgs3','months12'], cats:['innovation','recognition','contribution','academic','business']},
+  ace:{min:3, en:{name:'Arts and culture', body:'Arts Council England'}, ru:{name:'Искусство и культура', body:'Arts Council England'}, rules:'arts', checks:['orgs2','uk1'], cats:['media','awards','appearances','distribution']},
+  bfc:{min:3, en:{name:'Fashion', body:'British Fashion Council, via Arts Council England'}, ru:{name:'Мода', body:'British Fashion Council, через Arts Council England'}, rules:'arts', checks:['orgs2','uk1'], cats:['media','awards','appearances','distribution']},
+  pact:{min:3, en:{name:'Film and television', body:'PACT, via Arts Council England'}, ru:{name:'Кино и телевидение', body:'PACT, через Arts Council England'}, rules:'artsAward', checks:['orgs2','uk1'], cats:['media','awards','appearances','distribution']},
+  riba:{min:3, en:{name:'Architecture', body:'RIBA, via Arts Council England'}, ru:{name:'Архитектура', body:'RIBA, через Arts Council England'}, rules:'artsAward', checks:['orgs2','uk1'], cats:['media','awards','appearances','distribution']},
+  dba:{min:3, en:{name:'Design', body:'Design Business Association, via Arts Council England'}, ru:{name:'Дизайн', body:'Design Business Association, через Arts Council England'}, rules:'artsAward', checks:['orgs2','uk1'], cats:['media','awards','appearances','distribution']},
+  research:{min:2, en:{name:'Academia and research', body:'Royal Society, British Academy or Royal Academy of Engineering'}, ru:{name:'Наука и исследования', body:'Royal Society, British Academy или Royal Academy of Engineering'}, rules:'research', checks:['uk2'], cats:['publications','fellowships','grants','appointment']},
+  fasttrack:{min:0, en:{name:'Academia and research: fast track', body:'Listed fellowship, approved post or UKRI-funded role'}, ru:{name:'Наука: ускоренный путь', body:'Стипендия из списка, одобренная должность или роль с финансированием UKRI'}, rules:'none', checks:[], cats:['fellowship','jobdesc','hr','grant']},
+  prize:{min:0, en:{name:'Prestigious prize', body:'No endorsement needed'}, ru:{name:'Престижная премия', body:'Эндорсмент не нужен'}, rules:'none', checks:[], cats:['prize','certificate']}
+};
+const RULES = {
+  tech:{en:['3 dated letters from 3 different well-established people who are experts in digital technology','Each referee has known your work for 12 months or more','Choose referees from 3 different organisations','Each letter covers how they know you, your achievements, why you stand out, and the contribution you would make to the UK digital economy'],
+        ru:['3 датированных письма от 3 разных признанных экспертов в цифровых технологиях','Каждый рекомендатель знает вашу работу не менее 12 месяцев','Рекомендатели из 3 разных организаций','В каждом письме: как они вас знают, ваши достижения, чем вы выделяетесь и какой вклад вы внесёте в цифровую экономику Великобритании']},
+  arts:{en:['3 dated letters','2 from well-established organisations in your field that you have worked with','At least 1 of those 2 organisations is based in the UK','The 3rd from another such organisation, or a person with recognised experience in your field'],
+        ru:['3 датированных письма','2 от признанных организаций в вашей сфере, с которыми вы работали','Хотя бы 1 из этих 2 организаций находится в Великобритании','3-е от другой такой организации или от признанного специалиста в вашей сфере']},
+  artsAward:{en:['3 dated letters','2 from well-established organisations in your field that you have worked with','At least 1 of those 2 organisations is based in the UK','The 3rd from another such organisation, or a person with recognised experience in your field','Evidence of each award nomination or win is also needed (next step)'],
+        ru:['3 датированных письма','2 от признанных организаций в вашей сфере, с которыми вы работали','Хотя бы 1 из этих 2 организаций находится в Великобритании','3-е от другой такой организации или от признанного специалиста в вашей сфере','Также нужны подтверждения каждой номинации или награды (следующий шаг)']},
+  research:{en:['A personal letter from an eminent person who lives in the UK','A second letter from a senior member of a reputable UK research or innovation organisation','The second letter is needed at Talent level. The law firm decides the level, so we collect both'],
+        ru:['Личное письмо от выдающегося специалиста, живущего в Великобритании','Второе письмо от старшего сотрудника авторитетной британской исследовательской или инновационной организации','Второе письмо нужно для уровня Talent. Уровень определяет юридическая фирма, поэтому мы собираем оба']},
+  none:{en:[],ru:[]}
+};
+const CATS = {
+  innovation:{en:'Innovation as a founder, senior executive or employee',ru:'Инновации в роли основателя, руководителя или сотрудника'},
+  recognition:{en:'Recognition beyond your job: talks, judging, mentoring, media, awards',ru:'Признание за пределами работы: выступления, судейство, менторство, СМИ, награды'},
+  contribution:{en:'Significant technical, commercial or entrepreneurial contribution',ru:'Значимый технический, коммерческий или предпринимательский вклад'},
+  academic:{en:'Academic contribution: published or expert-endorsed research',ru:'Академический вклад: опубликованные или признанные исследования'},
+  business:{en:'Business evidence: companies founded, owned or dissolved in the last 5 years',ru:'Бизнес: компании, основанные, принадлежащие или закрытые за последние 5 лет'},
+  media:{en:'Media recognition',ru:'Публикации в СМИ'},
+  awards:{en:'Awards and nominations',ru:'Награды и номинации'},
+  appearances:{en:'Appearances, performances, publications or exhibitions',ru:'Выступления, спектакли, публикации или выставки'},
+  distribution:{en:'International distribution and sales',ru:'Международное распространение и продажи'},
+  publications:{en:'Publications and citations',ru:'Публикации и цитирования'},
+  fellowships:{en:'Fellowships and awards',ru:'Стипендии и награды'},
+  grants:{en:'Grants and funding',ru:'Гранты и финансирование'},
+  appointment:{en:'Appointment details',ru:'Детали должности'},
+  fellowship:{en:'Fellowship or award confirmation',ru:'Подтверждение стипендии или награды'},
+  jobdesc:{en:'Job description',ru:'Описание должности'},
+  hr:{en:'HR statement from the employer',ru:'Письмо отдела кадров работодателя'},
+  grant:{en:'Grant details from a UKRI-endorsed funder',ru:'Детали гранта от одобренного UKRI фонда'},
+  prize:{en:'Prize details: name, year, awarding body',ru:'Детали премии: название, год, кто вручил'},
+  certificate:{en:'Award certificate or announcement',ru:'Сертификат или объявление о награде'},
+  other:{en:'Other',ru:'Другое'}
+};
+const STAGES = ['New lead','Call done','Onboarding','Collecting','With firms','Firm chosen','Client paid','Endorsement applied','Endorsed','Not endorsed','Visa applied','Visa granted','In the UK','Closed or lost'];
+const STAGE_RU = {'New lead':'Новый лид','Call done':'Звонок проведён','Onboarding':'Регистрация','Collecting':'Сбор документов','With firms':'У юридических фирм','Firm chosen':'Фирма выбрана','Client paid':'Оплачено','Endorsement applied':'Заявка на эндорсмент подана','Endorsed':'Эндорсмент получен','Not endorsed':'Эндорсмент не получен','Visa applied':'Заявка на визу подана','Visa granted':'Виза одобрена','In the UK':'В Великобритании','Closed or lost':'Закрыто'};
+const CLIENT_TIMELINE = ['With firms','Firm chosen','Endorsement applied','Endorsed','Visa granted','In the UK'];
+const UPSELLS = {
+  gtc:{label:'Global Talent Club membership', when:c=>['Endorsed','Visa applied','Visa granted','In the UK'].includes(c.stage), en:['Join Global Talent Club','Start building your network in London before you arrive.'], ru:['Вступите в Global Talent Club','Начните заводить знакомства в Лондоне ещё до переезда.']},
+  family:{label:'Partner and children visas (law firm)', when:c=>(c.crm||{}).family==='yes' && ['Endorsed','Visa applied','Visa granted'].includes(c.stage), en:['Visas for your partner and children','We can introduce you to a firm for your family\'s applications.'], ru:['Визы для партнёра и детей','Мы познакомим вас с фирмой для заявок вашей семьи.']},
+  home:{label:'Home rental search', when:c=>['Visa granted','In the UK'].includes(c.stage), en:['Find a home to rent','Help with the search, viewings and the tenancy paperwork.'], ru:['Найти жильё в аренду','Помощь с поиском, просмотрами и документами по аренде.']},
+  school:{label:'School search', when:c=>(c.crm||{}).children==='yes' && ['Visa granted','In the UK'].includes(c.stage), en:['Find a school','Shortlists and applications for state and private schools.'], ru:['Найти школу','Подбор и подача заявок в государственные и частные школы.']},
+  events:{label:'Club events and introductions', when:c=>c.stage==='In the UK', en:['Club events','Meet founders, artists and researchers who came the same way.'], ru:['Мероприятия Клуба','Знакомьтесь с основателями, художниками и учёными, которые прошли тот же путь.']},
+  ilr:{label:'Settlement (ILR) via law firm, at 3 or 5 years', when:c=>c.stage==='In the UK', en:['Settlement when you qualify','We will remind you and introduce a firm when the time comes.'], ru:['ВНЖ, когда придёт время','Мы напомним и познакомим с фирмой, когда наступит срок.']}
+};
+const UK_WORDS = ['uk','united kingdom','england','scotland','wales','northern ireland','great britain','gb','britain','london','великобритания','англия','шотландия','уэльс','лондон'];
+
+const I18N = {
+en:{
+ brandSub:'Endorsement file', start:'Start my file', cont:'Continue my file', free:'Free until you choose a law firm',
+ heroA:'The endorsement', heroB:'to join the Club',
+ heroLead:'Prepare your UK Global Talent visa file in one place. Vetted UK immigration law firms review it and send you their offers within 24-48 hours.',
+ g1:'Free until you choose a law firm', g2:'Every firm on the panel is regulated in the UK', g3:'Offers within 24-48 hours of submitting', g4:'English or Russian, whichever you prefer',
+ howTitle:'How it works',
+ how1:'About you', how1t:'Upload your CV or LinkedIn. We read it and match your field to the right endorsing body.',
+ how2:'Referees', how2t:'Add the people who will write your letters. The rules depend on the endorsing body, and we check them as you go.',
+ how3:'Evidence', how3t:'Upload press, awards, talks and other proof. Each item is checked for format and relevance.',
+ how4:'Offers', how4t:'Every firm on the panel reviews your file. Compare offers and choose one, or take your file elsewhere.',
+ disclaimer:'We collect your information and documents for regulated UK law firms. We do not give immigration advice: any view on your eligibility comes from the firm you choose.',
+ regTitle:'Create your account', regLead:'It takes a minute. Your file saves as you go.',
+ google:'Continue with Google', apple:'Continue with Apple', orEmail:'or use your email', name:'Full name', email:'Email', createAcc:'Create account',
+ cTerms:'I agree to the Terms of use and the Privacy notice.',
+ cShare:'I agree that my file is shared with every law firm on the panel: {firms}. The firms pay the platform a fixed fee to be on the panel, whichever firm I choose.',
+ cNews:'Send me notifications and the newsletter about life in the UK and other important changes.',
+ required:'Required', optional:'Optional',
+ demoAuth:'Trial: Google and Apple sign-in are simulated. The live version connects to them.',
+ needConsents:'Tick the two required boxes first.', needName:'Enter your name and a valid email.',
+ ssoFill:'Trial: confirm the name and email you would use with {p}.',
+ step1:'About you', step2:'Referees', step3:'Evidence', step4:'Submit', stepCase:'Your case',
+ s1Title:'Tell us about your career', s1Lead:'Add your LinkedIn and your CV. We read them, show what we found, and match your field to an endorsing body.',
+ liLabel:'LinkedIn profile URL', liNote:'Live version: your profile is read from this link automatically. In this trial, also upload your CV or LinkedIn PDF below.',
+ cvLabel:'CV, or your LinkedIn profile saved as PDF', cvHint:'Choose a PDF, Word or text file', cvRead:'Read {n} characters from {f}', cvFail:'We could not read text from this file. Paste your profile text below instead.',
+ paste:'Or paste your profile text', prizeQ:'Have you personally won a major international prize, such as a Nobel, Turing Award, Oscar or Grammy?', yes:'Yes', no:'No', prizeName:'Prize name and year',
+ analyse:'Read my profile', reanalyse:'Read my profile again', thinking:'Reading your profile. This can take up to a minute.',
+ noAI:'Automatic reading is not available in this view. Choose your field below.', needText:'Upload a CV or paste your profile text first.',
+ aiFail:'We could not read the profile this time. Try again, or choose your field below.',
+ found:'What we found', roles:'Roles', founded:'Companies founded', publications:'Publications', awards:'Awards', media:'Media', talks:'Talks', judging:'Judging and reviewing', patents:'Patents', open_source:'Open source', other_highlights:'Other',
+ routeTitle:'Field we will collect documents for', routeYes:'Yes, that is right', routeOther:'Choose another', routeConfirmed:'Confirmed', routeChange:'Change',
+ routeNote:'This sets your referee and evidence lists. The law firm confirms the final route and whether you apply at Talent or Promise level.',
+ pickRoute:'Select your field', next:'Continue', back:'Back',
+ s2Title:'Your referees', s2Lead:'For {route} you need at least {n} referees.', s2More:'You can add more than the minimum. The law firm picks the strongest set.',
+ s2None:'This route does not use referee letters. You will upload the confirming documents in the next step.',
+ rulesTitle:'Rules for your letters', checksTitle:'Checks', addRef:'Add referee', editRef:'Edit referee',
+ refName:'Full name', refTitle:'Job title', refOrg:'Organisation', refCountry:'Country', refUK:'Based in the UK', refRel:'How they know your work', refSince:'Has known your work since', refEmail:'Email', refLi:'LinkedIn URL', refDesc:'No LinkedIn? Describe their role and standing', refAgreed:'Has agreed to write a letter',
+ save:'Save', cancel:'Cancel', remove:'Remove', edit:'Edit', agreed:'Agreed to write', notYet:'Not confirmed yet', months:'{n} months', ukBased:'UK-based',
+ chkMin:'At least {n} referees (you have {have})', chkOrgs3:'3 different organisations (you have {have})', chkOrgs2:'At least 2 different organisations (you have {have})', chkUk1:'At least 1 UK-based organisation', chkUk2:'Both letters from people based in the UK ({have} of 2)', chkM12:'At least 3 referees who have known your work for 12+ months ({have} so far)',
+ s3Title:'Your evidence', s3Lead:'Upload documents that back up your career. Each item gets two checks: its format, and whether it fits a published evidence category for your route.',
+ s3Count:'{n} items. Up to 10 go to the endorsing body; the lawyer picks the final set.',
+ reqTitle:'We would like to see', upload:'Upload', notNow:'Not now', addEv:'Add evidence', cats:'Published evidence categories for your route',
+ evTitle:'Title', evCat:'Category', evDesc:'What it shows', evKind:'Type', kFile:'File', kLink:'Web link', kNote:'Description only', evFileHint:'PDF or image. Save Word files as PDF first.', evUrl:'Link',
+ needTitle:'Give it a title.', needFile:'Choose a file.', needUrl:'Paste the link.', wordFile:'Word files cannot go to the endorsing body. Save it as PDF and upload that.',
+ format:'Format', relevance:'Relevance', checking:'Checking', retry:'Check again', late:'Added after submission', open:'Open', bizPrompt:'If you founded, owned or dissolved a digital business in the last 5 years, the endorsing body needs evidence of it.',
+ s4Title:'Ready to submit?', s4Lead:'Your file goes to every law firm on the panel. They reply with offers within 24-48 hours.',
+ kProfile:'Profile read', kRoute:'Field confirmed', kRefs:'Referees: {n} of {min} minimum', kEv:'Evidence: {n} items', kRed:'{n} items cannot be used in their current form',
+ noteLawyer:'Anything the lawyer should know?', submit:'I\'ve submitted everything', submitWarn:'Some items are missing. You can still submit and add more later.',
+ doneTitle:'Your file is with the law firms', doneMsg:'Your documents will now be sent to our partner law firms for review. You will receive their responses within 24-48 hours.',
+ emailSent:'We sent a confirmation to {email}.', demoEmail:'Trial: emails appear in the CRM outbox instead of being sent.',
+ caseTitle:'Your case', offersTitle:'Offers from law firms', waiting:'Waiting for offers. Firms usually reply within 24-48 hours of submission.',
+ fee:'Fee', scope:'What is included', timeline:'Timeline', replied:'Replied in {h}', regulator:'Regulator', choose:'Choose this firm', yourFirm:'Your firm', declined:'Cannot take this case',
+ chooseTitle:'Choose {firm}?', chooseBody:'We will introduce you to {firm} by email. They will send their client care letter and run your case from there. {firm} pays the platform a fixed fee to be on the panel, which does not depend on your choice.',
+ confirm:'Confirm', elsewhere:'Prefer to go elsewhere?', elsewhereT:'Your file is yours. Download it, or close it so firms no longer see it.', download:'Download my file', closeFile:'Close my file', closeQ:'Close your file? Firms will no longer see it.', closed:'Your file is closed. You can still download it.',
+ govFees:'Government fees, paid to the Home Office', feeEnd:'Endorsement application: £561', feeVisa:'Visa application: £205', feeIhs:'Health surcharge: usually £1,035 per person per year', feeEach:'Per applicant. Partners and children pay £766 each.',
+ addMore:'Add more documents', forNext:'For your next steps', interested:'I\'m interested', thanks:'Thanks, we will be in touch.',
+ newClient:'New trial client', you:'Signed in as {name}', noDb:'This view cannot save data. Open the trial in claude.ai while signed in, with edit access.', saving:'Saving'
+},
+ru:{
+ brandSub:'Досье на эндорсмент', start:'Начать досье', cont:'Продолжить досье', free:'Бесплатно, пока вы не выберете юридическую фирму',
+ heroA:'Эндорсмент,', heroB:'чтобы вступить в Клуб',
+ heroLead:'Подготовьте досье на визу UK Global Talent в одном месте. Проверенные британские иммиграционные юристы изучат его и пришлют предложения в течение 24-48 часов.',
+ g1:'Бесплатно, пока вы не выберете юридическую фирму', g2:'Все фирмы панели регулируются в Великобритании', g3:'Предложения в течение 24-48 часов после отправки', g4:'На русском или английском, как вам удобнее',
+ howTitle:'Как это работает',
+ how1:'О вас', how1t:'Загрузите резюме или LinkedIn. Мы прочитаем его и определим подходящий эндорсинг-орган для вашей сферы.',
+ how2:'Рекомендатели', how2t:'Добавьте людей, которые напишут письма. Требования зависят от эндорсинг-органа, и мы проверяем их по ходу.',
+ how3:'Доказательства', how3t:'Загрузите публикации, награды, выступления и другие подтверждения. Каждый документ проверяется на формат и релевантность.',
+ how4:'Предложения', how4t:'Все фирмы панели изучают ваше досье. Сравните предложения и выберите одно или заберите досье.',
+ disclaimer:'Мы собираем вашу информацию и документы для регулируемых юридических фирм Великобритании. Мы не даём иммиграционных консультаций: оценку ваших шансов даёт выбранная вами фирма.',
+ regTitle:'Создайте аккаунт', regLead:'Это займёт минуту. Досье сохраняется автоматически.',
+ google:'Продолжить с Google', apple:'Продолжить с Apple', orEmail:'или по email', name:'Полное имя', email:'Email', createAcc:'Создать аккаунт',
+ cTerms:'Я принимаю Условия использования и Политику конфиденциальности.',
+ cShare:'Я согласен(на), что моё досье получат все юридические фирмы панели: {firms}. Фирмы платят платформе фиксированный взнос за участие в панели, независимо от моего выбора.',
+ cNews:'Присылайте мне уведомления и рассылку о жизни в Великобритании и других важных изменениях.',
+ required:'Обязательно', optional:'По желанию',
+ demoAuth:'Тестовая версия: вход через Google и Apple имитируется. В рабочей версии будет настоящее подключение.',
+ needConsents:'Сначала отметьте два обязательных пункта.', needName:'Укажите имя и корректный email.',
+ ssoFill:'Тестовая версия: подтвердите имя и email, которые вы используете в {p}.',
+ step1:'О вас', step2:'Рекомендатели', step3:'Доказательства', step4:'Отправка', stepCase:'Ваше дело',
+ s1Title:'Расскажите о своей карьере', s1Lead:'Добавьте LinkedIn и резюме. Мы прочитаем их, покажем найденное и определим эндорсинг-орган для вашей сферы.',
+ liLabel:'Ссылка на профиль LinkedIn', liNote:'В рабочей версии профиль читается по ссылке автоматически. В тестовой версии также загрузите резюме или PDF из LinkedIn ниже.',
+ cvLabel:'Резюме или профиль LinkedIn в PDF', cvHint:'Выберите PDF, Word или текстовый файл', cvRead:'Прочитано {n} символов из {f}', cvFail:'Не удалось прочитать текст из файла. Вставьте текст профиля ниже.',
+ paste:'Или вставьте текст профиля', prizeQ:'Вы лично получали крупную международную премию, например Нобелевскую, премию Тьюринга, Оскар или Грэмми?', yes:'Да', no:'Нет', prizeName:'Название премии и год',
+ analyse:'Прочитать мой профиль', reanalyse:'Прочитать профиль заново', thinking:'Читаем ваш профиль. Это может занять до минуты.',
+ noAI:'Автоматическое чтение недоступно. Выберите сферу ниже.', needText:'Сначала загрузите резюме или вставьте текст профиля.',
+ aiFail:'Не удалось прочитать профиль. Попробуйте ещё раз или выберите сферу ниже.',
+ found:'Что мы нашли', roles:'Должности', founded:'Основанные компании', publications:'Публикации', awards:'Награды', media:'СМИ', talks:'Выступления', judging:'Судейство и рецензирование', patents:'Патенты', open_source:'Open source', other_highlights:'Другое',
+ routeTitle:'Сфера, для которой мы собираем документы', routeYes:'Да, всё верно', routeOther:'Выбрать другую', routeConfirmed:'Подтверждено', routeChange:'Изменить',
+ routeNote:'От этого зависят списки рекомендателей и доказательств. Окончательный маршрут и уровень (Talent или Promise) подтверждает юридическая фирма.',
+ pickRoute:'Выберите сферу', next:'Далее', back:'Назад',
+ s2Title:'Ваши рекомендатели', s2Lead:'Для направления «{route}» нужно минимум {n} рекомендателя.', s2More:'Можно добавить больше минимума. Юридическая фирма выберет самых сильных.',
+ s2None:'Для этого направления рекомендательные письма не нужны. Подтверждающие документы вы загрузите на следующем шаге.',
+ rulesTitle:'Требования к письмам', checksTitle:'Проверки', addRef:'Добавить рекомендателя', editRef:'Изменить рекомендателя',
+ refName:'Полное имя', refTitle:'Должность', refOrg:'Организация', refCountry:'Страна', refUK:'Находится в Великобритании', refRel:'Откуда знает вашу работу', refSince:'Знает вашу работу с', refEmail:'Email', refLi:'Ссылка на LinkedIn', refDesc:'Нет LinkedIn? Опишите роль и статус', refAgreed:'Согласился(ась) написать письмо',
+ save:'Сохранить', cancel:'Отмена', remove:'Удалить', edit:'Изменить', agreed:'Согласен(на) написать', notYet:'Ещё не подтвердил(а)', months:'{n} мес.', ukBased:'В Великобритании',
+ chkMin:'Минимум {n} рекомендателя (у вас {have})', chkOrgs3:'3 разные организации (у вас {have})', chkOrgs2:'Минимум 2 разные организации (у вас {have})', chkUk1:'Хотя бы 1 организация в Великобритании', chkUk2:'Оба письма от людей в Великобритании ({have} из 2)', chkM12:'Минимум 3 рекомендателя, знающих вашу работу 12+ месяцев (пока {have})',
+ s3Title:'Ваши доказательства', s3Lead:'Загрузите документы, подтверждающие вашу карьеру. Каждый документ проходит две проверки: формат и соответствие опубликованной категории доказательств для вашего направления.',
+ s3Count:'{n} документов. В эндорсинг-орган уходит до 10; окончательный набор выбирает юрист.',
+ reqTitle:'Что мы хотели бы увидеть', upload:'Загрузить', notNow:'Не сейчас', addEv:'Добавить доказательство', cats:'Опубликованные категории доказательств для вашего направления',
+ evTitle:'Название', evCat:'Категория', evDesc:'Что это подтверждает', evKind:'Тип', kFile:'Файл', kLink:'Ссылка', kNote:'Только описание', evFileHint:'PDF или изображение. Файлы Word сначала сохраните в PDF.', evUrl:'Ссылка',
+ needTitle:'Укажите название.', needFile:'Выберите файл.', needUrl:'Вставьте ссылку.', wordFile:'Файлы Word нельзя отправить в эндорсинг-орган. Сохраните в PDF и загрузите его.',
+ format:'Формат', relevance:'Релевантность', checking:'Проверяем', retry:'Проверить снова', late:'Добавлено после отправки', open:'Открыть', bizPrompt:'Если за последние 5 лет вы основали, владели или закрыли цифровую компанию, эндорсинг-органу нужны подтверждения.',
+ s4Title:'Готовы отправить?', s4Lead:'Ваше досье получат все юридические фирмы панели. Они пришлют предложения в течение 24-48 часов.',
+ kProfile:'Профиль прочитан', kRoute:'Сфера подтверждена', kRefs:'Рекомендатели: {n} из {min}', kEv:'Доказательства: {n}', kRed:'{n} документов нельзя использовать в текущем виде',
+ noteLawyer:'Что ещё стоит знать юристу?', submit:'Я загрузил(а) всё', submitWarn:'Некоторых пунктов не хватает. Вы всё равно можете отправить и дополнить позже.',
+ doneTitle:'Ваше досье у юридических фирм', doneMsg:'Ваши документы будут направлены партнёрским юридическим фирмам на рассмотрение. Вы получите их ответы в течение 24-48 часов.',
+ emailSent:'Мы отправили подтверждение на {email}.', demoEmail:'Тестовая версия: письма не отправляются, а появляются в разделе исходящих в CRM.',
+ caseTitle:'Ваше дело', offersTitle:'Предложения юридических фирм', waiting:'Ждём предложения. Обычно фирмы отвечают в течение 24-48 часов после отправки.',
+ fee:'Стоимость', scope:'Что входит', timeline:'Сроки', replied:'Ответ через {h}', regulator:'Регулятор', choose:'Выбрать эту фирму', yourFirm:'Ваша фирма', declined:'Не может взять дело',
+ chooseTitle:'Выбрать {firm}?', chooseBody:'Мы познакомим вас с {firm} по email. Фирма пришлёт договор и дальше будет вести ваше дело. {firm} платит платформе фиксированный взнос за участие в панели, и он не зависит от вашего выбора.',
+ confirm:'Подтвердить', elsewhere:'Хотите обратиться в другое место?', elsewhereT:'Досье принадлежит вам. Скачайте его или закройте, чтобы фирмы его больше не видели.', download:'Скачать моё досье', closeFile:'Закрыть досье', closeQ:'Закрыть досье? Фирмы больше не будут его видеть.', closed:'Ваше досье закрыто. Его можно скачать.',
+ govFees:'Государственные сборы, оплачиваются Home Office', feeEnd:'Заявка на эндорсмент: £561', feeVisa:'Заявка на визу: £205', feeIhs:'Медицинский сбор: обычно £1,035 на человека в год', feeEach:'За заявителя. Партнёры и дети платят по £766.',
+ addMore:'Добавить документы', forNext:'Для следующих шагов', interested:'Мне интересно', thanks:'Спасибо, мы свяжемся с вами.',
+ newClient:'Новый тестовый клиент', you:'Вы вошли как {name}', noDb:'Здесь нельзя сохранять данные. Откройте тестовую версию в claude.ai под своим аккаунтом с правами редактора.', saving:'Сохраняем'
+}};
+
+/* ---------- Helpers ---------- */
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-5);
+const clone = o => o == null ? o : JSON.parse(JSON.stringify(o));
+const str = (v, n=400) => (typeof v === 'string' ? v : (v == null ? '' : String(v))).slice(0, n);
+const arr = (v, n=8) => Array.isArray(v) ? v.map(x => typeof x === 'string' ? x : (x && typeof x === 'object' ? Object.values(x).filter(Boolean).join(', ') : String(x))).filter(Boolean).slice(0, n).map(x => str(x, 200)) : [];
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k, v){ try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch(e){} }
+function fmtD(ts){ if (!ts) return ''; return new Date(ts).toLocaleDateString(S.lang === 'ru' && S.view === 'app' ? 'ru-RU' : 'en-GB', {day:'numeric', month:'short', year:'numeric'}); }
+function fmtDT(ts){ if (!ts) return ''; return new Date(ts).toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}); }
+function fmtH(h){ const ru = S.lang === 'ru' && S.view === 'app'; if (h < 1) return Math.max(1, Math.round(h*60)) + (ru ? ' мин' : ' min'); return (h < 10 ? h.toFixed(1) : Math.round(h)) + (ru ? ' ч' : ' h'); }
+function monthsSince(ym){ if (!ym) return 0; const [y, m] = ym.split('-').map(Number); if (!y) return 0; const now = new Date(); return (now.getFullYear() - y) * 12 + (now.getMonth() + 1 - m); }
+function isUK(r){ if (r.uk) return true; const c = (r.country || '').trim().toLowerCase(); return UK_WORDS.includes(c); }
+function t(k, v){ let s = (I18N[S.lang] && I18N[S.lang][k]) ?? I18N.en[k] ?? k; if (v) for (const [a, b] of Object.entries(v)) s = s.split('{' + a + '}').join(b); return s; }
+function L(o){ return o ? (o[S.lang] || o.en || '') : ''; }
+function routeName(key, lang){ const r = ROUTES[key]; if (!r) return ''; return (lang ? r[lang] : r[S.lang] || r.en).name; }
+function routeBody(key){ const r = ROUTES[key]; return r ? (r[S.lang] || r.en).body : ''; }
+function catName(k, lang){ const c = CATS[k] || CATS.other; return lang ? c[lang] : L(c); }
+function stageLabel(s){ return S.lang === 'ru' && S.view === 'app' ? (STAGE_RU[s] || s) : s; }
+function toast(msg){ const el = $('#toast'); el.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`; clearTimeout(toast.t); toast.t = setTimeout(() => { el.innerHTML = ''; }, 3200); }
+function safeUrl(u){ u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
+function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e || ''); }
+const spin = (dark) => `<span class="spin${dark ? ' dark' : ''}" aria-hidden="true"></span>`;
+
+/* ---------- State ---------- */
+const S = {
+  db:null, user:null, assets:null, sample:null, downloads:null, me:null,
+  dbState:'connecting', clients:{}, firms:{}, loaded:{clients:false, firms:false},
+  lang: lsGet('gtc_lang') || 'en', currentId: lsGet('gtc_client'), view:'home',
+  crmTab:'clients', q:'', stageFilter:'', drawerId:null, firmId: lsGet('gtc_firm'), firmOpen:null,
+  busy:{}, cvInfo:'', pasteText:'', aiError:'', noAI:false, showRoutePick:false, seq:0, pendingRender:false
+};
+const pend = {};
+const creating = new Set();
+const queues = {};
+
+const clientsArr = () => Object.values(S.clients).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+const firmsArr = () => Object.values(S.firms).sort((a, b) => String(a.name).localeCompare(String(b.name)));
+const activeFirms = () => firmsArr().filter(f => f.active !== false);
+const cur = () => S.currentId ? S.clients[S.currentId] : null;
+
+/* ---------- Data writes ---------- */
+function writeDoc(path, fn){
+  const q = (queues[path] || Promise.resolve()).then(fn).catch(e => {
+    const code = e && e.code;
+    toast(code === 'invalid_argument' ? 'This account cannot save here. Ask the owner for edit access.' : code === 'quota_exceeded' ? 'Storage is full. Delete old trial clients in the CRM.' : 'Could not save. Check your connection and try again.');
+  });
+  queues[path] = q; return q;
+}
+function updClient(id, patch){
+  if (!S.db) { toast(t('noDb')); return Promise.resolve(); }
+  patch = {...patch, updatedAt: Date.now()};
+  const c = S.clients[id] || {};
+  S.clients[id] = {...c, ...patch, id};
+  const p = pend[id] || (pend[id] = {}); const seq = ++S.seq;
+  for (const k in patch) p[k] = {v: patch[k], seq};
+  scheduleRender();
+  return writeDoc('clients/' + id, () => S.db.doc('clients/' + id).update(patch)).finally(() => {
+    for (const k in patch) if (p[k] && p[k].seq === seq) delete p[k];
+  });
+}
+function stagePatch(c, stage){
+  if (!c || c.stage === stage) return {};
+  return {stage, stageHistory: [...(c.stageHistory || []), {stage, at: Date.now()}]};
+}
+function stageAtLeast(c, stage){
+  const order = ['New lead','Call done','Onboarding','Collecting','With firms'];
+  const i = order.indexOf(c.stage), j = order.indexOf(stage);
+  return (i !== -1 && i < j) ? stagePatch(c, stage) : {};
+}
+function mkEmail(c, kind, x={}){
+  const ru = c.lang === 'ru';
+  const firm = x.firm ? x.firm.name : '';
+  const T = {
+    welcome: ru ? ['Добро пожаловать: ваше досье открыто', `Здравствуйте, ${c.name}!\n\nВаше досье на визу Global Talent открыто. Заполняйте его в удобном темпе, всё сохраняется автоматически.\n\nGlobal Talent Club`]
+               : ['Welcome: your file is open', `Hi ${c.name},\n\nYour Global Talent file is open. Fill it in at your own pace; everything saves as you go.\n\nGlobal Talent Club`],
+    submitted: ru ? ['Мы получили ваши документы', `Здравствуйте, ${c.name}!\n\nВаши документы будут направлены партнёрским юридическим фирмам на рассмотрение. Вы получите их ответы в течение 24-48 часов.\n\nGlobal Talent Club`]
+                 : ['We have received your documents', `Hi ${c.name},\n\nYour documents will now be sent to our partner law firms for review. You will receive their responses within 24-48 hours.\n\nGlobal Talent Club`],
+    admin_new: ['New file submitted: ' + c.name, `${c.name} (${c.email}) submitted their file.\nField: ${routeName(c.route, 'en') || 'not set'}\nReferees: ${(c.referees || []).length}\nEvidence: ${(c.evidence || []).length}\n\nIt has been shared with every panel firm.`],
+    firm_new: ['New client file shared with the panel', `Dear ${firm},\n\nA new Global Talent file is ready for your review: ${c.name}, ${routeName(c.route, 'en') || 'field not set'}.\nPlease reply with your offer within 24-48 hours in the firm portal.\n\nGlobal Talent Club`],
+    offer: ru ? ['Новое предложение от ' + firm, `Здравствуйте, ${c.name}!\n\n${firm} прислали предложение по вашему делу. Сравните его с другими в вашем кабинете.\n\nGlobal Talent Club`]
+             : ['New offer from ' + firm, `Hi ${c.name},\n\n${firm} has sent an offer for your case. Compare it with the others in your account.\n\nGlobal Talent Club`],
+    chosen_client: ru ? ['Знакомим вас с ' + firm, `Здравствуйте, ${c.name}!\n\nВы выбрали ${firm}. Фирма свяжется с вами, пришлёт договор и будет вести ваше дело.\n\nGlobal Talent Club`]
+                      : ['Introducing you to ' + firm, `Hi ${c.name},\n\nYou chose ${firm}. They will contact you, send their client care letter and run your case from here.\n\nGlobal Talent Club`],
+    chosen_firm: ['Client chose your firm: ' + c.name, `Dear ${firm},\n\n${c.name} (${c.email}) has chosen your firm. Please contact them to start onboarding.\n\nGlobal Talent Club`],
+    chosen_admin: ['Firm chosen: ' + c.name + ' with ' + firm, `${c.name} chose ${firm}.`],
+    interest: ['Upsell interest: ' + c.name, `${c.name} is interested in: ${x.what || ''}`],
+    closed: ['File closed: ' + c.name, `${c.name} closed their file.`]
+  }[kind];
+  const to = ['welcome','submitted','offer','chosen_client'].includes(kind) ? c.email : (x.firm ? (x.firm.contact || x.firm.name) : 'Platform team');
+  return {id: uid(), kind, to, subject: T[0], body: T[1], at: Date.now()};
+}
+
+/* ---------- Render scheduling ---------- */
+function typing(){ const a = document.activeElement; return a && a.closest && a.closest('#view') && /^(INPUT|TEXTAREA)$/.test(a.tagName) && !['checkbox','radio','file','button','submit'].includes(a.type); }
+function scheduleRender(){
+  if (S.rq) return; S.rq = true;
+  setTimeout(() => { S.rq = false; if (typing()) { S.pendingRender = true; return; } renderAll(); }, 0);
+}
+document.addEventListener('focusout', () => { if (S.pendingRender) setTimeout(() => { if (!typing()) { S.pendingRender = false; renderAll(); } }, 60); });
+
+function renderAll(){
+  $('#bar').innerHTML = trialBar();
+  let html = '';
+  if (S.view === 'crm') html = viewCRM();
+  else if (S.view === 'firm') html = viewFirm();
+  else if (S.view === 'app') html = viewApp();
+  else html = viewHome();
+  const v = $('#view');
+  const y = window.scrollY;
+  v.innerHTML = html;
+  if (S.keepScroll) window.scrollTo(0, y);
+  S.keepScroll = true;
+}
+
+/* ---------- Trial bar ---------- */
+function trialBar(){
+  const st = S.dbState === 'local' ? ['ok','Standalone: saved in this browser'] : S.dbState === 'live' ? ['ok','Live data'] : S.dbState === 'connecting' ? ['wait','Connecting'] : S.dbState === 'slow' ? ['wait','Data is slow to load'] : ['bad','Saving unavailable in this view'];
+  const onClient = S.view === 'home' || S.view === 'app';
+  return `<div class="trialbar"><div class="wrap">
+    <span class="trialtag">Trial</span>
+    <nav aria-label="Trial surfaces">
+      <a href="#${cur() ? 'app' : 'home'}" data-act="nav" data-v="${cur() ? 'app' : 'home'}" class="${onClient ? 'on' : ''}">Client platform</a>
+      <a href="#firm" data-act="nav" data-v="firm" class="${S.view === 'firm' ? 'on' : ''}">Law firm portal</a>
+      <a href="#crm" data-act="nav" data-v="crm" class="${S.view === 'crm' ? 'on' : ''}">CRM</a>
+    </nav>
+    <span class="spacer"></span>
+    <span class="dbstate"><span class="dot ${st[0]}"></span>${st[1]}</span>
+  </div></div>`;
+}
+
+/* ---------- Client header ---------- */
+function clientHead(){
+  const c = cur();
+  return `<header class="chead"><div class="wrap">
+    <a class="brand" href="#home" data-act="nav" data-v="home" aria-label="Global Talent Club home"><span class="mark">G</span><span class="words">global talent<br>club<br><span class="sub">${esc(t('brandSub'))}</span></span></a>
+    <span class="spacer"></span>
+    ${c ? `<span class="who">${esc(t('you', {name: c.name}))}</span>` : ''}
+    <button class="btn link sm" data-act="newClient">${esc(t('newClient'))}</button>
+    <div class="langs" role="group" aria-label="Language"><button data-act="lang" data-v="en" class="${S.lang === 'en' ? 'on' : ''}">EN</button><button data-act="lang" data-v="ru" class="${S.lang === 'ru' ? 'on' : ''}">RU</button></div>
+  </div></header>`;
+}
+
+/* ---------- Home ---------- */
+function viewHome(){
+  const c = cur();
+  return clientHead() + `
+  <section class="hero"><div class="wrap">
+    <div>
+      <h1>${esc(t('heroA'))} <span class="blue">${esc(t('heroB'))}</span></h1>
+      <p class="lead">${esc(t('heroLead'))}</p>
+      <div class="ctas">
+        <button class="btn primary" data-act="${c ? 'goApp' : 'register'}">${esc(c ? t('cont') : t('start'))}</button>
+        <span style="color:rgba(255,255,255,.8);font-weight:600">${esc(t('free'))}</span>
+      </div>
+    </div>
+    <div class="glass"><ul>
+      <li><span class="n">1</span><span>${esc(t('g1'))}</span></li>
+      <li><span class="n">2</span><span>${esc(t('g2'))}</span></li>
+      <li><span class="n">3</span><span>${esc(t('g3'))}</span></li>
+      <li><span class="n">4</span><span>${esc(t('g4'))}</span></li>
+    </ul></div>
+  </div></section>
+  <section class="how"><div class="wrap">
+    <h2>${esc(t('howTitle'))}</h2>
+    <div class="grid">
+      ${[1,2,3,4].map(i => `<div class="item"><span class="k">0${i}</span><h3>${esc(t('how' + i))}</h3><p class="muted">${esc(t('how' + i + 't'))}</p></div>`).join('')}
+    </div>
+    <p class="disclaimer" style="margin-top:22px">${esc(t('disclaimer'))}</p>
+  </div></section>`;
+}
+
+/* ---------- Register ---------- */
+function openRegister(){
+  const firms = activeFirms().map(f => f.name).join(', ') || 'the panel firms';
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="regt">
+    <h2 id="regt">${esc(t('regTitle'))}</h2>
+    <p class="muted" style="margin-top:6px">${esc(t('regLead'))}</p>
+    <div class="stack" style="margin-top:18px;gap:12px">
+      <label class="check"><input type="checkbox" id="c_terms"><span>${esc(t('cTerms'))}<span class="req">${esc(t('required'))}</span></span></label>
+      <label class="check"><input type="checkbox" id="c_share"><span>${esc(t('cShare', {firms}))}<span class="req">${esc(t('required'))}</span></span></label>
+      <label class="check"><input type="checkbox" id="c_news"><span>${esc(t('cNews'))}<span class="req">${esc(t('optional'))}</span></span></label>
+    </div>
+    <div class="sso">
+      <button class="btn" data-act="sso" data-p="google"><span class="ico">G</span>${esc(t('google'))}</button>
+      <button class="btn" data-act="sso" data-p="apple"><span class="ico">A</span>${esc(t('apple'))}</button>
+    </div>
+    <p class="hint" style="margin-top:8px">${esc(t('demoAuth'))}</p>
+    <div class="or">${esc(t('orEmail'))}</div>
+    <p class="hint" id="ssonote" hidden></p>
+    <div class="grid2">
+      <div class="field"><label for="r_name">${esc(t('name'))}</label><input id="r_name" type="text" autocomplete="name" value="${esc(S.me && S.me.name || '')}"></div>
+      <div class="field"><label for="r_email">${esc(t('email'))}</label><input id="r_email" type="email" autocomplete="email" value="${esc(S.me && S.me.email || '')}"></div>
+    </div>
+    <p class="err" id="r_err" role="alert"></p>
+    <div class="navrow"><button class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button class="btn primary" data-act="regEmail" data-p="email">${esc(t('createAcc'))}</button></div>
+  </div>`);
+}
+function regSubmit(provider){
+  const err = $('#r_err');
+  if (!$('#c_terms').checked || !$('#c_share').checked) { err.textContent = t('needConsents'); return; }
+  const name = $('#r_name').value.trim(), email = $('#r_email').value.trim();
+  if (provider !== 'email' && (!name || !validEmail(email))) {
+    const n = $('#ssonote'); n.hidden = false; n.textContent = t('ssoFill', {p: provider === 'google' ? 'Google' : 'Apple'});
+    S.regProvider = provider; $('#r_name').focus(); return;
+  }
+  if (!name || !validEmail(email)) { err.textContent = t('needName'); return; }
+  createClient({provider: provider === 'email' ? (S.regProvider || 'email') : provider, name, email, news: $('#c_news').checked});
+}
+async function createClient(p){
+  if (!S.db) { toast(t('noDb')); return; }
+  const ref = S.db.collection('clients').doc();
+  const now = Date.now();
+  const firms = activeFirms();
+  const data = {
+    name: p.name, email: p.email, authProvider: p.provider, lang: S.lang, source: 'Instagram (Andrey)',
+    createdAt: now, updatedAt: now, stage: 'Onboarding', stageHistory: [{stage: 'Onboarding', at: now}], step: 1,
+    consents: {terms: now, share: now, shareWith: firms.map(f => f.name), newsletter: !!p.news, newsletterAt: p.news ? now : null},
+    referees: [], evidence: [], requests: [], offers: {}, emails: [],
+    crm: {owner: 'Ilia', nextAction: 'Check the profile once Step 1 is done', nextDate: '', family: '', children: '', notes: '', upsells: {}}
+  };
+  data.emails = [mkEmail(data, 'welcome')];
+  S.clients[ref.id] = {...data, id: ref.id};
+  S.currentId = ref.id; lsSet('gtc_client', ref.id);
+  S.regProvider = null; S.cvInfo = ''; S.pasteText = ''; S.aiError = ''; S.noAI = !!S.standalone;
+  creating.add(ref.id);
+  closeModal(); go('app');
+  await writeDoc('clients/' + ref.id, () => ref.set(data));
+  creating.delete(ref.id);
+}
+
+/* ---------- Client app ---------- */
+function viewApp(){
+  const c = cur();
+  if (!c) return viewHome();
+  let step = c.submittedAt ? (c.step === 3 ? 3 : 5) : (c.step || 1);
+  if (!c.submittedAt && !c.routeConfirmedAt) step = 1;
+  const steps = [[1,'step1'],[2,'step2'],[3,'step3'],[4,'step4']];
+  const done = {1: !!c.routeConfirmedAt, 2: c.routeConfirmedAt && refOk(c), 3: (c.evidence || []).length > 0, 4: !!c.submittedAt};
+  let body = '';
+  if (step === 1) body = step1(c); else if (step === 2) body = step2(c); else if (step === 3) body = step3(c); else if (step === 4) body = step4(c); else body = stepCase(c);
+  return clientHead() + `<div class="wrap appwrap">
+    ${S.dbState === 'off' ? `<div class="banner">${esc(t('noDb'))}</div>` : ''}
+    <div class="stepper" role="tablist">
+      ${steps.map(([n, k]) => { const locked = (n > 1 && !c.routeConfirmedAt) || (c.submittedAt && n !== 3); return `<button class="step ${step === n ? 'on' : ''} ${done[n] ? 'done' : ''}" data-act="goto" data-step="${n}" ${locked ? 'disabled' : ''} role="tab" aria-selected="${step === n}"><span class="num">${done[n] && step !== n ? '✓' : n}</span>${esc(t(k))}</button>`; }).join('')}
+      ${c.submittedAt ? `<button class="step ${step === 5 ? 'on' : ''}" data-act="goto" data-step="5"><span class="num">★</span>${esc(t('stepCase'))}</button>` : ''}
+    </div>
+    ${body}
+  </div>`;
+}
+
+function step1(c){
+  const p = c.profile;
+  return `<div class="cols"><div class="stack">
+    <section class="card">
+      <h2>${esc(t('s1Title'))}</h2><p class="lead" style="margin-top:6px">${esc(t('s1Lead'))}</p>
+      <div class="field"><label for="li">${esc(t('liLabel'))}</label><input id="li" type="url" placeholder="https://www.linkedin.com/in/your-name" value="${esc(c.linkedinUrl || '')}" data-chg="li"><p class="hint">${esc(t('liNote'))}</p></div>
+      <div class="field"><label for="cv">${esc(t('cvLabel'))}</label>
+        <div class="drop"><input id="cv" type="file" accept=".pdf,.docx,.txt,.md" data-chg="cv"></div>
+        <p class="hint ${c.cv ? 'ok' : ''}">${c.cv ? esc(t('cvRead', {n: (c.cv.chars || 0).toLocaleString('en-GB'), f: c.cv.name})) : esc(t('cvHint'))}</p>
+        ${S.cvInfo ? `<p class="err">${esc(S.cvInfo)}</p>` : ''}
+      </div>
+      <details ${c.pasted ? 'open' : ''}><summary>${esc(t('paste'))}</summary><textarea id="paste" rows="6" data-chg="paste">${esc(c.pasted || '')}</textarea></details>
+      <fieldset class="field"><legend>${esc(t('prizeQ'))}</legend>
+        <div class="radios"><label class="check"><input type="radio" name="prize" value="yes" data-chg="prize" ${c.prize && c.prize.has ? 'checked' : ''}>${esc(t('yes'))}</label><label class="check"><input type="radio" name="prize" value="no" data-chg="prize" ${c.prize && c.prize.has === false ? 'checked' : ''}>${esc(t('no'))}</label></div>
+        ${c.prize && c.prize.has ? `<input type="text" id="prizeName" placeholder="${esc(t('prizeName'))}" value="${esc(c.prize.name || '')}" data-chg="prizeName" aria-label="${esc(t('prizeName'))}">` : ''}
+      </fieldset>
+      ${S.standalone ? `<p class="hint" style="margin-top:16px">${esc(S.lang === 'ru' ? 'В этой версии автоматическое чтение профиля отключено. Выберите сферу ниже.' : 'Automatic profile reading is switched off in this version. Choose your field below.')}</p>` : ''}
+      <div class="row" style="margin-top:20px" ${S.standalone ? 'hidden' : ''}>
+        <button class="btn primary" data-act="analyse" ${S.busy.analyse ? 'disabled' : ''}>${S.busy.analyse ? spin() + esc(t('thinking')) : esc(p ? t('reanalyse') : t('analyse'))}</button>
+      </div>
+      ${S.aiError ? `<p class="err" role="alert">${esc(S.aiError)}</p>` : ''}
+    </section>
+    ${p ? profileCard(p) : ''}
+    ${(p || S.noAI || c.route) ? routeCard(c) : ''}
+    <div class="navrow"><span></span><button class="btn primary" data-act="goto" data-step="2" ${c.routeConfirmedAt ? '' : 'disabled'}>${esc(t('next'))}</button></div>
+  </div>
+  <aside class="side">${sideInfo(c)}</aside></div>`;
+}
+function profileCard(p){
+  const lists = ['founded','publications','awards','media','talks','judging','patents','open_source','other_highlights'].filter(k => (p[k] || []).length);
+  return `<section class="card"><h3>${esc(t('found'))}</h3>
+    <dl class="kv">
+      ${p.name ? `<dt>${esc(t('name'))}</dt><dd>${esc(p.name)}</dd>` : ''}
+      ${p.headline ? `<dt>Headline</dt><dd>${esc(p.headline)}</dd>` : ''}
+      ${p.location ? `<dt>Location</dt><dd>${esc(p.location)}</dd>` : ''}
+      ${(p.roles || []).length ? `<dt>${esc(t('roles'))}</dt><dd>${p.roles.map(r => `<div>${esc(r.title)}${r.org ? ', ' + esc(r.org) : ''} <span class="muted small">${esc([r.from, r.to].filter(Boolean).join(' to '))}</span></div>`).join('')}</dd>` : ''}
+      ${lists.map(k => `<dt>${esc(t(k))}</dt><dd><div class="chips">${p[k].map(x => `<span class="chip">${esc(x)}</span>`).join('')}</div></dd>`).join('')}
+    </dl></section>`;
+}
+function routeCard(c){
+  const key = c.route || c.routeSuggested;
+  const confirmed = !!c.routeConfirmedAt;
+  const picker = `<div class="field"><label for="routePick">${esc(t('pickRoute'))}</label><select id="routePick" data-chg="route"><option value="">-</option>${Object.keys(ROUTES).map(k => `<option value="${k}" ${k === key ? 'selected' : ''}>${esc(routeName(k))}: ${esc(routeBody(k))}</option>`).join('')}</select></div>`;
+  return `<section class="card ${confirmed ? '' : 'tint'}"><h3>${esc(t('routeTitle'))}</h3>
+    ${key ? `<div class="routebox" style="margin-top:12px"><div style="flex:1;min-width:220px"><div class="big">${esc(routeName(key))}</div><div class="muted">${esc(routeBody(key))}</div>
+      ${c.routeReason && !S.showRoutePick ? `<p style="margin-top:8px">${esc(L(c.routeReason))}</p>` : ''}</div>
+      ${confirmed ? `<span class="pill green">${esc(t('routeConfirmed'))}</span>` : ''}</div>` : ''}
+    ${(!key || S.showRoutePick || S.noAI) ? picker : ''}
+    <div class="row" style="margin-top:14px">
+      ${!confirmed && key && !S.showRoutePick ? `<button class="btn primary sm" data-act="routeYes">${esc(t('routeYes'))}</button>` : ''}
+      ${!S.showRoutePick && key ? `<button class="btn sm" data-act="routeOther">${esc(confirmed ? t('routeChange') : t('routeOther'))}</button>` : ''}
+    </div>
+    <p class="hint" style="margin-top:12px">${esc(t('routeNote'))}</p>
+  </section>`;
+}
+function sideInfo(c){
+  return `<div class="card"><h3>${esc(t('govFees'))}</h3>
+    <ul class="rules" style="list-style:none;padding:0"><li>${esc(t('feeEnd'))}</li><li>${esc(t('feeVisa'))}</li><li>${esc(t('feeIhs'))}</li></ul>
+    <p class="hint" style="margin-top:8px">${esc(t('feeEach'))}</p></div>
+    <div class="card"><p class="small" style="color:var(--ink-2)">${esc(t('disclaimer'))}</p></div>`;
+}
+
+function refChecks(c){
+  const r = ROUTES[c.route]; const refs = c.referees || []; const out = [];
+  if (!r || !r.min) return out;
+  out.push({ok: refs.length >= r.min, txt: t('chkMin', {n: r.min, have: refs.length})});
+  const orgs = new Set(refs.map(x => (x.org || '').trim().toLowerCase()).filter(Boolean)).size;
+  if (r.checks.includes('orgs3')) out.push({ok: orgs >= 3, txt: t('chkOrgs3', {have: orgs})});
+  if (r.checks.includes('orgs2')) out.push({ok: orgs >= 2, txt: t('chkOrgs2', {have: orgs})});
+  if (r.checks.includes('uk1')) out.push({ok: refs.some(isUK), txt: t('chkUk1')});
+  if (r.checks.includes('uk2')) { const n = refs.filter(isUK).length; out.push({ok: n >= 2, txt: t('chkUk2', {have: n})}); }
+  if (r.checks.includes('months12')) { const n = refs.filter(x => monthsSince(x.since) >= 12).length; out.push({ok: n >= 3, txt: t('chkM12', {have: n})}); }
+  return out;
+}
+const refOk = c => { const r = ROUTES[c.route]; if (!r) return false; if (!r.min) return true; return refChecks(c).every(x => x.ok); };
+
+function step2(c){
+  const r = ROUTES[c.route] || {min: 0};
+  const refs = c.referees || [];
+  const rules = (RULES[r.rules] || RULES.none)[S.lang] || [];
+  if (!r.min) return `<div class="cols"><div class="stack"><section class="card"><h2>${esc(t('s2Title'))}</h2><p class="lead" style="margin-top:8px">${esc(t('s2None'))}</p></section>
+    <div class="navrow"><button class="btn" data-act="goto" data-step="1">${esc(t('back'))}</button><button class="btn primary" data-act="goto" data-step="3">${esc(t('next'))}</button></div></div><aside class="side">${sideInfo(c)}</aside></div>`;
+  const checks = refChecks(c);
+  return `<div class="cols"><div class="stack">
+    <section class="card">
+      <h2>${esc(t('s2Title'))}</h2>
+      <p class="lead" style="margin-top:6px">${esc(t('s2Lead', {route: routeName(c.route), n: r.min}))} ${esc(t('s2More'))}</p>
+      <div class="list">
+        ${refs.map(x => `<div class="ritem"><div class="body">
+            <div class="title">${esc(x.name)}</div>
+            <div class="meta">${esc([x.title, x.org].filter(Boolean).join(', '))}${x.country ? ' · ' + esc(x.country) : ''}${isUK(x) ? ' · ' + esc(t('ukBased')) : ''}</div>
+            <div class="meta">${x.since ? esc(t('months', {n: Math.max(0, monthsSince(x.since))})) : ''}${x.rel ? ' · ' + esc(x.rel) : ''}</div>
+            <div class="row" style="margin-top:6px;gap:8px">${x.agreed ? `<span class="pill green">${esc(t('agreed'))}</span>` : `<span class="pill grey">${esc(t('notYet'))}</span>`}${safeUrl(x.linkedin) ? `<a class="small" href="${esc(safeUrl(x.linkedin))}" target="_blank" rel="noopener">LinkedIn</a>` : ''}${x.cvAsset && blobHref(x.cvAsset) ? `<a class="small" href="${esc(blobHref(x.cvAsset))}" target="_blank" rel="noopener">CV</a>` : ''}</div>
+          </div>
+          <div class="row" style="gap:4px"><button class="btn link sm" data-act="editRef" data-id="${esc(x.id)}">${esc(t('edit'))}</button><button class="btn link sm" data-act="delRef" data-id="${esc(x.id)}" style="color:var(--bad)">${esc(t('remove'))}</button></div>
+        </div>`).join('')}
+      </div>
+      <div class="row" style="margin-top:14px"><button class="btn primary" data-act="addRef">${esc(t('addRef'))}</button></div>
+    </section>
+    <div class="navrow"><button class="btn" data-act="goto" data-step="1">${esc(t('back'))}</button><button class="btn primary" data-act="goto" data-step="3">${esc(t('next'))}</button></div>
+  </div>
+  <aside class="side">
+    <div class="card"><h3>${esc(t('checksTitle'))}</h3><ul class="checks">${checks.map(x => `<li><span class="ic ${x.ok ? 'ok' : 'no'}">${x.ok ? '✓' : '!'}</span><span>${esc(x.txt)}</span></li>`).join('')}</ul></div>
+    <div class="card"><h3>${esc(t('rulesTitle'))}</h3><p class="muted small" style="margin-top:4px">${esc(routeName(c.route))} · ${esc(routeBody(c.route))}</p><ul class="rules">${rules.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+  </aside></div>`;
+}
+function refModal(id){
+  const c = cur(); const x = (c.referees || []).find(r => r.id === id) || {};
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="reft">
+    <h2 id="reft">${esc(id ? t('editRef') : t('addRef'))}</h2>
+    <form id="refForm" data-id="${esc(id || '')}">
+    <div class="grid2">
+      <div class="field"><label for="f_name">${esc(t('refName'))}</label><input id="f_name" type="text" required value="${esc(x.name || '')}"></div>
+      <div class="field"><label for="f_title">${esc(t('refTitle'))}</label><input id="f_title" type="text" value="${esc(x.title || '')}"></div>
+      <div class="field"><label for="f_org">${esc(t('refOrg'))}</label><input id="f_org" type="text" value="${esc(x.org || '')}"></div>
+      <div class="field"><label for="f_country">${esc(t('refCountry'))}</label><input id="f_country" type="text" value="${esc(x.country || '')}"></div>
+      <div class="field"><label for="f_since">${esc(t('refSince'))}</label><input id="f_since" type="month" value="${esc(x.since || '')}"></div>
+      <div class="field"><label for="f_email">${esc(t('refEmail'))}</label><input id="f_email" type="email" value="${esc(x.email || '')}"></div>
+    </div>
+    <label class="check" style="margin-top:14px"><input type="checkbox" id="f_uk" ${isUK(x) ? 'checked' : ''}>${esc(t('refUK'))}</label>
+    <div class="field"><label for="f_rel">${esc(t('refRel'))}</label><input id="f_rel" type="text" value="${esc(x.rel || '')}"></div>
+    <div class="field"><label for="f_li">${esc(t('refLi'))}</label><input id="f_li" type="url" placeholder="https://www.linkedin.com/in/..." value="${esc(x.linkedin || '')}"></div>
+    <div class="field"><label for="f_desc">${esc(t('refDesc'))}</label><textarea id="f_desc" rows="3">${esc(x.desc || '')}</textarea></div>
+    <div class="field"><label for="f_cv">CV (PDF)</label><input id="f_cv" type="file" accept=".pdf"></div>
+    <label class="check" style="margin-top:14px"><input type="checkbox" id="f_agreed" ${x.agreed ? 'checked' : ''}>${esc(t('refAgreed'))}</label>
+    <p class="err" id="f_err" role="alert"></p>
+    <div class="navrow"><button type="button" class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button type="submit" class="btn primary" id="refSave">${esc(t('save'))}</button></div>
+    </form></div>`);
+  setTimeout(() => $('#f_name') && $('#f_name').focus(), 30);
+}
+async function saveRef(form){
+  const c = cur(); const id = form.dataset.id;
+  const name = $('#f_name').value.trim();
+  if (!name) { $('#f_err').textContent = t('refName') + '?'; return; }
+  const list = clone(c.referees || []);
+  const old = list.find(r => r.id === id);
+  const x = {id: id || uid(), name, title: $('#f_title').value.trim(), org: $('#f_org').value.trim(), country: $('#f_country').value.trim(), uk: $('#f_uk').checked,
+    since: $('#f_since').value, email: $('#f_email').value.trim(), rel: $('#f_rel').value.trim(), linkedin: $('#f_li').value.trim(), desc: $('#f_desc').value.trim(), agreed: $('#f_agreed').checked, cvAsset: old ? old.cvAsset || '' : ''};
+  const f = $('#f_cv').files[0];
+  if (f && S.assets) { $('#refSave').disabled = true; try { const up = await S.assets.upload(f, {type: 'application/pdf'}); x.cvAsset = up.id; } catch(e) { toast('The CV could not be uploaded. The referee is saved without it.'); } }
+  if (old) Object.assign(old, x); else list.push(x);
+  closeModal(); updClient(c.id, {referees: list});
+}
+
+function step3(c){
+  const r = ROUTES[c.route] || {cats: []};
+  const ev = c.evidence || [];
+  const reqs = (c.requests || []).filter(q => !q.done);
+  const counts = {green: 0, yellow: 0, red: 0};
+  ev.forEach(e => { const f = e.format && e.format.rag; if (counts[f] != null) counts[f]++; });
+  return `<div class="cols"><div class="stack">
+    <section class="card">
+      <h2>${esc(t('s3Title'))}</h2><p class="lead" style="margin-top:6px">${esc(t('s3Lead'))}</p>
+      ${c.route === 'tech' ? `<p class="hint" style="margin-top:10px">${esc(t('bizPrompt'))}</p>` : ''}
+      ${reqs.length ? `<h3 style="margin-top:20px">${esc(t('reqTitle'))}</h3><div class="list">${reqs.map(q => `<div class="req-card"><p>${esc(L(q))}<br><span class="hint">${esc(catName(q.category))}</span></p><button class="btn sm primary" data-act="addEv" data-req="${esc(q.id)}">${esc(t('upload'))}</button><button class="btn link sm" data-act="dismissReq" data-id="${esc(q.id)}">${esc(t('notNow'))}</button></div>`).join('')}</div>` : ''}
+      <div class="row" style="margin-top:20px"><button class="btn primary" data-act="addEv">${esc(t('addEv'))}</button><span class="muted small">${esc(t('s3Count', {n: ev.length}))}</span></div>
+      <div class="list">${ev.slice().reverse().map(e => evRow(c, e, true)).join('')}</div>
+    </section>
+    <div class="navrow"><button class="btn" data-act="goto" data-step="${c.submittedAt ? 5 : 2}">${esc(t('back'))}</button>${c.submittedAt ? '' : `<button class="btn primary" data-act="goto" data-step="4">${esc(t('next'))}</button>`}</div>
+  </div>
+  <aside class="side"><div class="card"><h3>${esc(t('cats'))}</h3><p class="muted small" style="margin-top:4px">${esc(routeName(c.route))}</p><ul class="rules">${r.cats.map(k => `<li>${esc(catName(k))}</li>`).join('')}</ul></div>
+  <div class="card"><h3>${esc(t('format'))}</h3><div class="row" style="margin-top:10px;gap:8px"><span class="pill green">${counts.green}</span><span class="pill yellow">${counts.yellow}</span><span class="pill red">${counts.red}</span></div></div></aside></div>`;
+}
+const RAGW = {
+  format:{en:{green:'OK', yellow:'Check', red:'Not usable'}, ru:{green:'Подходит', yellow:'Проверить', red:'Не подходит'}},
+  relevance:{en:{green:'Fits', yellow:'Unclear', red:'No match'}, ru:{green:'По теме', yellow:'Неясно', red:'Не по теме'}}
+};
+function ragPill(o, kind){
+  const ru = S.lang === 'ru' && S.view === 'app';
+  if (!o || o.rag === 'pending') return `<span class="pill pending">${spin(true)} ${esc(ru ? I18N.ru.checking : 'Checking')}</span>`;
+  const word = ((RAGW[kind || 'format'] || RAGW.format)[ru ? 'ru' : 'en'])[o.rag] || o.rag;
+  return `<span class="pill ${esc(o.rag)}">${esc(word)}</span>`;
+}
+function evRow(c, e, editable){
+  const link = e.assetId ? blobHref(e.assetId) : safeUrl(e.url);
+  const lang = S.view === 'app' ? S.lang : 'en';
+  const fNote = e.format ? (e.format[lang] || e.format.en) : '';
+  const rNote = e.relevance && e.relevance.rag !== 'pending' ? [e.relevance.category ? catName(e.relevance.category, lang) : '', e.relevance[lang] || e.relevance.en].filter(Boolean).join(': ') : '';
+  return `<div class="evrow">
+    <div class="top"><div style="flex:1;min-width:0"><div class="title" style="font-weight:700">${esc(e.title)}</div>
+      <div class="meta small muted">${esc(catName(e.category, lang))}${e.fileName ? ' · ' + esc(e.fileName) : ''}${e.late ? ' · ' + esc(lang === 'ru' ? I18N.ru.late : I18N.en.late) : ''}</div>
+      ${e.desc ? `<div class="small" style="margin-top:4px">${esc(e.desc)}</div>` : ''}</div>
+      ${link ? `<a class="btn sm" href="${esc(link)}" target="_blank" rel="noopener">${esc(S.view === 'app' ? t('open') : 'Open')}</a>` : ''}
+      ${editable ? `<button class="btn link sm" data-act="delEv" data-id="${esc(e.id)}" style="color:var(--bad)" aria-label="Remove ${esc(e.title)}">${esc(S.view === 'app' ? t('remove') : 'Remove')}</button>` : ''}
+    </div>
+    <div class="checksline">
+      ${ragPill(e.format, 'format')}<span>${esc((lang === 'ru' ? I18N.ru.format : 'Format') + ': ' + fNote)}</span>
+      ${ragPill(e.relevance, 'relevance')}<span>${esc((lang === 'ru' ? I18N.ru.relevance : 'Relevance') + (rNote ? ': ' + rNote : ''))}${e.relevance && e.relevance.failed && editable ? ` <button class="btn link sm" data-act="recheck" data-id="${esc(e.id)}">${esc(t('retry'))}</button>` : ''}</span>
+    </div></div>`;
+}
+function evModal(reqId){
+  const c = cur(); const r = ROUTES[c.route] || {cats: []};
+  const q = (c.requests || []).find(x => x.id === reqId);
+  const cats = [...r.cats, 'other'];
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="evt">
+    <h2 id="evt">${esc(t('addEv'))}</h2>
+    ${q ? `<p class="muted" style="margin-top:6px">${esc(L(q))}</p>` : ''}
+    <form id="evForm" data-req="${esc(reqId || '')}">
+      <div class="field"><label for="e_title">${esc(t('evTitle'))}</label><input id="e_title" type="text" required></div>
+      <div class="field"><label for="e_cat">${esc(t('evCat'))}</label><select id="e_cat">${cats.map(k => `<option value="${k}" ${q && q.category === k ? 'selected' : ''}>${esc(catName(k))}</option>`).join('')}</select></div>
+      <div class="field"><label for="e_desc">${esc(t('evDesc'))}</label><textarea id="e_desc" rows="2"></textarea></div>
+      <fieldset class="field"><legend>${esc(t('evKind'))}</legend><div class="radios">
+        <label class="check"><input type="radio" name="e_kind" value="file" checked data-act="evKind">${esc(t('kFile'))}</label>
+        <label class="check"><input type="radio" name="e_kind" value="link" data-act="evKind">${esc(t('kLink'))}</label>
+        <label class="check"><input type="radio" name="e_kind" value="note" data-act="evKind">${esc(t('kNote'))}</label></div></fieldset>
+      <div class="field" id="e_fileWrap"><label for="e_file">${esc(t('kFile'))}</label><input id="e_file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.docx,.doc,.mp4,.mov,.mp3"><p class="hint">${esc(t('evFileHint'))}</p></div>
+      <div class="field" id="e_urlWrap" hidden><label for="e_url">${esc(t('evUrl'))}</label><input id="e_url" type="url" placeholder="https://"></div>
+      <p class="err" id="e_err" role="alert"></p>
+      <div class="navrow"><button type="button" class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button type="submit" class="btn primary" id="evSave">${esc(t('save'))}</button></div>
+    </form></div>`);
+  setTimeout(() => $('#e_title') && $('#e_title').focus(), 30);
+}
+function formatCheck(e){
+  const M = (en, ru, rag) => ({rag, en, ru});
+  if (e.kind === 'link') return M('A web link alone is not accepted. Upload a PDF or screenshot of the page with its address visible.', 'Одна ссылка не принимается. Загрузите PDF или скриншот страницы с видимым адресом.', 'red');
+  if (e.kind === 'note') return M('Description only. Upload the document itself before the lawyer submits.', 'Только описание. Загрузите сам документ до подачи.', 'yellow');
+  const m = e.mime || '', n = (e.fileName || '').toLowerCase();
+  if (m.startsWith('video/') || m.startsWith('audio/') || /\.(mp4|mov|mp3|wav|avi)$/.test(n)) return M('Video and audio are not accepted. Upload a document instead, such as a programme, article or certificate.', 'Видео и аудио не принимаются. Загрузите документ: программу, статью или сертификат.', 'red');
+  if (e.uploadFailed) return M('The file did not upload. Remove it and try again.', 'Файл не загрузился. Удалите и попробуйте снова.', 'red');
+  if (e.size > 25 * 1024 * 1024) return M('Over 25MB. Compress or split it.', 'Больше 25 МБ. Сожмите или разделите файл.', 'yellow');
+  if (e.lang === 'other') return M('Not in English. It needs a full, independently verified translation.', 'Не на английском. Нужен полный заверенный перевод.', 'yellow');
+  if (!/pdf|image\//.test(m)) return M('Unusual file type. A PDF works best.', 'Необычный тип файла. Лучше всего PDF.', 'yellow');
+  return M('Usable as it is.', 'Подходит как есть.', 'green');
+}
+async function saveEv(form){
+  const c = cur(); const err = $('#e_err');
+  const kind = (form.querySelector('input[name=e_kind]:checked') || {}).value || 'file';
+  const title = $('#e_title').value.trim();
+  if (!title) { err.textContent = t('needTitle'); return; }
+  const e = {id: uid(), title, category: $('#e_cat').value, desc: $('#e_desc').value.trim(), kind, addedAt: Date.now(), late: !!c.submittedAt, relevance: {rag: 'pending'}};
+  let text = '';
+  if (kind === 'file') {
+    const f = $('#e_file').files[0];
+    if (!f) { err.textContent = t('needFile'); return; }
+    if (/\.docx?$/i.test(f.name)) { err.textContent = t('wordFile'); return; }
+    e.fileName = f.name; e.mime = f.type || (/\.pdf$/i.test(f.name) ? 'application/pdf' : ''); e.size = f.size;
+    const media = /^(video|audio)\//.test(e.mime) || /\.(mp4|mov|mp3)$/i.test(f.name);
+    $('#evSave').disabled = true; $('#evSave').innerHTML = spin() + esc(t('saving'));
+    if (!media) {
+      if (S.assets) {
+        try { const up = e.mime === 'application/pdf' ? await S.assets.upload(f, {type: 'application/pdf'}) : await S.assets.upload(f); e.assetId = up.id; }
+        catch(x) { e.uploadFailed = true; }
+      }
+      if (e.mime === 'application/pdf') text = await pdfText(f, 4).catch(() => '');
+    }
+  } else if (kind === 'link') {
+    const u = $('#e_url').value.trim(); if (!u) { err.textContent = t('needUrl'); return; } e.url = u;
+  }
+  e.format = formatCheck(e);
+  const list = [...(c.evidence || []), e];
+  const patch = {evidence: list};
+  if (form.dataset.req) patch.requests = (c.requests || []).map(q => q.id === form.dataset.req ? {...q, done: true} : q);
+  closeModal(); await updClient(c.id, patch);
+  runRelevance(c.id, e.id, text);
+}
+async function runRelevance(cid, eid, text){
+  const setRel = (rel, extra = {}) => { const c = S.clients[cid]; if (!c) return; const list = clone(c.evidence || []); const e = list.find(x => x.id === eid); if (!e) return; e.relevance = rel; Object.assign(e, extra); e.format = formatCheck(e); updClient(cid, {evidence: list}); };
+  if (!S.sample) { setRel({rag: 'yellow', en: 'Automatic check unavailable here; the lawyer reviews it.', ru: 'Автоматическая проверка недоступна; документ проверит юрист.'}); return; }
+  const c = S.clients[cid]; const e = (c.evidence || []).find(x => x.id === eid); if (!e) return;
+  const r = ROUTES[c.route] || {cats: []};
+  const cats = [...r.cats, 'other'].map(k => `${k}: ${catName(k, 'en')}`).join('\n');
+  const prompt = `You check uploads for a UK Global Talent visa intake platform that only COLLECTS documents for a regulated law firm.
+Never judge strength, quality or whether the person qualifies. Decide only:
+1) whether this item fits one of the published evidence categories for the route below, and which one;
+2) the language of the document.
+Route: ${routeName(c.route, 'en')} (${(ROUTES[c.route] || {en: {}}).en.body || ''})
+Categories (key: label):
+${cats}
+Item title: ${e.title}
+Category chosen by the client: ${e.category}
+Client description: ${e.desc || '(none)'}
+Kind: ${e.kind}${e.fileName ? ', file ' + e.fileName : ''}${e.url ? ', link ' + e.url : ''}
+Text excerpt from the file: ${text ? text.slice(0, 3000) : '(not available)'}
+Reply with ONLY a JSON object: {"fit":"green"|"yellow"|"red","category":"<one key from the list>","note_en":"<max 20 words>","note_ru":"<the same note in Russian>","language":"en"|"other"|"unknown"}
+green = clearly fits a category. yellow = unclear fit, the client should add a line on what it shows. red = fits no category (for example a certificate of attending an event as a guest, a personal photo, an unrelated document).
+Example: {"fit":"green","category":"recognition","note_en":"Invitation to speak at an international tech conference.","note_ru":"Приглашение выступить на международной технологической конференции.","language":"en"}`;
+  try {
+    const res = await S.sample.json(prompt, {modelTier: 'quick'});
+    const fit = ['green','yellow','red'].includes(res && res.fit) ? res.fit : 'yellow';
+    const cat = r.cats.includes(res && res.category) ? res.category : (res && res.category === 'other' ? 'other' : e.category);
+    setRel({rag: fit, category: cat, en: str(res && res.note_en, 200), ru: str(res && res.note_ru, 200)}, {lang: ['en','other','unknown'].includes(res && res.language) ? res.language : 'unknown'});
+  } catch(x) {
+    if (x && (x.code === 'not_granted' || x.code === 'sampling_disabled')) { S.sample = null; setRel({rag: 'yellow', en: 'Automatic check unavailable here; the lawyer reviews it.', ru: 'Автоматическая проверка недоступна; документ проверит юрист.'}); return; }
+    setRel({rag: 'yellow', failed: true, en: x && x.code === 'rate_limited' ? 'Too many checks at once. Try again in a minute.' : 'The check did not finish.', ru: x && x.code === 'rate_limited' ? 'Слишком много проверок. Попробуйте через минуту.' : 'Проверка не завершилась.'});
+  }
+}
+
+function step4(c){
+  const r = ROUTES[c.route] || {min: 0};
+  const ev = c.evidence || [];
+  const red = ev.filter(e => e.format && e.format.rag === 'red').length;
+  const items = [
+    [!!c.profile || S.noAI || !!c.routeConfirmedAt, t('kProfile')],
+    [!!c.routeConfirmedAt, t('kRoute') + (c.route ? ': ' + routeName(c.route) : '')],
+    [!r.min || (c.referees || []).length >= r.min, t('kRefs', {n: (c.referees || []).length, min: r.min})],
+    [ev.length > 0, t('kEv', {n: ev.length})]
+  ];
+  if (red) items.push([false, t('kRed', {n: red})]);
+  const allOk = items.every(x => x[0]) && refOk(c);
+  return `<div class="cols"><div class="stack">
+    <section class="card"><h2>${esc(t('s4Title'))}</h2><p class="lead" style="margin-top:6px">${esc(t('s4Lead'))}</p>
+      <ul class="checks" style="margin-top:16px">${items.map(([ok, txt]) => `<li><span class="ic ${ok ? 'ok' : 'no'}">${ok ? '✓' : '!'}</span><span>${esc(txt)}</span></li>`).join('')}
+      ${r.min ? refChecks(c).filter(x => !x.ok).map(x => `<li><span class="ic no">!</span><span>${esc(x.txt)}</span></li>`).join('') : ''}</ul>
+      <div class="field"><label for="note">${esc(t('noteLawyer'))}</label><textarea id="note" rows="3" data-chg="note">${esc(c.note || '')}</textarea></div>
+      ${allOk ? '' : `<p class="hint" style="margin-top:12px">${esc(t('submitWarn'))}</p>`}
+      <div class="row" style="margin-top:18px"><button class="btn primary" data-act="submitFile">${esc(t('submit'))}</button></div>
+    </section>
+    <div class="navrow"><button class="btn" data-act="goto" data-step="3">${esc(t('back'))}</button><span></span></div>
+  </div><aside class="side">${sideInfo(c)}</aside></div>`;
+}
+function submitFile(){
+  const c = cur(); const firms = activeFirms(); const now = Date.now();
+  const emails = [...(c.emails || []), mkEmail(c, 'submitted'), mkEmail(c, 'admin_new'), ...firms.map(f => mkEmail(c, 'firm_new', {firm: f}))];
+  updClient(c.id, {submittedAt: now, step: 5, sharedWith: firms.map(f => f.id), emails, ...stagePatch(c, 'With firms'),
+    crm: {...(c.crm || {}), nextAction: 'Chase firm offers if none within 24 hours', nextDate: new Date(now + 864e5).toISOString().slice(0, 10)}});
+  S.justSubmitted = true; S.keepScroll = false; window.scrollTo(0, 0);
+}
+
+function stepCase(c){
+  const offers = Object.values(c.offers || {}).sort((a, b) => (a.at || 0) - (b.at || 0));
+  const chosen = c.chosenFirmId;
+  const idx = CLIENT_TIMELINE.indexOf(c.stage === 'Client paid' ? 'Firm chosen' : c.stage === 'Visa applied' ? 'Endorsed' : c.stage);
+  const ups = Object.entries((c.crm || {}).upsells || {}).filter(([k, v]) => (v === 'offered' || v === 'interested') && UPSELLS[k]);
+  const closed = c.stage === 'Closed or lost';
+  return `<div class="cols"><div class="stack">
+    ${S.justSubmitted || (!offers.length && !closed) ? `<section class="card success"><h2>${esc(t('doneTitle'))}</h2><p style="margin-top:10px">${esc(t('doneMsg'))}</p><p class="small" style="margin-top:10px">${esc(t('emailSent', {email: c.email}))} ${esc(t('demoEmail'))}</p></section>` : ''}
+    ${closed ? `<section class="card"><p>${esc(t('closed'))}</p></section>` : ''}
+    <section class="card"><h2>${esc(t('offersTitle'))}</h2>
+      ${offers.length ? `<div class="offers">${offers.map(o => { const f = S.firms[o.firmId] || {name: o.firmName || 'Firm'}; const h = c.submittedAt ? hoursBetween(c.submittedAt, o.at) : 0;
+        return `<div class="offer ${chosen === o.firmId ? 'chosen' : ''}">
+          <div class="row"><strong>${esc(f.name)}</strong><span class="spacer"></span><span class="pill plain blue">${esc(f.regulator || '')}</span></div>
+          ${o.take === false ? `<p class="muted">${esc(t('declined'))}</p>${o.notes ? `<p class="small">${esc(o.notes)}</p>` : ''}` : `
+          <div><div class="hint">${esc(t('fee'))}</div><div class="fee tabnum">£${esc(Number(o.fee || 0).toLocaleString('en-GB'))}</div></div>
+          ${o.scope ? `<div><div class="hint">${esc(t('scope'))}</div><div class="small">${esc(o.scope)}</div></div>` : ''}
+          ${o.timeline ? `<div><div class="hint">${esc(t('timeline'))}</div><div class="small">${esc(o.timeline)}</div></div>` : ''}
+          ${o.notes ? `<div class="small muted">${esc(o.notes)}</div>` : ''}
+          <div class="hint">${esc(t('replied', {h: fmtH(h)}))}</div>
+          ${chosen === o.firmId ? `<span class="pill green">${esc(t('yourFirm'))}</span>` : (!chosen && !closed ? `<button class="btn primary sm" data-act="chooseFirm" data-id="${esc(o.firmId)}">${esc(t('choose'))}</button>` : '')}`}
+        </div>`; }).join('')}</div>` : `<p class="muted" style="margin-top:8px">${spin(true)} ${esc(t('waiting'))}</p>`}
+    </section>
+    ${ups.length ? `<section class="card"><h2>${esc(t('forNext'))}</h2><div class="list">${ups.map(([k, v]) => { const u = UPSELLS[k][S.lang] || UPSELLS[k].en; return `<div class="ritem"><div class="body"><div class="title">${esc(u[0])}</div><div class="meta">${esc(u[1])}</div></div>${v === 'interested' ? `<span class="pill green">${esc(t('thanks'))}</span>` : `<button class="btn sm primary" data-act="interest" data-k="${esc(k)}">${esc(t('interested'))}</button>`}</div>`; }).join('')}</div></section>` : ''}
+    <section class="card"><h3>${esc(t('elsewhere'))}</h3><p class="muted small" style="margin-top:4px">${esc(t('elsewhereT'))}</p>
+      <div class="row" style="margin-top:12px"><button class="btn sm" data-act="dlFile">${esc(t('download'))}</button>${closed || chosen ? '' : `<button class="btn sm danger" data-act="closeFile">${esc(t('closeFile'))}</button>`}<button class="btn sm" data-act="goto" data-step="3">${esc(t('addMore'))}</button></div></section>
+  </div>
+  <aside class="side"><div class="card"><h3>${esc(t('caseTitle'))}</h3>
+    <ul class="timeline">${CLIENT_TIMELINE.map((s, i) => `<li><span class="ic ${i < idx ? 'ok' : i === idx ? 'cur' : 'todo'}">${i < idx ? '✓' : i + 1}</span><span ${i === idx ? 'style="font-weight:700"' : ''}>${esc(stageLabel(s))}</span></li>`).join('')}</ul></div>
+    ${sideInfo(c)}</aside></div>`;
+}
+function hoursBetween(a, b){ return Math.max(0, (b - a) / 36e5); }
+
+/* ---------- AI: profile ---------- */
+async function analyse(){
+  const c = cur();
+  const text = [c.cv && c.cv.text || '', c.pasted || '', c.linkedinUrl ? 'LinkedIn: ' + c.linkedinUrl : '', c.prize && c.prize.has ? 'Prize won: ' + (c.prize.name || 'yes') : ''].filter(Boolean).join('\n\n');
+  if (text.replace(/LinkedIn:.*/, '').trim().length < 40) { S.aiError = t('needText'); scheduleRender(); return; }
+  if (!S.sample) { S.noAI = true; S.aiError = t('noAI'); scheduleRender(); return; }
+  S.busy.analyse = true; S.aiError = ''; scheduleRender();
+  const catMap = Object.fromEntries(Object.entries(ROUTES).map(([k, r]) => [k, r.cats]));
+  const prompt = `You help a UK Global Talent visa intake platform COLLECT information for a regulated UK law firm.
+You must NOT assess eligibility, strength or chances, and must not say whether the person qualifies.
+Read the profile text below and reply with ONLY one JSON object of this shape:
+{"name":string,"headline":string,"location":string,
+ "roles":[{"title":string,"org":string,"from":string,"to":string}],
+ "founded":[string],"publications":[string],"awards":[string],"media":[string],"talks":[string],"judging":[string],"patents":[string],"open_source":[string],"other_highlights":[string],
+ "field":"tech"|"ace"|"bfc"|"pact"|"riba"|"dba"|"research"|"fasttrack"|"prize",
+ "field_reason_en":string,"field_reason_ru":string,
+ "requests":[{"category":string,"text_en":string,"text_ru":string}]}
+Field guide (by the area the person works in, as published by the endorsing bodies): tech = digital technology (software, product, data, AI, fintech, tech founders or investors); ace = arts and culture (music, dance, theatre, visual arts, literature, museums, combined arts); bfc = fashion design; pact = film and television; riba = architecture; dba = design (product, graphic, digital design); research = academic or research career, peer review route; fasttrack = already holds a listed fellowship, an approved academic or research post, or a UKRI-funded role; prize = named winner of a major international prize, only if clearly stated.
+field_reason_*: one factual sentence on which area their work is in. No judgement of strength.
+requests: up to 7 specific documents to ask for, each tied to something the text mentions, phrased as a polite request to upload proof, e.g. "Your CV mentions a talk at Web Summit 2025: upload the programme page or the invitation." Use a category key allowed for the chosen field: ${JSON.stringify(catMap)}.
+Use only facts in the text. At most 6 items per list, each under 15 words. All fields in English except *_ru, which are in Russian.
+PROFILE TEXT:
+<<<
+${text.slice(0, 30000)}
+>>>`;
+  try {
+    const res = await S.sample.json(prompt, {modelTier: 'default'});
+    if (!res || typeof res !== 'object') throw {code: 'invalid_json'};
+    const roles = Array.isArray(res.roles) ? res.roles.slice(0, 8).map(r => ({title: str(r && r.title, 120), org: str(r && r.org, 120), from: str(r && r.from, 30), to: str(r && r.to, 30)})) : [];
+    const prof = {name: str(res.name, 120), headline: str(res.headline, 200), location: str(res.location, 120), roles};
+    ['founded','publications','awards','media','talks','judging','patents','open_source','other_highlights'].forEach(k => prof[k] = arr(res[k], 6));
+    const field = ROUTES[res.field] ? res.field : 'tech';
+    const allowed = ROUTES[field].cats;
+    const requests = (Array.isArray(res.requests) ? res.requests : []).slice(0, 7).map(q => ({id: uid(), category: allowed.includes(q && q.category) ? q.category : allowed[0], en: str(q && q.text_en, 240), ru: str(q && q.text_ru, 240) || str(q && q.text_en, 240), done: false})).filter(q => q.en);
+    const c2 = cur();
+    updClient(c2.id, {profile: prof, routeSuggested: field, route: c2.routeConfirmedAt ? c2.route : field, routeReason: {en: str(res.field_reason_en, 300), ru: str(res.field_reason_ru, 300)}, requests, ...stageAtLeast(c2, 'Collecting'),
+      crm: {...(c2.crm || {}), nextAction: c2.crm && c2.crm.nextAction && !/Step 1/.test(c2.crm.nextAction) ? c2.crm.nextAction : 'Follow up on referees and evidence'}});
+    S.showRoutePick = false;
+  } catch(e) {
+    if (e && (e.code === 'not_granted' || e.code === 'sampling_disabled' || e.code === 'capability_disabled')) { S.noAI = true; S.aiError = t('noAI'); }
+    else if (e && e.code === 'cancelled') { S.aiError = ''; }
+    else { S.aiError = t('aiFail'); S.noAI = true; }
+  } finally { S.busy.analyse = false; scheduleRender(); }
+}
+
+/* ---------- Files ---------- */
+function loadScript(src){ return new Promise((res, rej) => { if (document.querySelector(`script[src="${src}"]`)) { res(); return; } const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const PDFW = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+async function pdfText(file, maxPages){
+  await loadScript(PDFJS); await loadScript(PDFW);
+  const lib = window.pdfjsLib; lib.GlobalWorkerOptions.workerSrc = PDFW;
+  const doc = await lib.getDocument({data: new Uint8Array(await file.arrayBuffer())}).promise;
+  let out = ''; const n = Math.min(doc.numPages, maxPages || 30);
+  for (let i = 1; i <= n; i++) { const p = await doc.getPage(i); const tc = await p.getTextContent(); out += tc.items.map(x => x.str).join(' ') + '\n'; }
+  return out.replace(/[ \t]+/g, ' ').trim();
+}
+async function docxText(file){
+  await loadScript('https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js');
+  const r = await window.mammoth.extractRawText({arrayBuffer: await file.arrayBuffer()});
+  return (r.value || '').trim();
+}
+async function onCV(input){
+  const c = cur(); const f = input.files[0]; if (!f) return;
+  S.cvInfo = ''; S.busy.cv = true;
+  let text = '';
+  try {
+    if (/\.pdf$/i.test(f.name) || f.type === 'application/pdf') text = await pdfText(f, 30);
+    else if (/\.docx$/i.test(f.name)) text = await docxText(f);
+    else text = await f.text();
+  } catch(e) { text = ''; }
+  const cv = {name: f.name, size: f.size, chars: text.length, text: text.slice(0, 40000), at: Date.now()};
+  if (S.assets) {
+    try {
+      const isPdf = /\.pdf$/i.test(f.name);
+      const up = isPdf ? await S.assets.upload(f, {type: 'application/pdf'}) : await S.assets.upload(new Blob([text || ' '], {type: 'text/plain'}), {type: 'text/plain'});
+      cv.assetId = up.id;
+    } catch(e) {}
+  }
+  if (!text) S.cvInfo = t('cvFail');
+  S.busy.cv = false;
+  updClient(c.id, {cv, ...stageAtLeast(c, 'Collecting')});
+}
+
+/* ---------- Downloads ---------- */
+function fileSummary(c){
+  const lines = [`# ${c.name}: Global Talent file`, '', `Email: ${c.email}`, `Field: ${routeName(c.route, 'en')} (${(ROUTES[c.route] || {en: {}}).en.body || ''})`, `LinkedIn: ${c.linkedinUrl || '-'}`, ''];
+  if (c.profile) { lines.push('## Profile', c.profile.headline || '', ''); (c.profile.roles || []).forEach(r => lines.push(`- ${r.title}, ${r.org} (${[r.from, r.to].filter(Boolean).join(' to ')})`)); lines.push(''); }
+  lines.push('## Referees'); (c.referees || []).forEach(r => lines.push(`- ${r.name}, ${r.title}, ${r.org}, ${r.country}${r.email ? ', ' + r.email : ''}${r.linkedin ? ', ' + r.linkedin : ''}`)); lines.push('');
+  lines.push('## Evidence'); (c.evidence || []).forEach(e => lines.push(`- ${e.title} [${catName(e.category, 'en')}] format: ${e.format ? e.format.rag : '-'}, relevance: ${e.relevance ? e.relevance.rag : '-'}${e.url ? ', ' + e.url : ''}`));
+  if (c.note) lines.push('', '## Note', c.note);
+  return lines.join('\n');
+}
+function anchorDownload(filename, data){
+  const blob = data instanceof Blob ? data : new Blob([data], {type: 'text/plain;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+async function saveFile(filename, data){
+  if (S.standalone) { anchorDownload(filename, data); return; }
+  if (!S.downloads) { try { await navigator.clipboard.writeText(typeof data === 'string' ? data : ''); toast('Downloads are not available here, so the content was copied instead.'); } catch(e) { toast('Downloads are not available in this view.'); } return; }
+  try { await S.downloads.save({filename, data}); } catch(e) { if (e && e.code !== 'declined') toast('The file could not be saved.'); }
+}
+
+/* ---------- Firm portal ---------- */
+function viewFirm(){
+  const firms = activeFirms();
+  if (!S.firmId || !S.firms[S.firmId]) S.firmId = firms[0] ? firms[0].id : null;
+  const f = S.firms[S.firmId];
+  const files = clientsArr().filter(c => c.submittedAt && (c.sharedWith || []).includes(S.firmId) && c.stage !== 'Closed or lost').sort((a, b) => b.submittedAt - a.submittedAt);
+  const open = S.firmOpen && S.clients[S.firmOpen];
+  return `<div class="wrap"><div class="ophead"><div class="row"><h1>Law firm portal</h1><span class="spacer"></span>
+    <label class="small muted" for="firmPick">Viewing as</label><select id="firmPick" data-chg="firmPick" style="width:auto">${firms.map(x => `<option value="${esc(x.id)}" ${x.id === S.firmId ? 'selected' : ''}>${esc(x.name)} (${esc(x.regulator)})</option>`).join('')}</select></div>
+    <p class="muted" style="margin-top:6px">Trial view. In the live version each firm signs in and sees only files shared with the panel.</p></div>
+    ${!f ? `<div class="card empty">No panel firms yet. Add one in the CRM under Panel firms.</div>` : open ? firmFile(open, f) : `
+    <div class="tablewrap"><table><thead><tr><th>Client</th><th>Field</th><th>Submitted</th><th>Referees</th><th>Evidence</th><th>Your offer</th></tr></thead><tbody>
+      ${files.length ? files.map(c => { const o = (c.offers || {})[S.firmId]; const ev = c.evidence || []; const age = hoursBetween(c.submittedAt, Date.now());
+        return `<tr class="click" data-act="firmOpen" data-id="${esc(c.id)}"><td><strong>${esc(c.name)}</strong></td><td>${esc(routeName(c.route, 'en'))}</td><td class="tabnum">${esc(fmtDT(c.submittedAt))}<div class="small muted">${fmtH(age)} ago</div></td><td class="tabnum">${(c.referees || []).length}</td>
+        <td>${['green','yellow','red'].map(k => `<span class="pill ${k}">${ev.filter(e => e.format && e.format.rag === k).length}</span>`).join(' ')}</td>
+        <td>${o ? (c.chosenFirmId === S.firmId ? '<span class="pill green">Chosen you</span>' : c.chosenFirmId ? '<span class="pill grey">Chose another firm</span>' : `<span class="pill blue">Sent ${o.take === false ? '(declined)' : '£' + esc(Number(o.fee || 0).toLocaleString('en-GB'))}</span>`) : (age > 24 ? '<span class="pill red">Due</span>' : '<span class="pill yellow">To do</span>')}</td></tr>`; }).join('') : `<tr><td colspan="6" class="empty">No files shared yet. Submit a client file from the client platform to see it here.</td></tr>`}
+    </tbody></table></div>`}
+  </div>`;
+}
+function fileBody(c){
+  const p = c.profile || {};
+  return `<div class="grid2" style="align-items:start">
+    <div class="stack" style="gap:12px">
+      <div><h3>Profile</h3><dl class="kv"><dt>Field</dt><dd>${esc(routeName(c.route, 'en'))}<div class="small muted">${esc((ROUTES[c.route] || {en: {}}).en.body || '')}</div></dd>
+        ${p.headline ? `<dt>Headline</dt><dd>${esc(p.headline)}</dd>` : ''}${p.location ? `<dt>Location</dt><dd>${esc(p.location)}</dd>` : ''}
+        <dt>LinkedIn</dt><dd>${safeUrl(c.linkedinUrl) ? `<a href="${esc(safeUrl(c.linkedinUrl))}" target="_blank" rel="noopener">${esc(c.linkedinUrl)}</a>` : esc(c.linkedinUrl || '-')}</dd>
+        <dt>CV</dt><dd>${c.cv ? (c.cv.assetId && blobHref(c.cv.assetId) ? `<a href="${esc(blobHref(c.cv.assetId))}" target="_blank" rel="noopener">${esc(c.cv.name)}</a>` : esc(c.cv.name)) : '-'}</dd>
+        ${c.prize && c.prize.has ? `<dt>Prize</dt><dd>${esc(c.prize.name)}</dd>` : ''}</dl>
+        ${(p.roles || []).length ? `<ul class="rules">${p.roles.map(r => `<li>${esc(r.title)}, ${esc(r.org)} <span class="muted small">${esc([r.from, r.to].filter(Boolean).join(' to '))}</span></li>`).join('')}</ul>` : ''}
+        ${['founded','publications','awards','media','talks','judging','patents','open_source'].filter(k => (p[k] || []).length).map(k => `<div class="small" style="margin-top:6px"><strong>${esc(I18N.en[k])}:</strong> ${esc(p[k].join('; '))}</div>`).join('')}
+      </div>
+      <div><h3>Referees (${(c.referees || []).length})</h3><div class="list">${(c.referees || []).map(r => `<div class="ritem"><div class="body"><div class="title">${esc(r.name)}</div><div class="meta">${esc([r.title, r.org, r.country].filter(Boolean).join(', '))}${isUK(r) ? ' · UK-based' : ''}${r.since ? ' · ' + Math.max(0, monthsSince(r.since)) + ' months' : ''}</div>
+        <div class="meta">${esc(r.rel || '')}</div>${r.desc ? `<div class="small">${esc(r.desc)}</div>` : ''}
+        <div class="row small" style="gap:10px;margin-top:4px">${r.email ? esc(r.email) : ''}${safeUrl(r.linkedin) ? `<a href="${esc(safeUrl(r.linkedin))}" target="_blank" rel="noopener">LinkedIn</a>` : ''}${r.cvAsset && blobHref(r.cvAsset) ? `<a href="${esc(blobHref(r.cvAsset))}" target="_blank" rel="noopener">CV</a>` : ''}${r.agreed ? '<span class="pill green">Agreed</span>' : '<span class="pill grey">Not confirmed</span>'}</div></div></div>`).join('') || '<p class="muted small">None</p>'}</div>
+        ${ROUTES[c.route] && ROUTES[c.route].min ? `<ul class="checks">${(() => { const sl = S.lang; S.lang = 'en'; const ch = refChecks(c); S.lang = sl; return ch; })().map(x => `<li><span class="ic ${x.ok ? 'ok' : 'no'}">${x.ok ? '✓' : '!'}</span><span class="small">${esc(x.txt)}</span></li>`).join('')}</ul>` : ''}
+      </div>
+    </div>
+    <div class="stack" style="gap:12px"><div><h3>Evidence (${(c.evidence || []).length})</h3><div class="list">${(c.evidence || []).map(e => evRow(c, e, false)).join('') || '<p class="muted small">None</p>'}</div></div>
+      ${c.note ? `<div><h3>Client note</h3><p class="small">${esc(c.note)}</p></div>` : ''}</div>
+  </div>`;
+}
+function firmFile(c, f){
+  const o = (c.offers || {})[f.id];
+  return `<div class="row" style="margin:10px 0 16px"><button class="btn sm" data-act="firmBack">Back to files</button><span class="spacer"></span>
+    ${c.chosenFirmId ? (c.chosenFirmId === f.id ? '<span class="pill green">Client chose your firm</span>' : '<span class="pill grey">Client chose another firm</span>') : `<button class="btn primary" data-act="offerModal" data-id="${esc(c.id)}">${o ? 'Update offer' : 'Send offer'}</button>`}</div>
+    <section class="card"><div class="row"><h2>${esc(c.name)}</h2><span class="spacer"></span><span class="muted small">Submitted ${esc(fmtDT(c.submittedAt))}</span></div>
+      ${o ? `<p class="small" style="margin-top:6px">Your offer: ${o.take === false ? 'declined' : '£' + esc(Number(o.fee || 0).toLocaleString('en-GB')) + ', ' + esc(o.timeline || '')} · sent ${esc(fmtDT(o.at))}</p>` : ''}
+      <div style="margin-top:16px">${fileBody(c)}</div></section>`;
+}
+function offerModal(cid){
+  const c = S.clients[cid]; const f = S.firms[S.firmId]; const o = (c.offers || {})[f.id] || {};
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="oft"><h2 id="oft">Offer for ${esc(c.name)}</h2><p class="muted small" style="margin-top:4px">From ${esc(f.name)} (${esc(f.regulator)})</p>
+    <form id="offerForm" data-id="${esc(cid)}">
+      <fieldset class="field"><legend>Can you take this case?</legend><div class="radios"><label class="check"><input type="radio" name="o_take" value="yes" ${o.take !== false ? 'checked' : ''}>Yes</label><label class="check"><input type="radio" name="o_take" value="no" ${o.take === false ? 'checked' : ''}>No</label></div></fieldset>
+      <div class="grid2"><div class="field"><label for="o_fee">Fee (£, excluding Home Office fees)</label><input id="o_fee" type="number" min="0" step="50" value="${esc(o.fee || '')}"></div>
+      <div class="field"><label for="o_view">Your view on level</label><select id="o_view">${['Not sure yet','Talent','Promise','Prize route','Fast track'].map(v => `<option ${o.view === v ? 'selected' : ''}>${v}</option>`).join('')}</select></div></div>
+      <div class="field"><label for="o_scope">What is included</label><textarea id="o_scope" rows="3" placeholder="Endorsement strategy, letters drafting, application, visa stage">${esc(o.scope || '')}</textarea></div>
+      <div class="field"><label for="o_tl">Timeline</label><input id="o_tl" type="text" placeholder="Endorsement application filed within 3 weeks" value="${esc(o.timeline || '')}"></div>
+      <div class="field"><label for="o_notes">Notes to the client</label><textarea id="o_notes" rows="2">${esc(o.notes || '')}</textarea></div>
+      <p class="err" id="o_err" role="alert"></p>
+      <div class="navrow"><button type="button" class="btn" data-act="closeModal">Cancel</button><button type="submit" class="btn primary">Send offer</button></div>
+    </form></div>`);
+}
+function saveOffer(form){
+  const c = S.clients[form.dataset.id]; const f = S.firms[S.firmId];
+  const take = (form.querySelector('input[name=o_take]:checked') || {}).value !== 'no';
+  const fee = Number($('#o_fee').value || 0);
+  if (take && !fee) { $('#o_err').textContent = 'Enter your fee.'; return; }
+  const prev = (c.offers || {})[f.id];
+  const offer = {firmId: f.id, firmName: f.name, take, fee, view: $('#o_view').value, scope: $('#o_scope').value.trim(), timeline: $('#o_tl').value.trim(), notes: $('#o_notes').value.trim(), at: prev ? prev.at : Date.now(), updatedAt: Date.now()};
+  const patch = {offers: {...(c.offers || {}), [f.id]: offer}};
+  if (!prev) patch.emails = [...(c.emails || []), mkEmail(c, 'offer', {firm: f})];
+  closeModal(); updClient(c.id, patch); toast('Offer sent to ' + c.name);
+}
+
+/* ---------- Client actions ---------- */
+function chooseModal(fid){
+  const c = cur(); const f = S.firms[fid] || {name: ((c.offers || {})[fid] || {}).firmName || 'the firm'};
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="cht"><h2 id="cht">${esc(t('chooseTitle', {firm: f.name}))}</h2><p style="margin-top:10px">${esc(t('chooseBody', {firm: f.name}))}</p>
+    <div class="navrow"><button class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button class="btn primary" data-act="confirmChoose" data-id="${esc(fid)}">${esc(t('confirm'))}</button></div></div>`);
+}
+function confirmChoose(fid){
+  const c = cur(); const f = S.firms[fid] || {id: fid, name: ((c.offers || {})[fid] || {}).firmName || 'Firm'};
+  const emails = [...(c.emails || []), mkEmail(c, 'chosen_client', {firm: f}), mkEmail(c, 'chosen_firm', {firm: f}), mkEmail(c, 'chosen_admin', {firm: f})];
+  closeModal(); S.justSubmitted = false;
+  updClient(c.id, {chosenFirmId: fid, chosenAt: Date.now(), emails, ...stagePatch(c, 'Firm chosen'), crm: {...(c.crm || {}), nextAction: 'Confirm ' + f.name + ' has started onboarding', nextDate: new Date(Date.now() + 2 * 864e5).toISOString().slice(0, 10)}});
+}
+
+/* ---------- CRM ---------- */
+function crmRows(){
+  const q = S.q.trim().toLowerCase();
+  return clientsArr().filter(c => (!S.stageFilter || c.stage === S.stageFilter) && (!q || [c.name, c.email, c.source, routeName(c.route, 'en')].join(' ').toLowerCase().includes(q)));
+}
+function viewCRM(){
+  const all = clientsArr();
+  const n = s => all.filter(c => c.stage === s).length;
+  const k = [['Clients', all.length], ['Collecting', n('Onboarding') + n('Collecting')], ['With firms', n('With firms')], ['Firm chosen', all.filter(c => c.chosenFirmId).length], ['Endorsed', n('Endorsed') + n('Visa applied') + n('Visa granted') + n('In the UK')], ['Newsletter opt-ins', all.filter(c => c.consents && c.consents.newsletter).length]];
+  let body = '';
+  if (S.crmTab === 'firms') body = crmFirms(); else if (S.crmTab === 'outbox') body = crmOutbox(); else body = crmClients();
+  return `<div class="wrap"><div class="ophead"><div class="row"><h1>CRM</h1><span class="spacer"></span>${S.standalone ? '<button class="btn sm" data-act="resetLocal">Reset demo data</button>' : ''}<button class="btn sm" data-act="export">Export to Excel</button></div>
+    <p class="muted" style="margin-top:6px">Linked to the client platform: every registration, upload, submission and offer shows here live. In the live version only your team can open this view.</p></div>
+    <div class="kpis">${k.map(([l, v]) => `<div class="kpi"><div class="v tabnum">${v}</div><div class="l">${esc(l)}</div></div>`).join('')}</div>
+    <div class="tabs" role="tablist">${[['clients','Clients'],['firms','Panel firms'],['outbox','Email outbox']].map(([id, l]) => `<button role="tab" aria-selected="${S.crmTab === id}" class="${S.crmTab === id ? 'on' : ''}" data-act="crmTab" data-v="${id}">${l}</button>`).join('')}</div>
+    ${body}</div>${S.drawerId && S.clients[S.drawerId] ? drawer(S.clients[S.drawerId]) : ''}`;
+}
+function crmClients(){
+  const rows = crmRows();
+  if (!S.loaded.clients && S.dbState !== 'off') return `<div class="card empty">${spin(true)} Loading clients</div>`;
+  return `<div class="filters"><input type="text" placeholder="Search name, email, field" value="${esc(S.q)}" data-chg="q" aria-label="Search clients"><select data-chg="stageFilter" aria-label="Filter by stage"><option value="">All stages</option>${STAGES.map(s => `<option ${S.stageFilter === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+  <div class="tablewrap"><table><thead><tr><th>Client</th><th>Source</th><th>Field</th><th>Stage</th><th>Referees</th><th>Evidence</th><th>Submitted</th><th>Offers</th><th>Firm chosen</th><th>Next action</th><th>News</th></tr></thead><tbody>
+  ${rows.length ? rows.map(c => { const r = ROUTES[c.route]; const ev = c.evidence || []; const offers = Object.values(c.offers || {}); const fc = c.chosenFirmId ? (S.firms[c.chosenFirmId] || {}).name || ((c.offers || {})[c.chosenFirmId] || {}).firmName : '';
+    return `<tr class="click" data-act="openDrawer" data-id="${esc(c.id)}">
+      <td style="min-width:170px"><strong>${esc(c.name)}</strong><div class="small muted">${esc(c.email)}</div></td>
+      <td class="small">${esc(c.source || '')}</td>
+      <td class="small">${esc(routeName(c.route, 'en') || '-')}</td>
+      <td><select data-chg="crmStage" data-id="${esc(c.id)}" aria-label="Stage for ${esc(c.name)}">${STAGES.map(s => `<option ${c.stage === s ? 'selected' : ''}>${s}</option>`).join('')}</select></td>
+      <td class="tabnum">${(c.referees || []).length}${r && r.min ? ' / ' + r.min : ''}</td>
+      <td style="white-space:nowrap">${['green','yellow','red'].map(k => `<span class="pill ${k}">${ev.filter(e => e.format && e.format.rag === k).length}</span>`).join(' ')}</td>
+      <td class="small tabnum">${esc(fmtD(c.submittedAt))}</td>
+      <td class="tabnum">${offers.filter(o => o.take !== false).length}</td>
+      <td class="small">${esc(fc || '')}</td>
+      <td class="small" style="min-width:200px">${esc((c.crm || {}).nextAction || '')}${(c.crm || {}).nextDate ? `<div class="muted">${esc(c.crm.nextDate)}</div>` : ''}</td>
+      <td>${c.consents && c.consents.newsletter ? '<span class="pill green">Yes</span>' : '<span class="pill grey">No</span>'}</td></tr>`; }).join('') : `<tr><td colspan="11" class="empty">No clients match. Register one on the client platform.</td></tr>`}
+  </tbody></table></div>`;
+}
+function drawer(c){
+  const cr = c.crm || {};
+  const ups = Object.entries(UPSELLS).filter(([k, u]) => u.when(c) || (cr.upsells || {})[k]);
+  const offers = Object.values(c.offers || {});
+  return `<div class="drawer-bg" data-act="closeDrawer"></div><aside class="drawer" role="dialog" aria-modal="true" aria-label="${esc(c.name)}">
+    <div class="head"><div style="flex:1;min-width:0"><h2 style="font-size:18px">${esc(c.name)}</h2><div class="small muted">${esc(c.email)} · ${esc(c.authProvider || '')} sign-up · ${esc(c.lang === 'ru' ? 'Russian' : 'English')}</div></div>
+      <select data-chg="crmStage" data-id="${esc(c.id)}" style="width:auto" aria-label="Stage">${STAGES.map(s => `<option ${c.stage === s ? 'selected' : ''}>${s}</option>`).join('')}</select>
+      <button class="btn sm" data-act="closeDrawer" aria-label="Close">Close</button></div>
+    <div class="sec"><div class="row"><button class="btn sm" data-act="openAsClient" data-id="${esc(c.id)}">Open as client</button><button class="btn sm" data-act="dlClient" data-id="${esc(c.id)}">Download file summary</button><span class="spacer"></span><button class="btn sm danger" data-act="delClient" data-id="${esc(c.id)}">Delete</button></div></div>
+    <div class="sec"><h3>Account and consents</h3><dl class="kv" style="margin-top:0">
+      <dt>Registered</dt><dd>${esc(fmtDT(c.createdAt))}</dd>
+      <dt>Terms and privacy</dt><dd>${c.consents && c.consents.terms ? 'Agreed ' + esc(fmtDT(c.consents.terms)) : '-'}</dd>
+      <dt>Share with panel</dt><dd>${c.consents && c.consents.share ? 'Agreed ' + esc(fmtDT(c.consents.share)) + '<div class="small muted">' + esc((c.consents.shareWith || []).join(', ')) + '</div>' : '-'}</dd>
+      <dt>Newsletter</dt><dd>${c.consents && c.consents.newsletter ? 'Opted in ' + esc(fmtDT(c.consents.newsletterAt)) : 'Not opted in'}</dd>
+      <dt>Source</dt><dd><input type="text" value="${esc(c.source || '')}" data-chg="crmField" data-id="${esc(c.id)}" data-f="source" data-top="1" aria-label="Source"></dd></dl></div>
+    <div class="sec"><h3>CRM</h3><div class="grid2">
+      <div class="field" style="margin-top:0"><label>Owner</label><select data-chg="crmField" data-id="${esc(c.id)}" data-f="owner">${['Ilia','Andrey'].map(o => `<option ${cr.owner === o ? 'selected' : ''}>${o}</option>`).join('')}</select></div>
+      <div class="field" style="margin-top:0"><label>Next action date</label><input type="date" value="${esc(cr.nextDate || '')}" data-chg="crmField" data-id="${esc(c.id)}" data-f="nextDate"></div></div>
+      <div class="field"><label>Next action</label><input type="text" value="${esc(cr.nextAction || '')}" data-chg="crmField" data-id="${esc(c.id)}" data-f="nextAction"></div>
+      <div class="grid2"><div class="field"><label>Partner joining</label><select data-chg="crmField" data-id="${esc(c.id)}" data-f="family">${['','yes','no'].map(o => `<option value="${o}" ${cr.family === o ? 'selected' : ''}>${o || '-'}</option>`).join('')}</select></div>
+      <div class="field"><label>Children joining</label><select data-chg="crmField" data-id="${esc(c.id)}" data-f="children">${['','yes','no'].map(o => `<option value="${o}" ${cr.children === o ? 'selected' : ''}>${o || '-'}</option>`).join('')}</select></div>
+      <div class="field"><label>Endorsement applied</label><input type="date" value="${esc(cr.endApplied || '')}" data-chg="crmField" data-id="${esc(c.id)}" data-f="endApplied"></div>
+      <div class="field"><label>Endorsement decision</label><input type="date" value="${esc(cr.endDecision || '')}" data-chg="crmField" data-id="${esc(c.id)}" data-f="endDecision"></div>
+      <div class="field"><label>Visa decision</label><input type="date" value="${esc(cr.visaDecision || '')}" data-chg="crmField" data-id="${esc(c.id)}" data-f="visaDecision"></div>
+      <div class="field"><label>Arrival in UK</label><input type="date" value="${esc(cr.arrival || '')}" data-chg="crmField" data-id="${esc(c.id)}" data-f="arrival"></div></div>
+      <div class="field"><label>Notes</label><textarea rows="3" data-chg="crmField" data-id="${esc(c.id)}" data-f="notes">${esc(cr.notes || '')}</textarea></div></div>
+    <div class="sec"><h3>Upsell</h3>${ups.length ? `<div class="list">${ups.map(([k, u]) => { const v = (cr.upsells || {})[k] || ''; return `<div class="ritem"><div class="body"><div class="title">${esc(u.label)}</div><div class="meta">${v === 'interested' ? 'Client is interested' : v === 'offered' ? 'Shown to the client' : v === 'taken' ? 'Taken' : 'Available at this stage'}</div></div>
+      <select data-chg="upsell" data-id="${esc(c.id)}" data-k="${k}" style="width:auto" aria-label="${esc(u.label)} status">${[['','Not offered'],['offered','Offer to client'],['interested','Interested'],['taken','Taken']].map(([val, l]) => `<option value="${val}" ${v === val ? 'selected' : ''}>${l}</option>`).join('')}</select></div>`; }).join('')}</div>` : '<p class="small muted">Offers appear from the Endorsed stage onwards: Club membership, family visas, home and school search, settlement.</p>'}</div>
+    <div class="sec"><h3>Offers from firms (${offers.length})</h3>${offers.length ? `<div class="list">${offers.map(o => `<div class="ritem"><div class="body"><div class="title">${esc(o.firmName || (S.firms[o.firmId] || {}).name || '')}${c.chosenFirmId === o.firmId ? ' <span class="pill green">Chosen</span>' : ''}</div><div class="meta">${o.take === false ? 'Declined' : '£' + esc(Number(o.fee || 0).toLocaleString('en-GB')) + ' · ' + esc(o.timeline || '') + ' · view: ' + esc(o.view || '')}</div><div class="meta">Replied in ${c.submittedAt ? fmtH(hoursBetween(c.submittedAt, o.at)) : '-'}</div></div></div>`).join('')}</div>` : '<p class="small muted">None yet.</p>'}</div>
+    <div class="sec"><h3>Client file</h3>${fileBody(c)}</div>
+    <div class="sec"><h3>Timeline</h3><ul class="checks">${(c.stageHistory || []).slice().reverse().map(h => `<li><span class="ic ok">•</span><span class="small"><strong>${esc(h.stage)}</strong> · ${esc(fmtDT(h.at))}</span></li>`).join('')}</ul></div>
+    <div class="sec"><h3>Emails (${(c.emails || []).length})</h3><div class="list">${(c.emails || []).slice().reverse().map(m => `<details class="mail"><summary><span class="subj">${esc(m.subject)}</span> <span class="small muted">to ${esc(m.to)} · ${esc(fmtDT(m.at))}</span></summary><pre>${esc(m.body)}</pre></details>`).join('')}</div></div>
+  </aside>`;
+}
+function crmFirms(){
+  const all = clientsArr(); const week = Date.now() - 7 * 864e5;
+  const shared = all.filter(c => c.submittedAt && c.submittedAt >= week);
+  return `<div class="row" style="margin-bottom:12px"><p class="muted small">Every submitted file goes to every active firm. Firms pay a fixed panel fee; the weekly commitment counts files shared, not clients won.</p><span class="spacer"></span><button class="btn primary sm" data-act="firmModal">Add firm</button></div>
+  <div class="tablewrap"><table><thead><tr><th>Firm</th><th>Regulator</th><th>Panel fee</th><th>Weekly commitment</th><th>Files shared, last 7 days</th><th>Offers sent</th><th>Avg reply</th><th>Clients won</th><th>Status</th><th></th></tr></thead><tbody>
+  ${firmsArr().map(f => { const os = all.map(c => [(c.offers || {})[f.id], c]).filter(([o]) => o); const avg = os.length ? os.reduce((s, [o, c]) => s + hoursBetween(c.submittedAt || o.at, o.at), 0) / os.length : null; const sh = shared.filter(c => (c.sharedWith || []).includes(f.id)).length; const won = all.filter(c => c.chosenFirmId === f.id).length; const wk = Number(f.weekly || 0);
+    return `<tr><td><strong>${esc(f.name)}</strong><div class="small muted">${esc(f.contact || '')}</div></td><td>${esc(f.regulator)}</td><td class="tabnum">£${esc(Number(f.fee || 0).toLocaleString('en-GB'))} / ${esc(f.period || 'month')}</td><td class="tabnum">${wk || '-'}</td>
+    <td class="tabnum">${sh}${wk ? ` <span class="pill ${sh >= wk ? 'green' : 'yellow'}">${sh >= wk ? 'Met' : (wk - sh) + ' to go'}</span>` : ''}</td><td class="tabnum">${os.length}</td><td class="tabnum">${avg == null ? '-' : fmtH(avg)}</td><td class="tabnum">${won}</td>
+    <td>${f.active === false ? '<span class="pill grey">Paused</span>' : '<span class="pill green">Active</span>'}</td><td><button class="btn link sm" data-act="firmModal" data-id="${esc(f.id)}">Edit</button></td></tr>`; }).join('') || '<tr><td colspan="10" class="empty">No firms yet.</td></tr>'}
+  </tbody></table></div>`;
+}
+function firmModal(id){
+  const f = S.firms[id] || {regulator: 'SRA', period: 'month', active: true};
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="fmt"><h2 id="fmt">${id ? 'Edit firm' : 'Add firm'}</h2>
+    <form id="firmForm" data-id="${esc(id || '')}"><div class="grid2">
+    <div class="field"><label for="fm_name">Firm name</label><input id="fm_name" type="text" value="${esc(f.name || '')}" required></div>
+    <div class="field"><label for="fm_reg">Regulator</label><select id="fm_reg">${['SRA','IAA'].map(r => `<option ${f.regulator === r ? 'selected' : ''}>${r}</option>`).join('')}</select></div>
+    <div class="field"><label for="fm_fee">Panel fee (£)</label><input id="fm_fee" type="number" min="0" value="${esc(f.fee || '')}"></div>
+    <div class="field"><label for="fm_per">Per</label><select id="fm_per">${['month','quarter','year'].map(r => `<option ${f.period === r ? 'selected' : ''}>${r}</option>`).join('')}</select></div>
+    <div class="field"><label for="fm_wk">Weekly file commitment</label><input id="fm_wk" type="number" min="0" value="${esc(f.weekly || '')}"></div>
+    <div class="field"><label for="fm_contact">Contact email</label><input id="fm_contact" type="email" value="${esc(f.contact || '')}"></div></div>
+    <label class="check" style="margin-top:14px"><input type="checkbox" id="fm_active" ${f.active !== false ? 'checked' : ''}>Active on the panel</label>
+    <p class="err" id="fm_err" role="alert"></p>
+    <div class="navrow"><button type="button" class="btn" data-act="closeModal">Cancel</button><button type="submit" class="btn primary">Save firm</button></div></form></div>`);
+}
+async function saveFirm(form){
+  const name = $('#fm_name').value.trim(); if (!name) { $('#fm_err').textContent = 'Enter the firm name.'; return; }
+  const id = form.dataset.id || ('f' + uid());
+  const data = {name, regulator: $('#fm_reg').value, fee: Number($('#fm_fee').value || 0), period: $('#fm_per').value, weekly: Number($('#fm_wk').value || 0), contact: $('#fm_contact').value.trim(), active: $('#fm_active').checked, updatedAt: Date.now()};
+  S.firms[id] = {...(S.firms[id] || {}), ...data, id}; closeModal(); scheduleRender();
+  if (!S.db) { toast('Saving is not available in this view.'); return; }
+  await writeDoc('firms/' + id, () => S.db.doc('firms/' + id).set(data));
+}
+function crmOutbox(){
+  const mails = []; clientsArr().forEach(c => (c.emails || []).forEach(m => mails.push({...m, client: c.name})));
+  mails.sort((a, b) => b.at - a.at);
+  return `<p class="muted small" style="margin-bottom:12px">Trial: these emails are recorded here instead of being sent. The live version sends them through an email service.</p>
+  <div class="list">${mails.slice(0, 200).map(m => `<details class="mail"><summary><span class="subj">${esc(m.subject)}</span> <span class="small muted">to ${esc(m.to)} · ${esc(m.client)} · ${esc(fmtDT(m.at))}</span></summary><pre>${esc(m.body)}</pre></details>`).join('') || '<div class="card empty">No emails yet.</div>'}</div>`;
+}
+async function exportXlsx(){
+  try { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'); } catch(e) { toast('The Excel library did not load.'); return; }
+  const rows = clientsArr().map(c => { const cr = c.crm || {}; const ev = c.evidence || []; const fc = c.chosenFirmId ? (S.firms[c.chosenFirmId] || {}).name || ((c.offers || {})[c.chosenFirmId] || {}).firmName : ''; const fo = c.chosenFirmId ? (c.offers || {})[c.chosenFirmId] : null;
+    return {Client: c.name, Email: c.email, 'Sign-up': c.authProvider, Language: c.lang, Source: c.source, Owner: cr.owner, Field: routeName(c.route, 'en'), 'Endorsing body': (ROUTES[c.route] || {en: {}}).en.body || '', Stage: c.stage,
+      Referees: (c.referees || []).length, 'Referees min': (ROUTES[c.route] || {}).min ?? '', 'Evidence green': ev.filter(e => e.format && e.format.rag === 'green').length, 'Evidence yellow': ev.filter(e => e.format && e.format.rag === 'yellow').length, 'Evidence red': ev.filter(e => e.format && e.format.rag === 'red').length,
+      Submitted: c.submittedAt ? new Date(c.submittedAt).toISOString().slice(0, 10) : '', 'Offers': Object.values(c.offers || {}).filter(o => o.take !== false).length, 'Firm chosen': fc || '', 'Firm fee (£)': fo ? fo.fee : '',
+      'Endorsement applied': cr.endApplied || '', 'Endorsement decision': cr.endDecision || '', 'Visa decision': cr.visaDecision || '', 'Arrival': cr.arrival || '', 'Partner joining': cr.family || '', 'Children joining': cr.children || '',
+      Upsells: Object.entries(cr.upsells || {}).filter(([, v]) => v).map(([k, v]) => k + ': ' + v).join('; '), 'Newsletter': c.consents && c.consents.newsletter ? 'yes' : 'no', 'Next action': cr.nextAction || '', 'Next action date': cr.nextDate || '', Notes: cr.notes || '', Registered: c.createdAt ? new Date(c.createdAt).toISOString().slice(0, 10) : ''}; });
+  const firms = firmsArr().map(f => ({Firm: f.name, Regulator: f.regulator, 'Panel fee (£)': f.fee, Per: f.period, 'Weekly commitment': f.weekly, Contact: f.contact, Active: f.active === false ? 'no' : 'yes', 'Clients won': clientsArr().filter(c => c.chosenFirmId === f.id).length}));
+  const X = window.XLSX; const wb = X.utils.book_new();
+  X.utils.book_append_sheet(wb, X.utils.json_to_sheet(rows.length ? rows : [{Client: ''}]), 'Clients');
+  X.utils.book_append_sheet(wb, X.utils.json_to_sheet(firms.length ? firms : [{Firm: ''}]), 'Panel firms');
+  const buf = X.write(wb, {type: 'array', bookType: 'xlsx'});
+  const fn = 'gtc-crm-' + new Date().toISOString().slice(0, 10) + '.xlsx';
+  if (S.standalone) { anchorDownload(fn, new Blob([buf], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})); return; }
+  if (!S.downloads) { toast('Downloads are not available in this view.'); return; }
+  try { await S.downloads.save({filename: fn, data: new Blob([buf])}); } catch(e) { if (e && e.code !== 'declined') toast('The file could not be saved.'); }
+}
+
+/* ---------- Modal ---------- */
+function openModal(html){ $('#modal').innerHTML = `<div class="backdrop" data-act="backdrop">${html}</div>`; }
+function closeModal(){ $('#modal').innerHTML = ''; }
+function confirmModal(title, body, act, id, danger){
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="cft"><h2 id="cft">${esc(title)}</h2>${body ? `<p style="margin-top:10px">${esc(body)}</p>` : ''}
+    <div class="navrow"><button class="btn" data-act="closeModal">${esc(S.view === 'app' ? t('cancel') : 'Cancel')}</button><button class="btn ${danger ? 'danger' : 'primary'}" data-act="${act}" data-id="${esc(id || '')}">${esc(S.view === 'app' ? t('confirm') : 'Confirm')}</button></div></div>`);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if ($('#modal').innerHTML) closeModal(); else if (S.drawerId) { S.drawerId = null; scheduleRender(); } } });
+
+/* ---------- Events ---------- */
+const ACT = {
+  lang: el => { S.lang = el.dataset.v; lsSet('gtc_lang', S.lang); document.documentElement.lang = S.lang; const c = cur(); if (c && c.lang !== S.lang) updClient(c.id, {lang: S.lang}); scheduleRender(); },
+  register: () => openRegister(),
+  goApp: () => go('app'),
+  nav: el => go(el.dataset.v),
+  sso: el => regSubmit(el.dataset.p),
+  regEmail: () => regSubmit('email'),
+  closeModal: () => closeModal(),
+  backdrop: (el, e) => { if (e.target === el) closeModal(); },
+  newClient: () => { S.currentId = null; lsSet('gtc_client', null); S.aiError = ''; S.noAI = !!S.standalone; S.cvInfo = ''; S.justSubmitted = false; go('home'); setTimeout(openRegister, 50); },
+  goto: el => { const c = cur(); const n = Number(el.dataset.step); S.justSubmitted = false; S.keepScroll = false; updClient(c.id, {step: n}); window.scrollTo(0, 0); },
+  analyse: () => analyse(),
+  routeYes: () => { const c = cur(); updClient(c.id, {route: c.route || c.routeSuggested, routeConfirmedAt: Date.now(), ...stageAtLeast(c, 'Collecting')}); },
+  routeOther: () => { S.showRoutePick = true; scheduleRender(); },
+  addRef: () => refModal(null),
+  editRef: el => refModal(el.dataset.id),
+  delRef: el => { const c = cur(); updClient(c.id, {referees: (c.referees || []).filter(r => r.id !== el.dataset.id)}); },
+  addEv: el => evModal(el.dataset.req || null),
+  evKind: () => { const k = (document.querySelector('input[name=e_kind]:checked') || {}).value; $('#e_fileWrap').hidden = k !== 'file'; $('#e_urlWrap').hidden = k !== 'link'; },
+  dismissReq: el => { const c = cur(); updClient(c.id, {requests: (c.requests || []).map(q => q.id === el.dataset.id ? {...q, done: true, dismissed: true} : q)}); },
+  delEv: el => { const c = cur(); updClient(c.id, {evidence: (c.evidence || []).filter(e => e.id !== el.dataset.id)}); },
+  recheck: el => { const c = cur(); const list = clone(c.evidence); const e = list.find(x => x.id === el.dataset.id); if (!e) return; e.relevance = {rag: 'pending'}; updClient(c.id, {evidence: list}); runRelevance(c.id, e.id, ''); },
+  submitFile: () => submitFile(),
+  chooseFirm: el => chooseModal(el.dataset.id),
+  confirmChoose: el => confirmChoose(el.dataset.id),
+  interest: el => { const c = cur(); const k = el.dataset.k; updClient(c.id, {crm: {...(c.crm || {}), upsells: {...((c.crm || {}).upsells || {}), [k]: 'interested'}}, emails: [...(c.emails || []), mkEmail(c, 'interest', {what: UPSELLS[k].label})]}); },
+  dlFile: () => { const c = cur(); saveFile((c.name || 'file').replace(/[^\w\- ]+/g, '') + ' - Global Talent file.md', fileSummary(c)); },
+  closeFile: () => confirmModal(t('closeQ'), '', 'doCloseFile', '', true),
+  doCloseFile: () => { const c = cur(); closeModal(); updClient(c.id, {...stagePatch(c, 'Closed or lost'), emails: [...(c.emails || []), mkEmail(c, 'closed')]}); },
+  firmOpen: el => { S.firmOpen = el.dataset.id; S.keepScroll = false; scheduleRender(); },
+  firmBack: () => { S.firmOpen = null; scheduleRender(); },
+  offerModal: el => offerModal(el.dataset.id),
+  crmTab: el => { S.crmTab = el.dataset.v; scheduleRender(); },
+  openDrawer: (el, e) => { if (e.target.closest('select,input,a,button')) return; S.drawerId = el.dataset.id; scheduleRender(); },
+  closeDrawer: () => { S.drawerId = null; scheduleRender(); },
+  openAsClient: el => { S.currentId = el.dataset.id; lsSet('gtc_client', S.currentId); S.drawerId = null; go('app'); },
+  dlClient: el => { const c = S.clients[el.dataset.id]; saveFile((c.name || 'client').replace(/[^\w\- ]+/g, '') + ' - file summary.md', fileSummary(c)); },
+  delClient: el => confirmModal('Delete ' + (S.clients[el.dataset.id] || {}).name + '?', 'This removes the client and their file from the trial for everyone. Uploaded files stay in storage.', 'doDelClient', el.dataset.id, true),
+  doDelClient: async el => { const id = el.dataset.id; closeModal(); S.drawerId = null; delete S.clients[id]; if (S.currentId === id) { S.currentId = null; lsSet('gtc_client', null); } scheduleRender(); await writeDoc('clients/' + id, () => S.db.doc('clients/' + id).delete()); },
+  firmModal: el => firmModal(el.dataset.id || null),
+  export: () => exportXlsx(),
+  resetLocal: () => confirmModal('Reset demo data?', 'This deletes every client, firm and file saved in this browser and loads the sample data again.', 'doResetLocal', '', true),
+  doResetLocal: async () => { closeModal(); await resetLocal(); }
+};
+document.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el) return; const f = ACT[el.dataset.act]; if (!f) return; if (el.tagName === 'A') e.preventDefault(); f(el, e); });
+document.addEventListener('submit', e => { e.preventDefault(); const f = e.target; if (f.id === 'refForm') saveRef(f); else if (f.id === 'evForm') saveEv(f); else if (f.id === 'offerForm') saveOffer(f); else if (f.id === 'firmForm') saveFirm(f); });
+const CHG = {
+  li: el => { const c = cur(); if ((c.linkedinUrl || '') !== el.value.trim()) updClient(c.id, {linkedinUrl: el.value.trim()}); },
+  cv: el => onCV(el),
+  paste: el => { const c = cur(); if ((c.pasted || '') !== el.value) updClient(c.id, {pasted: el.value.slice(0, 40000), ...stageAtLeast(c, 'Collecting')}); },
+  prize: el => { const c = cur(); updClient(c.id, {prize: {...(c.prize || {}), has: el.value === 'yes'}}); },
+  prizeName: el => { const c = cur(); updClient(c.id, {prize: {...(c.prize || {}), name: el.value.trim()}}); },
+  route: el => { const c = cur(); if (!el.value) return; S.showRoutePick = false; updClient(c.id, {route: el.value, routeConfirmedAt: Date.now(), routeReason: null, ...stageAtLeast(c, 'Collecting')}); },
+  note: el => { const c = cur(); updClient(c.id, {note: el.value.slice(0, 4000)}); },
+  firmPick: el => { S.firmId = el.value; S.firmOpen = null; lsSet('gtc_firm', el.value); scheduleRender(); },
+  q: el => { S.q = el.value; scheduleRender(); },
+  stageFilter: el => { S.stageFilter = el.value; scheduleRender(); },
+  crmStage: el => { const c = S.clients[el.dataset.id]; if (!c) return; updClient(c.id, stagePatch(c, el.value)); },
+  crmField: el => { const c = S.clients[el.dataset.id]; if (!c) return; if (el.dataset.top) { updClient(c.id, {[el.dataset.f]: el.value}); return; } updClient(c.id, {crm: {...(c.crm || {}), [el.dataset.f]: el.value}}); },
+  upsell: el => { const c = S.clients[el.dataset.id]; const cr = c.crm || {}; updClient(c.id, {crm: {...cr, upsells: {...(cr.upsells || {}), [el.dataset.k]: el.value}}}); }
+};
+document.addEventListener('change', e => { const el = e.target.closest('[data-chg]'); if (!el) return; const f = CHG[el.dataset.chg]; if (f) f(el, e); });
+let qTimer; document.addEventListener('input', e => { const el = e.target; if (el.dataset && el.dataset.chg === 'q') { clearTimeout(qTimer); qTimer = setTimeout(() => { S.q = el.value; S.pendingRender = false; renderAll(); const n = document.querySelector('[data-chg=q]'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 250); } });
+
+/* ---------- Routing ---------- */
+function go(v){
+  S.view = ['home','app','firm','crm'].includes(v) ? v : 'home';
+  S.keepScroll = false; document.documentElement.lang = (S.view === 'home' || S.view === 'app') ? S.lang : 'en';
+  try { if (location.hash !== '#' + S.view) history.replaceState(null, '', '#' + S.view); } catch(e) {}
+  window.scrollTo(0, 0); scheduleRender();
+}
+function onHash(){
+  const h = (location.hash || '#home').slice(1);
+  S.view = ['home','app','firm','crm'].includes(h) ? h : 'home';
+  if (S.view === 'app' && !cur() && S.loaded.clients) S.view = 'home';
+  S.keepScroll = false; document.documentElement.lang = (S.view === 'home' || S.view === 'app') ? S.lang : 'en';
+  scheduleRender();
+}
+window.addEventListener('hashchange', onHash);
+
+
+/* ---------- Standalone mode (outside claude.ai, e.g. GitHub Pages) ---------- */
+const BLOBS = {};
+function blobHref(id){ if (!id) return ''; return S.standalone ? (BLOBS[id] || '') : '/_blob/' + id; }
+const LKEY = 'gtc_trial_store_v1';
+function makeLocalDB(){
+  let store = {};
+  try { store = JSON.parse(localStorage.getItem(LKEY) || '{}') || {}; } catch(e) { store = {}; }
+  const listeners = [];
+  const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
+  const merge = (a, b) => { const o = {...a}; for (const k in b) o[k] = isObj(b[k]) && isObj(a[k]) ? merge(a[k], b[k]) : b[k]; return o; };
+  const copy = o => JSON.parse(JSON.stringify(o));
+  const persist = () => { try { localStorage.setItem(LKEY, JSON.stringify(store)); } catch(e) { toast('Browser storage is full. Use Reset demo data in the CRM.'); } };
+  const snapDoc = path => { const d = store[path]; return {id: path.split('/').pop(), exists: !!d, data: () => d ? copy(d) : undefined, metadata: {fromCache: false, hasPendingWrites: false}}; };
+  const colDocs = col => Object.keys(store).filter(p => p.startsWith(col + '/') && p.split('/').length === col.split('/').length + 1).map(snapDoc);
+  const qs = col => { const docs = colDocs(col); return {docs, size: docs.length, empty: !docs.length, docChanges: () => [], metadata: {fromCache: false, hasPendingWrites: false}}; };
+  const notify = () => setTimeout(() => listeners.forEach(l => l.kind === 'col' ? l.next(qs(l.path)) : l.next(snapDoc(l.path))), 0);
+  window.addEventListener('storage', e => { if (e.key === LKEY) { try { store = JSON.parse(e.newValue || '{}') || {}; } catch(x) { store = {}; } notify(); } });
+  const docRef = path => ({id: path.split('/').pop(), path,
+    get: async () => snapDoc(path),
+    set: async d => { store[path] = copy(d); persist(); notify(); },
+    update: async d => { if (!store[path]) throw {code: 'invalid_argument'}; store[path] = merge(store[path], copy(d)); persist(); notify(); },
+    delete: async () => { delete store[path]; persist(); notify(); },
+    onSnapshot: next => { const l = {kind: 'doc', path, next}; listeners.push(l); setTimeout(() => next(snapDoc(path)), 0); return () => { const i = listeners.indexOf(l); if (i > -1) listeners.splice(i, 1); }; }
+  });
+  const colRef = path => ({path,
+    doc: id => docRef(path + '/' + (id || uid())),
+    add: async d => { const r = docRef(path + '/' + uid()); await r.set(d); return r; },
+    onSnapshot: next => { const l = {kind: 'col', path, next}; listeners.push(l); setTimeout(() => next(qs(path)), 0); return () => { const i = listeners.indexOf(l); if (i > -1) listeners.splice(i, 1); }; }
+  });
+  return {doc: docRef, collection: colRef, _isEmpty: () => !Object.keys(store).length, _seed: data => { Object.assign(store, copy(data)); persist(); notify(); }, _clear: () => { store = {}; persist(); notify(); }};
+}
+function idb(){ return new Promise((res, rej) => { try { const r = indexedDB.open('gtc_trial_files', 1); r.onupgradeneeded = () => r.result.createObjectStore('files'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch(e) { rej(e); } }); }
+async function makeLocalAssets(){
+  let d; try { d = await idb(); } catch(e) { return null; }
+  const tx = (mode, fn) => new Promise((res, rej) => { const t = d.transaction('files', mode); const st = t.objectStore('files'); const out = fn(st); t.oncomplete = () => res(out && out.result); t.onerror = () => rej(t.error); });
+  try {
+    const keys = await tx('readonly', st => st.getAllKeys());
+    for (const k of keys || []) { const b = await tx('readonly', st => st.get(k)); if (b) BLOBS[k] = URL.createObjectURL(b); }
+  } catch(e) {}
+  return {
+    upload: async (blob, opts) => { const id = 'L' + uid() + uid(); const b = opts && opts.type && blob.type !== opts.type ? new Blob([blob], {type: opts.type}) : blob; await tx('readwrite', st => st.put(b, id)); BLOBS[id] = URL.createObjectURL(b); return {id, url: BLOBS[id], sizeBytes: b.size, contentType: b.type}; },
+    _clear: async () => { await tx('readwrite', st => st.clear()); Object.keys(BLOBS).forEach(k => { URL.revokeObjectURL(BLOBS[k]); delete BLOBS[k]; }); }
+  };
+}
+function sampleData(){
+  const now = Date.now(), H = 36e5, D = 24 * H;
+  const firms = [['f1','Sample Firm A (demo)','SRA',500,5],['f2','Sample Firm B (demo)','IAA',400,5],['f3','Sample Firm C (demo)','SRA',650,8]];
+  const out = {};
+  firms.forEach(([id, name, regulator, fee, weekly]) => { out['firms/' + id] = {name, regulator, fee, period: 'month', weekly, contact: id.replace('f', 'firm-') + '@example.com', active: true, updatedAt: now}; });
+  const names = firms.map(f => f[1]);
+  const desc = {rag: 'yellow', en: 'Description only. Upload the document itself before the lawyer submits.', ru: 'Только описание. Загрузите сам документ до подачи.'};
+  const c1 = now - 3 * D, c2 = now - 5 * D, sub = now - 20 * H;
+  out['clients/sample-dmitry'] = {name: 'Sample: Dmitry Orlov', email: 'dmitry.sample@example.com', authProvider: 'google', lang: 'ru', source: 'Instagram (Andrey)', createdAt: c1, updatedAt: now - 5 * H,
+    stage: 'Collecting', stageHistory: [{stage: 'Onboarding', at: c1}, {stage: 'Collecting', at: c1 + 40 * 60000}], step: 2,
+    consents: {terms: c1, share: c1, shareWith: names, newsletter: true, newsletterAt: c1}, linkedinUrl: 'https://www.linkedin.com/in/example-dmitry',
+    route: 'tech', routeSuggested: 'tech', routeConfirmedAt: c1 + 45 * 60000, routeReason: {en: 'His work is in machine learning products and engineering leadership.', ru: 'Его работа связана с продуктами машинного обучения и руководством разработкой.'},
+    profile: {name: 'Dmitry Orlov', headline: 'ML engineering lead', location: 'Belgrade', roles: [{title: 'ML Engineering Lead', org: 'Example AI', from: '2022', to: 'present'}, {title: 'Senior ML Engineer', org: 'Example Search', from: '2018', to: '2022'}], founded: [], publications: ['2 conference papers on ranking'], awards: [], media: [], talks: ['PyData Berlin 2024'], judging: [], patents: [], open_source: ['Maintainer of an open-source ranking library'], other_highlights: []},
+    requests: [{id: 'rq1', category: 'recognition', en: 'Your CV mentions a talk at PyData Berlin 2024: upload the programme page or invitation.', ru: 'В резюме указано выступление на PyData Berlin 2024: загрузите страницу программы или приглашение.', done: false}, {id: 'rq2', category: 'contribution', en: 'You maintain an open-source library: upload a document showing usage figures or adoption.', ru: 'Вы поддерживаете open-source библиотеку: загрузите документ с данными об использовании.', done: false}],
+    referees: [{id: 'r1', name: 'Sample Referee One', title: 'CTO', org: 'Example AI', country: 'Serbia', uk: false, since: '2022-03', email: '', rel: 'Current manager', linkedin: '', desc: '', agreed: true, cvAsset: ''}, {id: 'r2', name: 'Sample Referee Two', title: 'Professor', org: 'Example University', country: 'UK', uk: true, since: '2019-09', email: '', rel: 'Co-author', linkedin: '', desc: '', agreed: false, cvAsset: ''}],
+    evidence: [{id: 'e1', title: 'PyData Berlin 2024 talk listing (sample)', category: 'recognition', desc: 'Speaker page', kind: 'note', addedAt: c1 + D, late: false, format: desc, relevance: {rag: 'green', category: 'recognition', en: 'A conference talk fits recognition beyond the job.', ru: 'Выступление на конференции подходит под признание вне работы.'}}],
+    offers: {}, emails: [{id: 'w1', kind: 'welcome', to: 'dmitry.sample@example.com', subject: 'Добро пожаловать: ваше досье открыто', body: 'Здравствуйте, Dmitry!\n\nВаше досье на визу Global Talent открыто.\n\nGlobal Talent Club', at: c1}],
+    crm: {owner: 'Andrey', nextAction: 'Chase the 3rd referee', nextDate: '', family: 'yes', children: 'no', notes: 'Sample record for the demo.', upsells: {}}};
+  out['clients/sample-elena'] = {name: 'Sample: Elena Sokolova', email: 'elena.sample@example.com', authProvider: 'apple', lang: 'en', source: 'Instagram (Andrey)', createdAt: c2, updatedAt: now - 2 * H,
+    stage: 'With firms', stageHistory: [{stage: 'Onboarding', at: c2}, {stage: 'Collecting', at: c2 + H}, {stage: 'With firms', at: sub}], step: 5, submittedAt: sub, sharedWith: ['f1','f2','f3'],
+    consents: {terms: c2, share: c2, shareWith: names, newsletter: false, newsletterAt: null}, linkedinUrl: 'https://www.linkedin.com/in/example-elena',
+    route: 'ace', routeSuggested: 'ace', routeConfirmedAt: c2 + 2 * H, routeReason: {en: 'Her work is in contemporary dance and choreography.', ru: 'Её работа связана с современным танцем и хореографией.'},
+    profile: {name: 'Elena Sokolova', headline: 'Choreographer and dancer', location: 'Tbilisi', roles: [{title: 'Choreographer', org: 'Independent', from: '2016', to: 'present'}], founded: [], publications: [], awards: ['International choreography prize finalist (sample)'], media: ['Reviews in two national newspapers (sample)'], talks: [], judging: [], patents: [], open_source: [], other_highlights: ['Performances in 4 countries']},
+    requests: [],
+    referees: [{id: 'r1', name: 'Sample Theatre Director', title: 'Artistic Director', org: 'Example Theatre London', country: 'UK', uk: true, since: '2021-05', email: '', rel: 'Commissioned two pieces', linkedin: '', desc: '', agreed: true, cvAsset: ''}, {id: 'r2', name: 'Sample Festival Curator', title: 'Curator', org: 'Example Dance Festival', country: 'Germany', uk: false, since: '2019-08', email: '', rel: 'Programmed her work', linkedin: '', desc: '', agreed: true, cvAsset: ''}, {id: 'r3', name: 'Sample Critic', title: 'Dance critic', org: 'Example Arts Review', country: 'France', uk: false, since: '2020-02', email: '', rel: 'Reviewed her work', linkedin: '', desc: '', agreed: true, cvAsset: ''}],
+    evidence: [{id: 'e1', title: 'Newspaper review (sample)', category: 'media', desc: 'Review of 2024 premiere', kind: 'note', addedAt: c2 + D, late: false, format: desc, relevance: {rag: 'green', category: 'media', en: 'A press review fits media recognition.', ru: 'Рецензия в прессе подходит под публикации в СМИ.'}},
+      {id: 'e2', title: 'Prize finalist letter (sample)', category: 'awards', desc: '', kind: 'note', addedAt: c2 + D, late: false, format: desc, relevance: {rag: 'green', category: 'awards', en: 'A prize shortlisting fits awards and nominations.', ru: 'Шорт-лист премии подходит под награды и номинации.'}},
+      {id: 'e3', title: 'Festival guest pass (sample)', category: 'other', desc: 'Attended as a guest', kind: 'note', addedAt: c2 + 2 * D, late: false, format: desc, relevance: {rag: 'red', category: 'other', en: 'Attending as a guest fits no published category.', ru: 'Посещение в качестве гостя не подходит ни под одну категорию.'}}],
+    note: 'Sample record for the demo.',
+    offers: {f2: {firmId: 'f2', firmName: 'Sample Firm B (demo)', take: true, fee: 4800, view: 'Promise', scope: 'Endorsement strategy, letters drafting, endorsement application, visa application', timeline: 'Endorsement application filed within 3 weeks', notes: '', at: sub + 6 * H, updatedAt: sub + 6 * H}},
+    emails: [{id: 'w2', kind: 'welcome', to: 'elena.sample@example.com', subject: 'Welcome: your file is open', body: 'Hi Elena,\n\nYour Global Talent file is open.\n\nGlobal Talent Club', at: c2}, {id: 's2', kind: 'submitted', to: 'elena.sample@example.com', subject: 'We have received your documents', body: 'Hi Elena,\n\nYour documents will now be sent to our partner law firms for review. You will receive their responses within 24-48 hours.\n\nGlobal Talent Club', at: sub}, {id: 'o2', kind: 'offer', to: 'elena.sample@example.com', subject: 'New offer from Sample Firm B (demo)', body: 'Hi Elena,\n\nSample Firm B (demo) has sent an offer for your case.\n\nGlobal Talent Club', at: sub + 6 * H}],
+    crm: {owner: 'Ilia', nextAction: 'Chase Firm A and Firm C for offers', nextDate: '', family: '', children: '', notes: 'Sample record for the demo.', upsells: {}}};
+  return out;
+}
+async function startStandalone(){
+  S.standalone = true; S.dbState = 'local';
+  S.db = makeLocalDB();
+  S.assets = await makeLocalAssets();
+  S.sample = null; S.downloads = null; S.user = null; S.noAI = true;
+  if (S.db._isEmpty()) S.db._seed(sampleData());
+}
+async function resetLocal(){
+  if (!S.standalone) return;
+  try { if (S.assets && S.assets._clear) await S.assets._clear(); } catch(e) {}
+  S.db._clear(); S.db._seed(sampleData());
+  S.currentId = null; lsSet('gtc_client', null); S.drawerId = null; S.firmOpen = null;
+  toast('Demo data reset.'); go('crm');
+}
+function subscribeAll(db){
+  const slow = setTimeout(() => { if (S.dbState === 'connecting') { S.dbState = 'slow'; scheduleRender(); } }, 10000);
+  db.collection('clients').onSnapshot(snap => {
+    const m = {};
+    snap.docs.forEach(d => { if (!d.exists) return; const x = {...d.data(), id: d.id}; const p = pend[d.id]; if (p) for (const k in p) x[k] = p[k].v; m[d.id] = x; });
+    for (const id in pend) if (!m[id] && S.clients[id] && Object.keys(pend[id]).length) m[id] = S.clients[id];
+    creating.forEach(id => { if (!m[id] && S.clients[id]) m[id] = S.clients[id]; });
+    S.clients = m; S.loaded.clients = true;
+    if (!snap.metadata.fromCache) { clearTimeout(slow); if (S.dbState !== 'local') S.dbState = 'live'; }
+    if (S.view === 'app' && !cur()) { S.view = 'home'; }
+    scheduleRender();
+  }, () => { clearTimeout(slow); S.dbState = 'off'; scheduleRender(); });
+  db.collection('firms').onSnapshot(snap => {
+    const m = {}; snap.docs.forEach(d => { if (d.exists) m[d.id] = {...d.data(), id: d.id}; });
+    S.firms = m; S.loaded.firms = true; scheduleRender();
+  }, () => {});
+}
+
+/* ---------- Boot ---------- */
+(async function boot(){
+  onHash(); renderAll();
+  const C = window.claude;
+  if (!C || typeof C.use !== 'function') { await startStandalone(); subscribeAll(S.db); return; }
+  const use = n => C.use(n).catch(() => null);
+  const [db, user, assets, sample, downloads] = await Promise.all([use('db'), use('user'), use('assets'), use('sample'), use('downloads')]);
+  Object.assign(S, {db, user, assets, sample, downloads});
+  if (user) { try { const me = await user.me(); S.me = me ? {name: me.name || '', email: me.email || ''} : null; } catch(e) {} }
+  if (!db) { S.dbState = 'off'; scheduleRender(); return; }
+  subscribeAll(db);
+})();
+</script>
+</body>
+</html>
