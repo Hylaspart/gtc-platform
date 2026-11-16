@@ -514,7 +514,7 @@ const spin = (dark) => `<span class="spin${dark ? ' dark' : ''}" aria-hidden="tr
 /* ---------- Connections. Public values only: secret keys live in Cloudflare, never in this page ---------- */
 const CONFIG = {
   googleClientId: '1010444376534-5ifcn1but8vbv74abiok3vumr73162el.apps.googleusercontent.com',  // Google OAuth Client ID (public)
-  apiBase: ''          // Cloudflare Worker address, for example https://gtc-api.yourname.workers.dev
+  apiBase: 'https://gtc-api.2611ilya.workers.dev'  // Cloudflare Worker address (public)
 };
 function cfg(k){ return String(lsGet('gtc_cfg_' + k) || CONFIG[k] || '').trim().replace(/\/+$/, ''); }
 async function checkApi(){
