@@ -353,7 +353,8 @@ en:{
  regTitle:'Create your account', regLead:'One click with Google. Your file saves as you go.',
  google:'Continue with Google', orEmail:'or use your email', name:'Full name', email:'Email', createAcc:'Create account',
  noGoogle:'No Google account? Use your email', gNotSet:'Google sign-in is not connected yet. Use your email below for now.', gFail:'Google sign-in could not load. Use your email instead.',
- almost:'Almost done', createFile:'Create my file', privacy:'Privacy notice', welcomeBack:'Welcome back, {name}. Here is your file.', signOut:'Sign out', or:'or',
+ almost:'Almost done', createFile:'Create my file', privacy:'Privacy notice',
+ restart:'Start again', restartQ:'Start again from the beginning?', restartB:'This deletes everything in your file: your LinkedIn profile, field, referees, evidence, uploads and notes. You are signed out and start again from sign-up.', restartDone:'Everything was deleted. You can start again.', welcomeBack:'Welcome back, {name}. Here is your file.', signOut:'Sign out', or:'or',
  reauthT:'Please sign in again', reauthB:'Your Google sign-in has expired. Sign in again to continue.',
  cTerms:'I agree to the Terms of use and the Privacy notice.',
  cShare:'I agree that my file is shared with every law firm on the panel: {firms}. The firms pay the platform a fixed fee to be on the panel, whichever firm I choose.',
@@ -426,7 +427,8 @@ ru:{
  regTitle:'Создайте аккаунт', regLead:'Один клик через Google. Досье сохраняется автоматически.',
  google:'Продолжить с Google', orEmail:'или по email', name:'Полное имя', email:'Email', createAcc:'Создать аккаунт',
  noGoogle:'Нет аккаунта Google? Используйте email', gNotSet:'Вход через Google ещё не подключён. Пока используйте email ниже.', gFail:'Не удалось загрузить вход через Google. Используйте email.',
- almost:'Почти готово', createFile:'Создать досье', privacy:'Политика конфиденциальности', welcomeBack:'С возвращением, {name}. Вот ваше досье.', signOut:'Выйти', or:'или',
+ almost:'Почти готово', createFile:'Создать досье', privacy:'Политика конфиденциальности',
+ restart:'Начать заново', restartQ:'Начать всё сначала?', restartB:'Будет удалено всё в вашем досье: профиль LinkedIn, сфера, рекомендатели, доказательства, загруженные файлы и заметки. Вы выйдете из аккаунта и начнёте с регистрации.', restartDone:'Всё удалено. Можно начать заново.', welcomeBack:'С возвращением, {name}. Вот ваше досье.', signOut:'Выйти', or:'или',
  reauthT:'Войдите ещё раз', reauthB:'Срок входа через Google истёк. Войдите снова, чтобы продолжить.',
  cTerms:'Я принимаю Условия использования и Политику конфиденциальности.',
  cShare:'Я согласен(на), что моё досье получат все юридические фирмы панели: {firms}. Фирмы платят платформе фиксированный взнос за участие в панели, независимо от моего выбора.',
@@ -585,6 +587,21 @@ function reauth(){
     openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="rat"><h2 id="rat">${esc(t('reauthT'))}</h2><p class="muted" style="margin-top:6px">${esc(t('reauthB'))}</p><div class="gbtn" id="gbtn"></div><div class="navrow"><button class="btn" data-act="closeModal">${esc(t('cancel'))}</button><span></span></div></div>`);
     mountGoogle($('#gbtn'), 'signin_with');
   });
+}
+async function restartAll(){
+  const c = cur(); closeModal();
+  if (!c) { go('home'); return; }
+  const files = [c.cv && c.cv.assetId, ...(c.evidence || []).map(e => e.assetId), ...(c.referees || []).map(r => r.cvAsset)].filter(Boolean);
+  delete S.clients[c.id]; delete pend[c.id]; creating.delete(c.id);
+  S.currentId = null; lsSet('gtc_client', null);
+  S.gauth = null; lsSet('gtc_gauth', null);
+  try { if (window.google && google.accounts) google.accounts.id.disableAutoSelect(); } catch(e) {}
+  Object.assign(S, {busy: {}, cvInfo: '', liError: '', aiError: '', noAI: false, showRoutePick: false, justSubmitted: false, pendingUser: null, refLi: null, evFiles: [], drawerId: null, firmOpen: null});
+  go('home');
+  if (S.db) await writeDoc('clients/' + c.id, () => S.db.doc('clients/' + c.id).delete());
+  if (S.assets && S.assets.remove) for (const id of files) { try { await S.assets.remove(id); } catch(e) {} }
+  toast(t('restartDone'));
+  setTimeout(openRegister, 400);
 }
 function signOut(){
   S.gauth = null; lsSet('gtc_gauth', null);
@@ -1023,6 +1040,7 @@ function viewApp(){
     <div class="stepper" role="tablist">
       ${steps.map(([n, k]) => { const locked = (n > 1 && !c.routeConfirmedAt) || (c.submittedAt && n !== 3); return `<button class="step ${step === n ? 'on' : ''} ${done[n] ? 'done' : ''}" data-act="goto" data-step="${n}" ${locked ? 'disabled' : ''} role="tab" aria-selected="${step === n}"><span class="num">${done[n] && step !== n ? '✓' : n}</span>${esc(t(k))}</button>`; }).join('')}
       ${c.submittedAt ? `<button class="step ${step === 5 ? 'on' : ''}" data-act="goto" data-step="5"><span class="num">★</span>${esc(t('stepCase'))}</button>` : ''}
+      <button class="btn sm danger" data-act="restart" style="margin-left:auto;align-self:center">↺ ${esc(t('restart'))}</button>
     </div>
     ${body}
   </div>`;
@@ -1847,6 +1865,8 @@ const ACT = {
   regBack: () => { S.pendingUser = null; S.gauth = null; lsSet('gtc_gauth', null); openRegister(); },
   createFile: () => createFile(),
   signOut: () => signOut(),
+  restart: () => confirmModal(t('restartQ'), t('restartB'), 'doRestart', '', true),
+  doRestart: () => restartAll(),
   cfgClear: () => { lsSet('gtc_cfg_googleClientId', null); lsSet('gtc_cfg_apiBase', null); gisInit = null; toast('Cleared. Using the values built into the page.'); checkApi(); },
   closeModal: () => closeModal(),
   backdrop: (el, e) => { if (e.target === el) closeModal(); },
@@ -1972,6 +1992,7 @@ async function makeLocalAssets(){
   } catch(e) {}
   return {
     upload: async (blob, opts) => { const id = 'L' + uid() + uid(); const b = opts && opts.type && blob.type !== opts.type ? new Blob([blob], {type: opts.type}) : blob; await tx('readwrite', st => st.put(b, id)); BLOBS[id] = URL.createObjectURL(b); return {id, url: BLOBS[id], sizeBytes: b.size, contentType: b.type}; },
+    remove: async id => { await tx('readwrite', st => st.delete(id)); if (BLOBS[id]) { URL.revokeObjectURL(BLOBS[id]); delete BLOBS[id]; } },
     _clear: async () => { await tx('readwrite', st => st.clear()); Object.keys(BLOBS).forEach(k => { URL.revokeObjectURL(BLOBS[k]); delete BLOBS[k]; }); }
   };
 }
