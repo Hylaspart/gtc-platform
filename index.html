@@ -233,6 +233,31 @@ td select{padding:6px 8px;border-radius:8px;font-size:13px;width:auto}
 .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:inline-block}
 .spin.dark{border-color:rgba(0,0,0,.15);border-top-color:var(--blue)}
 @keyframes sp{to{transform:rotate(360deg)}}
+
+/* Sign-in, lookups, autofill */
+.gbtn{min-height:44px;display:flex;justify-content:center;align-items:center;margin-top:20px}
+.me{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:16px;background:#fafbfd}
+.ava{width:40px;height:40px;border-radius:50%;background:var(--paper);flex:none;display:inline-grid;place-items:center;font-weight:800;color:var(--muted);border:1px solid var(--line);position:relative;overflow:hidden}
+.ava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ava.sm{width:28px;height:28px;font-size:12px}
+.ava.lg{width:60px;height:60px;font-size:20px}
+.lookup{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;margin-top:16px}
+.lookup input{flex:1;min-width:220px;font-size:16px;padding:12px 14px}
+.auto{display:inline-block;font-size:10.5px;font-weight:800;color:var(--good);background:var(--good-tint);border-radius:999px;padding:2px 8px;margin-left:6px;text-transform:uppercase;letter-spacing:.04em;vertical-align:middle}
+.pcard{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:14px;background:#fff}
+.pcard .body{flex:1;min-width:0}
+.dropzone{border:1.5px dashed #c7cbd6;border-radius:16px;padding:24px 16px;text-align:center;background:#fafbfd;cursor:pointer;display:block;margin-top:16px}
+.dropzone.over{border-color:var(--blue);background:var(--blue-tint)}
+.dropzone input{position:absolute;width:1px;height:1px;opacity:0}
+.dropzone .files{margin-top:8px;font-size:13px;color:var(--ink-2)}
+.evrow .inl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.list > *{min-width:0}
+.evrow{grid-template-columns:minmax(0,1fr)}
+.evrow .inl select{flex:0 1 auto;width:auto;min-width:0;max-width:100%;padding:5px 8px;border-radius:8px;font-size:12.5px;text-overflow:ellipsis}
+.evrow .inl input{padding:6px 10px;border-radius:8px;font-size:13px;flex:1 1 200px;min-width:0}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.setup code{background:var(--paper);border-radius:6px;padding:1px 6px;font-size:12.5px}
 @media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}.btn{transition:none}}
 @media (max-width:900px){
   .hero .wrap,.cols{grid-template-columns:1fr}
@@ -320,13 +345,16 @@ en:{
  heroLead:'Prepare your UK Global Talent visa file in one place. Vetted UK immigration law firms review it and send you their offers within 24-48 hours.',
  g1:'Free until you choose a law firm', g2:'Every firm on the panel is regulated in the UK', g3:'Offers within 24-48 hours of submitting', g4:'English or Russian, whichever you prefer',
  howTitle:'How it works',
- how1:'About you', how1t:'Upload your CV or LinkedIn. We read it and match your field to the right endorsing body.',
- how2:'Referees', how2t:'Add the people who will write your letters. The rules depend on the endorsing body, and we check them as you go.',
- how3:'Evidence', how3t:'Upload press, awards, talks and other proof. Each item is checked for format and relevance.',
+ how1:'About you', how1t:'Sign in with Google and paste your LinkedIn link. We read your profile and match your field to the right endorsing body.',
+ how2:'Referees', how2t:'Paste each referee\'s LinkedIn link. We fill in their details and check the endorsing body\'s rules as you go.',
+ how3:'Evidence', how3t:'Drop in press, awards, talks and other proof. We name and sort each item and check its format and relevance.',
  how4:'Offers', how4t:'Every firm on the panel reviews your file. Compare offers and choose one, or take your file elsewhere.',
  disclaimer:'We collect your information and documents for regulated UK law firms. We do not give immigration advice: any view on your eligibility comes from the firm you choose.',
- regTitle:'Create your account', regLead:'It takes a minute. Your file saves as you go.',
- google:'Continue with Google', apple:'Continue with Apple', orEmail:'or use your email', name:'Full name', email:'Email', createAcc:'Create account',
+ regTitle:'Create your account', regLead:'One click with Google. Your file saves as you go.',
+ google:'Continue with Google', orEmail:'or use your email', name:'Full name', email:'Email', createAcc:'Create account',
+ noGoogle:'No Google account? Use your email', gNotSet:'Google sign-in is not connected yet. Use your email below for now.', gFail:'Google sign-in could not load. Use your email instead.',
+ almost:'Almost done', createFile:'Create my file', welcomeBack:'Welcome back, {name}. Here is your file.', signOut:'Sign out', or:'or',
+ reauthT:'Please sign in again', reauthB:'Your Google sign-in has expired. Sign in again to continue.',
  cTerms:'I agree to the Terms of use and the Privacy notice.',
  cShare:'I agree that my file is shared with every law firm on the panel: {firms}. The firms pay the platform a fixed fee to be on the panel, whichever firm I choose.',
  cNews:'Send me notifications and the newsletter about life in the UK and other important changes.',
@@ -335,8 +363,13 @@ en:{
  needConsents:'Tick the two required boxes first.', needName:'Enter your name and a valid email.',
  ssoFill:'Trial: confirm the name and email you would use with {p}.',
  step1:'About you', step2:'Referees', step3:'Evidence', step4:'Submit', stepCase:'Your case',
- s1Title:'Tell us about your career', s1Lead:'Add your LinkedIn and your CV. We read them, show what we found, and match your field to an endorsing body.',
- liLabel:'LinkedIn profile URL', liNote:'Live version: your profile is read from this link automatically. In this trial, also upload your CV or LinkedIn PDF below.',
+ s1Title:'Your LinkedIn profile', s1Lead:'Paste the link to your LinkedIn profile. We read it for you, show what we found and match your field to an endorsing body. Nothing to type.',
+ liLabel:'LinkedIn profile link', liRead:'Read my profile', liAgain:'Read again', liReadingShort:'Reading',
+ liReading:'Reading your LinkedIn profile. This usually takes 10 to 30 seconds.', liBad:'This does not look like a LinkedIn profile link. It should look like https://www.linkedin.com/in/your-name',
+ liFail:'We could not read this profile just now. Try again, or upload your CV below.', liNotFound:'No public profile was found at this link. Check the link, or upload your CV below.',
+ liOff:'Automatic LinkedIn reading is not switched on yet. Upload your CV or your LinkedIn profile saved as PDF below.', liDone:'Read from LinkedIn on {date}.',
+ cvAlt:'No LinkedIn, or want to add your CV as well?', chooseSelf:'Prefer to choose your field yourself?', present:'present',
+ education:'Education', certifications:'Certificates', languages:'Languages', routeAuto:'Suggested from your profile',
  cvLabel:'CV, or your LinkedIn profile saved as PDF', cvHint:'Choose a PDF, Word or text file', cvRead:'Read {n} characters from {f}', cvFail:'We could not read text from this file. Paste your profile text below instead.',
  paste:'Or paste your profile text', prizeQ:'Have you personally won a major international prize, such as a Nobel, Turing Award, Oscar or Grammy?', yes:'Yes', no:'No', prizeName:'Prize name and year',
  analyse:'Read my profile', reanalyse:'Read my profile again', thinking:'Reading your profile. This can take up to a minute.',
@@ -349,7 +382,11 @@ en:{
  s2Title:'Your referees', s2Lead:'For {route} you need at least {n} referees.', s2More:'You can add more than the minimum. The law firm picks the strongest set.',
  s2None:'This route does not use referee letters. You will upload the confirming documents in the next step.',
  rulesTitle:'Rules for your letters', checksTitle:'Checks', addRef:'Add referee', editRef:'Edit referee',
- refName:'Full name', refTitle:'Job title', refOrg:'Organisation', refCountry:'Country', refUK:'Based in the UK', refRel:'How they know your work', refSince:'Has known your work since', refEmail:'Email', refLi:'LinkedIn URL', refDesc:'No LinkedIn? Describe their role and standing', refAgreed:'Has agreed to write a letter',
+ refName:'Full name', refTitle:'Job title', refOrg:'Organisation', refCountry:'Country', refUK:'Based in the UK', refRel:'How they know your work', refSince:'Has known your work since', refEmail:'Email (optional)', refLi:'Referee\'s LinkedIn link', refDesc:'No LinkedIn? Describe their role and standing', refAgreed:'Has agreed to write a letter',
+ refLiLead:'Paste their LinkedIn link. We fill in their name, role, organisation and country.', refLook:'Look up', refReading:'Reading',
+ refManual:'No LinkedIn? Enter their details yourself', refEditD:'Check or edit the details', refOffLi:'Automatic reading is not switched on yet. Enter the details below.',
+ refSinceAuto:'Filled in from your time together at {org}.', refNoOverlap:'We could not find a shared employer on LinkedIn. Pick the month they started knowing your work.',
+ refRelAuto:'Worked together at {org}', refStudyAuto:'Studied together at {org}', refNeedLook:'Paste their LinkedIn link and press Look up, or enter the details yourself.',
  save:'Save', cancel:'Cancel', remove:'Remove', edit:'Edit', agreed:'Agreed to write', notYet:'Not confirmed yet', months:'{n} months', ukBased:'UK-based',
  chkMin:'At least {n} referees (you have {have})', chkOrgs3:'3 different organisations (you have {have})', chkOrgs2:'At least 2 different organisations (you have {have})', chkUk1:'At least 1 UK-based organisation', chkUk2:'Both letters from people based in the UK ({have} of 2)', chkM12:'At least 3 referees who have known your work for 12+ months ({have} so far)',
  s3Title:'Your evidence', s3Lead:'Upload documents that back up your career. Each item gets two checks: its format, and whether it fits a published evidence category for your route.',
@@ -357,6 +394,10 @@ en:{
  reqTitle:'We would like to see', upload:'Upload', notNow:'Not now', addEv:'Add evidence', cats:'Published evidence categories for your route',
  evTitle:'Title', evCat:'Category', evDesc:'What it shows', evKind:'Type', kFile:'File', kLink:'Web link', kNote:'Description only', evFileHint:'PDF or image. Save Word files as PDF first.', evUrl:'Link',
  needTitle:'Give it a title.', needFile:'Choose a file.', needUrl:'Paste the link.', wordFile:'Word files cannot go to the endorsing body. Save it as PDF and upload that.',
+ evDrop:'Drop files here, or click to choose', evDropHint:'PDF or images. Add several at once: we fill in the title and category for each.', evOrLink:'Or paste a link to an article or page',
+ evLinkHint:'We read its title, source and date. A link alone cannot go to the endorsing body, so you will also be asked for a PDF of the page.',
+ evNoteOpt:'What it shows (optional)', evAdd:'Add', evNothing:'Choose a file or paste a link.', evPdf:'Upload a PDF of this page', evWhat:'What it shows, in one line', evCatL:'Category',
+ kwGreen:'Matches this category from its title and content.', kwYellow:'We could not tell which category this fits. Add one line on what it shows.', kwRed:'Looks like a guest pass, ticket or personal document. It fits no published category.', kwReq:'Uploaded for: {req}',
  format:'Format', relevance:'Relevance', checking:'Checking', retry:'Check again', late:'Added after submission', open:'Open', bizPrompt:'If you founded, owned or dissolved a digital business in the last 5 years, the endorsing body needs evidence of it.',
  s4Title:'Ready to submit?', s4Lead:'Your file goes to every law firm on the panel. They reply with offers within 24-48 hours.',
  kProfile:'Profile read', kRoute:'Field confirmed', kRefs:'Referees: {n} of {min} minimum', kEv:'Evidence: {n} items', kRed:'{n} items cannot be used in their current form',
@@ -377,13 +418,16 @@ ru:{
  heroLead:'Подготовьте досье на визу UK Global Talent в одном месте. Проверенные британские иммиграционные юристы изучат его и пришлют предложения в течение 24-48 часов.',
  g1:'Бесплатно, пока вы не выберете юридическую фирму', g2:'Все фирмы панели регулируются в Великобритании', g3:'Предложения в течение 24-48 часов после отправки', g4:'На русском или английском, как вам удобнее',
  howTitle:'Как это работает',
- how1:'О вас', how1t:'Загрузите резюме или LinkedIn. Мы прочитаем его и определим подходящий эндорсинг-орган для вашей сферы.',
- how2:'Рекомендатели', how2t:'Добавьте людей, которые напишут письма. Требования зависят от эндорсинг-органа, и мы проверяем их по ходу.',
- how3:'Доказательства', how3t:'Загрузите публикации, награды, выступления и другие подтверждения. Каждый документ проверяется на формат и релевантность.',
+ how1:'О вас', how1t:'Войдите через Google и вставьте ссылку на LinkedIn. Мы прочитаем профиль и определим подходящий эндорсинг-орган для вашей сферы.',
+ how2:'Рекомендатели', how2t:'Вставьте ссылку на LinkedIn каждого рекомендателя. Мы заполним данные и проверим требования эндорсинг-органа.',
+ how3:'Доказательства', how3t:'Перетащите публикации, награды, выступления и другие подтверждения. Мы назовём и рассортируем каждый документ и проверим формат и релевантность.',
  how4:'Предложения', how4t:'Все фирмы панели изучают ваше досье. Сравните предложения и выберите одно или заберите досье.',
  disclaimer:'Мы собираем вашу информацию и документы для регулируемых юридических фирм Великобритании. Мы не даём иммиграционных консультаций: оценку ваших шансов даёт выбранная вами фирма.',
- regTitle:'Создайте аккаунт', regLead:'Это займёт минуту. Досье сохраняется автоматически.',
- google:'Продолжить с Google', apple:'Продолжить с Apple', orEmail:'или по email', name:'Полное имя', email:'Email', createAcc:'Создать аккаунт',
+ regTitle:'Создайте аккаунт', regLead:'Один клик через Google. Досье сохраняется автоматически.',
+ google:'Продолжить с Google', orEmail:'или по email', name:'Полное имя', email:'Email', createAcc:'Создать аккаунт',
+ noGoogle:'Нет аккаунта Google? Используйте email', gNotSet:'Вход через Google ещё не подключён. Пока используйте email ниже.', gFail:'Не удалось загрузить вход через Google. Используйте email.',
+ almost:'Почти готово', createFile:'Создать досье', welcomeBack:'С возвращением, {name}. Вот ваше досье.', signOut:'Выйти', or:'или',
+ reauthT:'Войдите ещё раз', reauthB:'Срок входа через Google истёк. Войдите снова, чтобы продолжить.',
  cTerms:'Я принимаю Условия использования и Политику конфиденциальности.',
  cShare:'Я согласен(на), что моё досье получат все юридические фирмы панели: {firms}. Фирмы платят платформе фиксированный взнос за участие в панели, независимо от моего выбора.',
  cNews:'Присылайте мне уведомления и рассылку о жизни в Великобритании и других важных изменениях.',
@@ -392,8 +436,13 @@ ru:{
  needConsents:'Сначала отметьте два обязательных пункта.', needName:'Укажите имя и корректный email.',
  ssoFill:'Тестовая версия: подтвердите имя и email, которые вы используете в {p}.',
  step1:'О вас', step2:'Рекомендатели', step3:'Доказательства', step4:'Отправка', stepCase:'Ваше дело',
- s1Title:'Расскажите о своей карьере', s1Lead:'Добавьте LinkedIn и резюме. Мы прочитаем их, покажем найденное и определим эндорсинг-орган для вашей сферы.',
- liLabel:'Ссылка на профиль LinkedIn', liNote:'В рабочей версии профиль читается по ссылке автоматически. В тестовой версии также загрузите резюме или PDF из LinkedIn ниже.',
+ s1Title:'Ваш профиль LinkedIn', s1Lead:'Вставьте ссылку на свой профиль LinkedIn. Мы прочитаем его, покажем найденное и определим эндорсинг-орган для вашей сферы. Ничего печатать не нужно.',
+ liLabel:'Ссылка на профиль LinkedIn', liRead:'Прочитать профиль', liAgain:'Прочитать заново', liReadingShort:'Читаем',
+ liReading:'Читаем ваш профиль LinkedIn. Обычно это занимает 10-30 секунд.', liBad:'Это не похоже на ссылку на профиль LinkedIn. Она выглядит так: https://www.linkedin.com/in/your-name',
+ liFail:'Сейчас не удалось прочитать профиль. Попробуйте ещё раз или загрузите резюме ниже.', liNotFound:'По этой ссылке не найден открытый профиль. Проверьте ссылку или загрузите резюме ниже.',
+ liOff:'Автоматическое чтение LinkedIn пока не включено. Загрузите резюме или профиль LinkedIn в PDF ниже.', liDone:'Прочитано из LinkedIn {date}.',
+ cvAlt:'Нет LinkedIn или хотите добавить резюме?', chooseSelf:'Хотите выбрать сферу сами?', present:'н.в.',
+ education:'Образование', certifications:'Сертификаты', languages:'Языки', routeAuto:'Предложено по вашему профилю',
  cvLabel:'Резюме или профиль LinkedIn в PDF', cvHint:'Выберите PDF, Word или текстовый файл', cvRead:'Прочитано {n} символов из {f}', cvFail:'Не удалось прочитать текст из файла. Вставьте текст профиля ниже.',
  paste:'Или вставьте текст профиля', prizeQ:'Вы лично получали крупную международную премию, например Нобелевскую, премию Тьюринга, Оскар или Грэмми?', yes:'Да', no:'Нет', prizeName:'Название премии и год',
  analyse:'Прочитать мой профиль', reanalyse:'Прочитать профиль заново', thinking:'Читаем ваш профиль. Это может занять до минуты.',
@@ -406,7 +455,11 @@ ru:{
  s2Title:'Ваши рекомендатели', s2Lead:'Для направления «{route}» нужно минимум {n} рекомендателя.', s2More:'Можно добавить больше минимума. Юридическая фирма выберет самых сильных.',
  s2None:'Для этого направления рекомендательные письма не нужны. Подтверждающие документы вы загрузите на следующем шаге.',
  rulesTitle:'Требования к письмам', checksTitle:'Проверки', addRef:'Добавить рекомендателя', editRef:'Изменить рекомендателя',
- refName:'Полное имя', refTitle:'Должность', refOrg:'Организация', refCountry:'Страна', refUK:'Находится в Великобритании', refRel:'Откуда знает вашу работу', refSince:'Знает вашу работу с', refEmail:'Email', refLi:'Ссылка на LinkedIn', refDesc:'Нет LinkedIn? Опишите роль и статус', refAgreed:'Согласился(ась) написать письмо',
+ refName:'Полное имя', refTitle:'Должность', refOrg:'Организация', refCountry:'Страна', refUK:'Находится в Великобритании', refRel:'Откуда знает вашу работу', refSince:'Знает вашу работу с', refEmail:'Email (по желанию)', refLi:'Ссылка на LinkedIn рекомендателя', refDesc:'Нет LinkedIn? Опишите роль и статус', refAgreed:'Согласился(ась) написать письмо',
+ refLiLead:'Вставьте ссылку на LinkedIn. Мы заполним имя, должность, организацию и страну.', refLook:'Найти', refReading:'Читаем',
+ refManual:'Нет LinkedIn? Введите данные сами', refEditD:'Проверить или изменить данные', refOffLi:'Автоматическое чтение пока не включено. Введите данные ниже.',
+ refSinceAuto:'Заполнено по времени совместной работы в {org}.', refNoOverlap:'В LinkedIn не нашлось общего работодателя. Выберите месяц, с которого рекомендатель знает вашу работу.',
+ refRelAuto:'Работали вместе в {org}', refStudyAuto:'Учились вместе в {org}', refNeedLook:'Вставьте ссылку на LinkedIn и нажмите «Найти» или введите данные сами.',
  save:'Сохранить', cancel:'Отмена', remove:'Удалить', edit:'Изменить', agreed:'Согласен(на) написать', notYet:'Ещё не подтвердил(а)', months:'{n} мес.', ukBased:'В Великобритании',
  chkMin:'Минимум {n} рекомендателя (у вас {have})', chkOrgs3:'3 разные организации (у вас {have})', chkOrgs2:'Минимум 2 разные организации (у вас {have})', chkUk1:'Хотя бы 1 организация в Великобритании', chkUk2:'Оба письма от людей в Великобритании ({have} из 2)', chkM12:'Минимум 3 рекомендателя, знающих вашу работу 12+ месяцев (пока {have})',
  s3Title:'Ваши доказательства', s3Lead:'Загрузите документы, подтверждающие вашу карьеру. Каждый документ проходит две проверки: формат и соответствие опубликованной категории доказательств для вашего направления.',
@@ -414,6 +467,10 @@ ru:{
  reqTitle:'Что мы хотели бы увидеть', upload:'Загрузить', notNow:'Не сейчас', addEv:'Добавить доказательство', cats:'Опубликованные категории доказательств для вашего направления',
  evTitle:'Название', evCat:'Категория', evDesc:'Что это подтверждает', evKind:'Тип', kFile:'Файл', kLink:'Ссылка', kNote:'Только описание', evFileHint:'PDF или изображение. Файлы Word сначала сохраните в PDF.', evUrl:'Ссылка',
  needTitle:'Укажите название.', needFile:'Выберите файл.', needUrl:'Вставьте ссылку.', wordFile:'Файлы Word нельзя отправить в эндорсинг-орган. Сохраните в PDF и загрузите его.',
+ evDrop:'Перетащите файлы сюда или нажмите, чтобы выбрать', evDropHint:'PDF или изображения. Можно сразу несколько: мы сами заполним название и категорию.', evOrLink:'Или вставьте ссылку на статью или страницу',
+ evLinkHint:'Мы прочитаем заголовок, источник и дату. Одна ссылка не принимается эндорсинг-органом, поэтому понадобится и PDF страницы.',
+ evNoteOpt:'Что это подтверждает (по желанию)', evAdd:'Добавить', evNothing:'Выберите файл или вставьте ссылку.', evPdf:'Загрузить PDF этой страницы', evWhat:'Что это подтверждает, одной строкой', evCatL:'Категория',
+ kwGreen:'Подходит под эту категорию по названию и содержанию.', kwYellow:'Не удалось определить категорию. Добавьте одну строку о том, что это подтверждает.', kwRed:'Похоже на гостевой пропуск, билет или личный документ. Не подходит ни под одну категорию.', kwReq:'Загружено по запросу: {req}',
  format:'Формат', relevance:'Релевантность', checking:'Проверяем', retry:'Проверить снова', late:'Добавлено после отправки', open:'Открыть', bizPrompt:'Если за последние 5 лет вы основали, владели или закрыли цифровую компанию, эндорсинг-органу нужны подтверждения.',
  s4Title:'Готовы отправить?', s4Lead:'Ваше досье получат все юридические фирмы панели. Они пришлют предложения в течение 24-48 часов.',
  kProfile:'Профиль прочитан', kRoute:'Сфера подтверждена', kRefs:'Рекомендатели: {n} из {min}', kEv:'Доказательства: {n}', kRed:'{n} документов нельзя использовать в текущем виде',
@@ -453,6 +510,272 @@ function toast(msg){ const el = $('#toast'); el.innerHTML = `<div class="toast" 
 function safeUrl(u){ u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
 function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e || ''); }
 const spin = (dark) => `<span class="spin${dark ? ' dark' : ''}" aria-hidden="true"></span>`;
+
+/* ---------- Connections. Public values only: secret keys live in Cloudflare, never in this page ---------- */
+const CONFIG = {
+  googleClientId: '',  // Google OAuth Client ID, ends with .apps.googleusercontent.com
+  apiBase: ''          // Cloudflare Worker address, for example https://gtc-api.yourname.workers.dev
+};
+function cfg(k){ return String(lsGet('gtc_cfg_' + k) || CONFIG[k] || '').trim().replace(/\/+$/, ''); }
+async function checkApi(){
+  const base = cfg('apiBase'); S.api = null; S.apiChecked = false;
+  if (S.sample && S.sample._worker) S.sample = null;
+  if (!base) { S.apiChecked = true; scheduleRender(); return; }
+  try {
+    const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 12000);
+    const r = await fetch(base + '/health', {signal: ctl.signal}); clearTimeout(tm);
+    const d = await r.json(); S.api = {...d, ok: !!(d && d.ok)};
+  } catch(e) { S.api = {ok: false, error: true}; }
+  S.apiChecked = true;
+  if (S.api.ai && !S.sample) S.sample = {_worker: true, json: (prompt, o) => api('/ai', {prompt, tier: o && o.modelTier === 'quick' ? 'quick' : 'default'})};
+  scheduleRender();
+}
+async function api(path, body, retried){
+  const base = cfg('apiBase'); if (!base) throw {code: 'not_configured'};
+  const headers = {'Content-Type': 'application/json'};
+  const tok = gToken(); if (tok) headers.Authorization = 'Bearer ' + tok;
+  const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 150000);
+  let res;
+  try { res = await fetch(base + path, {method: 'POST', headers, body: JSON.stringify(body || {}), signal: ctl.signal}); }
+  catch(e) { throw {code: e && e.name === 'AbortError' ? 'timeout' : 'network'}; }
+  finally { clearTimeout(tm); }
+  let data = null; try { data = await res.json(); } catch(e) {}
+  if (res.status === 401 && !retried) { const t2 = await reauth(); if (t2) return api(path, body, true); throw {code: 'auth_required'}; }
+  if (!res.ok) throw {code: (data && data.error) || 'http_' + res.status, detail: data && data.detail};
+  return data;
+}
+
+/* ---------- Google sign-in (Google Identity Services) ---------- */
+const GIS_SRC = 'https://accounts.google.com/gsi/client';
+let gisInit = null;
+function jwtPayload(tok){ try { const b = String(tok).split('.')[1].replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b + '==='.slice((b.length + 3) % 4)), c => c.charCodeAt(0)))); } catch(e) { return null; } }
+function gAuth(){ if (S.gauth === undefined) { try { S.gauth = JSON.parse(lsGet('gtc_gauth') || 'null'); } catch(e) { S.gauth = null; } } return S.gauth; }
+function gToken(){ const a = gAuth(); return a && a.credential && a.exp > Date.now() + 30000 ? a.credential : ''; }
+function googleOn(){ return !!cfg('googleClientId') && !!S.standalone; }
+function gisLoad(){
+  if (!gisInit) gisInit = loadScript(GIS_SRC).then(() => {
+    if (!window.google || !google.accounts || !google.accounts.id) throw new Error('gis');
+    google.accounts.id.initialize({client_id: cfg('googleClientId'), callback: onGoogle, auto_select: false, cancel_on_tap_outside: true, context: 'signup', itp_support: true});
+  }).catch(e => { gisInit = null; throw e; });
+  return gisInit;
+}
+function mountGoogle(el, text){
+  if (!el) return;
+  if (!googleOn()) { el.innerHTML = S.standalone ? `<p class="hint" style="text-align:center">${esc(t('gNotSet'))}</p>` : ''; return; }
+  el.innerHTML = spin(true);
+  gisLoad().then(() => {
+    if (!el.isConnected) return;
+    el.innerHTML = '';
+    google.accounts.id.renderButton(el, {type: 'standard', theme: 'outline', size: 'large', shape: 'pill', text: text || 'continue_with', logo_alignment: 'left', width: Math.max(240, Math.min(380, (el.clientWidth || 320) - 4)), locale: S.lang});
+  }).catch(() => { if (el.isConnected) el.innerHTML = `<p class="err">${esc(t('gFail'))}</p>`; });
+}
+function onGoogle(resp){
+  const p = jwtPayload(resp && resp.credential);
+  if (!p || !p.email) { toast(t('gFail')); return; }
+  S.gauth = {credential: resp.credential, exp: (p.exp || 0) * 1000, sub: p.sub || '', email: p.email, name: p.name || [p.given_name, p.family_name].filter(Boolean).join(' ') || p.email.split('@')[0], picture: p.picture || ''};
+  lsSet('gtc_gauth', JSON.stringify(S.gauth));
+  if (S.reauth) { const r = S.reauth; S.reauth = null; closeModal(); r(S.gauth.credential); return; }
+  afterSignIn({provider: 'google', name: S.gauth.name, email: S.gauth.email, photo: S.gauth.picture, sub: S.gauth.sub});
+}
+function reauth(){
+  if (!googleOn()) return Promise.resolve('');
+  return new Promise(res => {
+    S.reauth = res;
+    openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="rat"><h2 id="rat">${esc(t('reauthT'))}</h2><p class="muted" style="margin-top:6px">${esc(t('reauthB'))}</p><div class="gbtn" id="gbtn"></div><div class="navrow"><button class="btn" data-act="closeModal">${esc(t('cancel'))}</button><span></span></div></div>`);
+    mountGoogle($('#gbtn'), 'signin_with');
+  });
+}
+function signOut(){
+  S.gauth = null; lsSet('gtc_gauth', null);
+  try { if (window.google && google.accounts) google.accounts.id.disableAutoSelect(); } catch(e) {}
+  S.currentId = null; lsSet('gtc_client', null); go('home');
+}
+function avatar(src, name, cls){
+  const ini = String(name || '?').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  return `<span class="ava ${cls || ''}" aria-hidden="true">${esc(ini)}${src && safeUrl(src) ? `<img src="${esc(src)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">` : ''}</span>`;
+}
+
+/* ---------- LinkedIn data helpers ---------- */
+function liSlug(u){ const m = String(u || '').trim().match(/^(?:https?:\/\/)?(?:[a-z]{2,3}\.)?(?:www\.)?linkedin\.com\/in\/([^/?#\s]+)/i); return m ? m[1].toLowerCase() : ''; }
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MON_RU = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+function fmtYM(s, lang){ if (!s) return ''; const [y, m] = String(s).split('-'); if (!m) return y; return ((lang || S.lang) === 'ru' && S.view === 'app' ? MON_RU : MON)[Number(m) - 1] + ' ' + y; }
+function ymNum(s){ if (!s) return 0; const [y, m] = String(s).split('-').map(Number); return y ? y * 12 + ((m || 1) - 1) : 0; }
+function numYM(n){ return Math.floor(n / 12) + '-' + String(n % 12 + 1).padStart(2, '0'); }
+function nowNum(){ const d = new Date(); return d.getFullYear() * 12 + d.getMonth(); }
+function liCountry(li){ const p = String(li && li.location || '').split(',').map(x => x.trim()).filter(Boolean); return p.length ? p[p.length - 1] : ''; }
+function liUK(li){ if (!li) return false; if (li.countryCode === 'GB' || li.countryCode === 'UK') return true; const loc = String(li.location || '').toLowerCase(); return UK_WORDS.some(w => w.length > 2 && loc.includes(w)); }
+function liToProfile(li){
+  const yr = s => String(s || '').slice(0, 4);
+  const roles = (li.experience || []).slice(0, 8).map(e => ({title: e.title, org: e.company, from: e.start || '', to: e.current ? 'present' : (e.end || '')}));
+  const founded = [...new Set((li.experience || []).filter(e => /\b(co-?founder|founder|founding partner)\b|основател|сооснователь/i.test(e.title || '')).map(e => e.company).filter(Boolean))].slice(0, 6);
+  return {
+    name: li.name || '', headline: li.headline || '', location: li.location || '', photo: li.photo || '', roles, founded,
+    awards: (li.honors || []).slice(0, 6).map(h => [h.title, h.issuer].filter(Boolean).join(', ') + (h.date ? ' (' + yr(h.date) + ')' : '')),
+    publications: (li.publications || []).slice(0, 6).map(p => [p.title, p.publisher].filter(Boolean).join(', ') + (p.date ? ' (' + yr(p.date) + ')' : '')),
+    patents: (li.patents || []).slice(0, 6).map(p => p.title + (p.number ? ' (' + p.number + ')' : '')),
+    education: (li.education || []).slice(0, 4).map(e => [[e.degree, e.field].filter(Boolean).join(', '), e.school].filter(Boolean).join(', ')),
+    certifications: (li.certifications || []).slice(0, 6).map(c => [c.title, c.issuer].filter(Boolean).join(', ')),
+    other_highlights: (li.projects || []).slice(0, 4).map(p => p.title),
+    languages: (li.languages || []).slice(0, 6),
+    media: [], talks: [], judging: [], open_source: []
+  };
+}
+function liSegments(li){
+  const seg = [];
+  if (li.headline) seg.push([li.headline, 3]);
+  (li.experience || []).forEach((e, i) => { const s = [e.title, e.company].filter(Boolean).join(', '); if (s) seg.push([s, i < 2 ? 3 : 2]); if (e.description) seg.push([e.description, 1]); });
+  if (li.about) seg.push([li.about, 1]);
+  (li.education || []).forEach(e => seg.push([[e.degree, e.field, e.school].filter(Boolean).join(', '), 1]));
+  if ((li.skills || []).length) seg.push([li.skills.join(', '), 1]);
+  (li.publications || []).forEach(p => seg.push([p.title, 1]));
+  (li.honors || []).forEach(h => seg.push([[h.title, h.issuer].filter(Boolean).join(', '), 1]));
+  return seg;
+}
+function liText(li){ return liSegments(li).map(s => s[0]).join('\n'); }
+
+/* ---------- Field matching by keyword rules (free, no AI). The law firm confirms the final route ---------- */
+const FIELD_KW = {
+  tech: ['software','engineer','engineering manager','developer','programmer','data scien','data engineer','data analyst','machine learning','deep learning','artificial intelligence','\\bai\\b','\\bml\\b','\\bllms?\\b','computer vision','\\bnlp\\b','product manager','product owner','head of product','\\bcto\\b','fintech','saas','cloud','devops','cyber','blockchain','web3','startup','mobile app','\\bios\\b','android','backend','back-end','frontend','front-end','full.?stack','\\bit\\b','python','javascript','typescript','golang','kubernetes','computer science','tech lead','technical lead','\\bsre\\b','game developer','robotics','techarchitect','разработчик','программист','машинн','искусственн','продакт','стартап','финтех','кибербезопас','блокчейн','техлид','ит-'],
+  research: ['ph\\.?d','doctor of philosophy','dphil','post-?doc','professor','lecturer','researcher','research fellow','research scientist','research associate','principal investigator','university','faculty','academic','peer.?review','h-index','кандидат наук','доктор наук','научн','исследовател','профессор','доцент','университет','аспирант'],
+  pact: ['\\bfilm','filmmaker','cinematograph','director of photography','screenwriter','screenplay','television','\\btv\\b','documentar','showrunner','\\bvfx\\b','visual effects','post-production','film editor','animation','animator','\\bactor\\b','actress','casting director','broadcast','режиссёр','режиссер','кино','фильм','сериал','оператор-постановщик','сценарист','телевиден','актёр','актер','актриса','анимац'],
+  bfc: ['fashion','couture','apparel','clothing','womenswear','menswear','knitwear','textile','garment','runway','stylist','footwear','jewell?ery','мода','модельер','одежд','текстил','ювелир','стилист'],
+  riba: ['\\barchitect\\b','architecture','architectural','\\briba\\b','urban design','urbanism','landscape architect','masterplan','архитектор','архитектур','урбанист','градостро'],
+  dba: ['graphic design','product design','industrial design','interior design','brand design','branding','design studio','creative director','visual identity','packaging design','typograph','illustrat','ux designer','ui designer','ux/ui','ui/ux','service design','design director','дизайнер','графическ','промышленный дизайн','дизайн интерьер','брендинг','креативный директор','иллюстратор'],
+  ace: ['\\bmusic','musician','composer','singer','songwriter','pianist','violinist','orchestra','\\bopera\\b','conductor','dancer','choreograph','ballet','\\bdance\\b','theatre','theater','\\bartist\\b','painter','sculpt','visual art','gallery','exhibition','museum','curator','\\bwriter\\b','author','novelist','\\bpoet','literature','photographer','circus','performer','музыкант','композитор','певец','певица','пианист','скрипач','оркестр','оперн','опера(?![а-яё])','дирижёр','дирижер','танцор','хореограф','балет','театр','художни','скульптор','галере','выставк','музей','куратор','писател','поэт','фотограф','цирк']
+};
+const PRIZE_RX = /nobel|turing award|fields medal|abel prize|wolf prize|kyoto prize|breakthrough prize|pritzker|academy award|\boscars?\b|grammy|\bemmy\b|\bbafta\b|golden globe|palme d.or|golden (lion|bear)|booker prize|pulitzer|нобелевск|оскар|грэмми/i;
+const FIELD_RX = Object.fromEntries(Object.entries(FIELD_KW).map(([k, ws]) => [k, ws.map(w => new RegExp(w, 'i'))]));
+const AREA = {tech:['digital technology','цифровых технологий'], ace:['arts and culture','искусства и культуры'], bfc:['fashion','моды'], pact:['film and television','кино и телевидения'], riba:['architecture','архитектуры'], dba:['design','дизайна'], research:['academia and research','науки и исследований']};
+function prepText(s){ return String(s || '').replace(/\b(software|solutions?|cloud|data|enterprise|systems?|technical|security|it|infrastructure|platform|integration|network)\s+architect/gi, '$1 techarchitect'); }
+function matchField(segments, li){
+  const score = {}, best = {};
+  segments.forEach(([raw, w]) => {
+    const s = prepText(raw); if (!s) return;
+    for (const [k, rxs] of Object.entries(FIELD_RX)) {
+      const hits = rxs.filter(rx => rx.test(s)).length; if (!hits) continue;
+      score[k] = (score[k] || 0) + hits * w;
+      const pts = hits * w; if (!best[k] || pts > best[k][1] || (pts === best[k][1] && raw.length < best[k][0].length)) best[k] = [raw, pts];
+    }
+  });
+  if (li) { const h = (li.honors || []).find(x => PRIZE_RX.test(x.title + ' ' + (x.issuer || '')) && !/nominat|shortlist|longlist|finalist|номинац/i.test(x.title)); if (h) return {key: 'prize', reason: {en: 'Your LinkedIn lists ' + h.title + '. The law firm confirms whether it is on the list of prizes that need no endorsement.', ru: 'В вашем LinkedIn указана награда ' + h.title + '. Юридическая фирма подтвердит, входит ли она в список премий, при которых эндорсмент не нужен.'}}; }
+  const top = Object.entries(score).sort((a, b) => b[1] - a[1])[0];
+  if (!top || top[1] < 2) return {key: '', reason: null};
+  const k = top[0]; let snip = String(best[k][0]).replace(/\s+/g, ' ').trim(); if (snip.length > 110) snip = snip.slice(0, 107).replace(/\s+\S*$/, '') + '...'; snip = snip.replace(/[.;,:\s]+$/, '');
+  return {key: k, reason: {en: `Your profile shows work in ${AREA[k][0]}: ${snip}.`, ru: `В профиле указана работа в сфере ${AREA[k][1]}: ${snip}.`}};
+}
+function textSegments(text){ return String(text || '').split(/\n+|(?<=[.;])\s+/).map(x => x.trim()).filter(x => x.length > 2).slice(0, 400).map(x => [x.slice(0, 300), 1]); }
+
+/* ---------- Document requests built from the LinkedIn profile ---------- */
+const REQ_CAT = {
+  award: {tech:'recognition', ace:'awards', bfc:'awards', pact:'awards', riba:'awards', dba:'awards', research:'fellowships', fasttrack:'fellowship', prize:'certificate'},
+  pub: {tech:'academic', research:'publications', ace:'appearances', bfc:'appearances', pact:'appearances', riba:'appearances', dba:'appearances'},
+  patent: {tech:'innovation', research:'publications', dba:'appearances'},
+  founder: {tech:'innovation'}, company: {tech:'business'}, role: {tech:'contribution', research:'appointment', fasttrack:'jobdesc'}
+};
+function buildRequests(c, route){
+  const li = c.li; if (!li || !ROUTES[route]) return (c.requests || []).filter(q => !q.key);
+  const out = []; const old = c.requests || [];
+  const add = (kind, key, en, ru) => {
+    const cat = (REQ_CAT[kind] || {})[route]; if (!cat || out.length >= 8 || out.some(q => q.key === key)) return;
+    const o = old.find(q => q.key === key && q.category === cat);
+    out.push(o || {id: uid(), key, category: cat, en, ru, done: false});
+  };
+  (li.honors || []).slice(0, 4).forEach(h => add('award', 'award:' + h.title, `LinkedIn lists the award "${h.title}"${h.issuer ? ' from ' + h.issuer : ''}: upload the certificate, award letter or official announcement.`, `В LinkedIn указана награда «${h.title}»${h.issuer ? ' от ' + h.issuer : ''}: загрузите сертификат, письмо о награждении или официальное объявление.`));
+  (li.publications || []).slice(0, 3).forEach(p => add('pub', 'pub:' + p.title, `LinkedIn lists the publication "${p.title}": upload its first page, or the publisher's page saved as PDF.`, `В LinkedIn указана публикация «${p.title}»: загрузите первую страницу или страницу издателя в PDF.`));
+  (li.patents || []).slice(0, 2).forEach(p => add('patent', 'patent:' + p.title, `LinkedIn lists the patent "${p.title}": upload the patent document or its registry page as PDF.`, `В LinkedIn указан патент «${p.title}»: загрузите патент или страницу реестра в PDF.`));
+  const fiveY = nowNum() - 60;
+  const fr = (li.experience || []).find(e => /\b(co-?founder|founder)\b|основател/i.test(e.title || '') && e.company && (e.current || ymNum(e.end) >= fiveY));
+  if (fr) {
+    add('founder', 'founder:' + fr.company, `You founded ${fr.company}: upload something that shows the product's traction, such as users, revenue, investment or press.`, `Вы основали ${fr.company}: загрузите подтверждение развития продукта, например данные о пользователях, выручке, инвестициях или публикации.`);
+    add('company', 'company:' + fr.company, `For ${fr.company}: upload the company registration document. If it was closed in the last 5 years, the closure document too.`, `Для ${fr.company}: загрузите документ о регистрации компании. Если она закрыта за последние 5 лет, то и документ о закрытии.`);
+  }
+  const cr = (li.experience || []).find(e => e.current && e.company && !/\b(co-?founder|founder)\b|основател/i.test(e.title || ''));
+  if (cr) add('role', 'role:' + cr.company, `Your current role is ${cr.title} at ${cr.company}: upload a letter from the employer, on letterhead, describing your role.`, `Ваша текущая должность ${cr.title} в ${cr.company}: загрузите письмо от работодателя на бланке с описанием вашей роли.`);
+  return [...out, ...old.filter(q => !q.key)];
+}
+
+/* ---------- Evidence: auto title, category, language and relevance by keyword rules ---------- */
+const CAT_KW = {
+  innovation: ['founder','founded','launch','product','startup','start-up','invention','investment','investor','funding','raised','seed round','series a','venture','revenue','growth','users','customers','основател','запуск','продукт','стартап','инвест','выручк'],
+  recognition: ['speaker','keynote','talk','conference','panel','summit','meetup','webinar','judge','jury','mentor','hackathon','award','prize','interview','featured','podcast','invited','invitation','спикер','выступлен','конференц','жюри','ментор','награ','интервью','приглашен'],
+  contribution: ['open source','open-source','github','contributor','commits','downloads','maintainer','architecture','led the','contract','client','case study','reference letter','recommendation','letter of','рекомендательн','письмо от'],
+  academic: ['paper','journal','proceedings','arxiv','doi','citation','published in','peer-reviewed','research','статья','журнал','публикац','исследован'],
+  business: ['companies house','incorporation','registration','registry','articles of association','shareholder','dissolution','confirmation statement','company number','свидетельство','регистрац','устав','выписк','егрюл'],
+  media: ['review','article','newspaper','magazine','interview','feature','press','coverage','journalist','editorial','рецензи','статья','газет','журнал','интервью','пресс'],
+  awards: ['award','prize','nominat','nominee','shortlist','longlist','winner','laureate','official selection','награ','преми','номинац','лауреат','победител'],
+  appearances: ['performance','performed','exhibition','exhibited','screening','concert','festival','gallery','premiere','tour','programme','program','publication','published','book','album','выступлен','выставк','показ','концерт','фестивал','галере','премьер','гастрол','спектакл','книг','альбом'],
+  distribution: ['distribution','distributed','sales','box office','streaming','released','chart','territories','licens','tickets sold','прокат','продаж','релиз','дистрибуц'],
+  publications: ['paper','journal','proceedings','arxiv','doi','citation','google scholar','h-index','monograph','статья','журнал','публикац','цитирован','монограф'],
+  fellowships: ['fellowship','fellow','award','prize','medal','стипенди','преми','медаль'],
+  grants: ['grant','funding','funded','\\berc\\b','ukri','horizon','principal investigator','award letter','грант','финансирован'],
+  appointment: ['offer letter','appointment','contract of employment','employment contract','position','job offer','назначен','трудовой договор','должност'],
+  fellowship: ['fellowship','fellow','award letter','стипенди'], jobdesc: ['job description','role description','responsibilities','описание должности'],
+  hr: ['human resources','to whom it may concern','confirm that','employment','отдел кадров','справка'], grant: ['grant','ukri','funding','грант'],
+  prize: ['prize','award','laureate','winner','преми','лауреат'], certificate: ['certificate','announcement','сертификат','диплом']
+};
+const CAT_RX = Object.fromEntries(Object.entries(CAT_KW).map(([k, ws]) => [k, ws.map(w => new RegExp(w, 'i'))]));
+const RED_RX = /\b(attendee|attended as a guest|guest pass|visitor pass|ticket|admission|delegate badge|certificate of attendance|boarding pass|selfie|holiday|passport|bank statement|payslip)\b|билет|гостев|сертификат участника|паспорт|выписка из банка/i;
+function bestCat(e, text, route){
+  const cats = (ROUTES[route] || {cats: []}).cats;
+  const head = [e.title, e.desc, e.source, e.fileName].filter(Boolean).join(' \n ');
+  const body = String(text || '').slice(0, 6000);
+  let best = '', top = 0;
+  cats.forEach(k => { const rxs = CAT_RX[k] || []; const sc = rxs.filter(rx => rx.test(head)).length * 3 + rxs.filter(rx => rx.test(body)).length; if (sc > top) { top = sc; best = k; } });
+  return {cat: best, score: top, red: RED_RX.test(head)};
+}
+function kwRelevance(c, e, text){
+  const ru = 'ru', en = 'en';
+  const b = bestCat(e, text, c.route);
+  if (b.red) return {rag: 'red', category: 'other', en: I18N.en.kwRed, ru: I18N.ru.kwRed};
+  if (e.catManual && e.category && e.category !== 'other') {
+    const sc = (CAT_RX[e.category] || []).filter(rx => rx.test([e.title, e.desc, e.source, text].join(' '))).length;
+    return sc ? {rag: 'green', category: e.category, en: I18N.en.kwGreen.replace('{cat}', catName(e.category, en)), ru: I18N.ru.kwGreen.replace('{cat}', catName(e.category, ru))} : {rag: 'yellow', category: e.category, en: I18N.en.kwYellow, ru: I18N.ru.kwYellow};
+  }
+  if (b.cat) return {rag: 'green', category: b.cat, en: I18N.en.kwGreen.replace('{cat}', catName(b.cat, en)), ru: I18N.ru.kwGreen.replace('{cat}', catName(b.cat, ru))};
+  const q = e.reqId && (c.requests || []).find(x => x.id === e.reqId);
+  if (q) return {rag: 'green', category: q.category, en: I18N.en.kwReq.replace('{req}', q.en), ru: I18N.ru.kwReq.replace('{req}', q.ru || q.en)};
+  return {rag: 'yellow', category: e.category || 'other', en: I18N.en.kwYellow, ru: I18N.ru.kwYellow};
+}
+function cleanTitle(name){
+  let s = String(name || '').replace(/\.[a-z0-9]{2,5}$/i, '').replace(/[_]+|(?<=\w)[.-](?=\w)/g, ' ').replace(/\s+/g, ' ').trim();
+  return s ? s[0].toUpperCase() + s.slice(1) : '';
+}
+const junkTitle = s => !s || /^(scan|img|image|photo|doc|document|file|untitled|screenshot|снимок|скан|документ)?[\s\d()_-]*$/i.test(s) || /^(scan|img|image|screenshot|whatsapp)\b/i.test(s);
+function pdfTitle(text){ const w = String(text || '').replace(/\s+/g, ' ').trim().split(' ').slice(0, 12).join(' '); return w.length > 6 ? w : ''; }
+function detectLang(text){
+  const s = String(text || ''); const lat = (s.match(/[a-z]/gi) || []).length; const oth = (s.match(/[Ͱ-῿　-￿]/g) || []).length;
+  if (lat + oth < 40) return 'unknown'; return oth / (lat + oth) > 0.3 ? 'other' : 'en';
+}
+function guessMime(n){ n = String(n || '').toLowerCase(); return /\.pdf$/.test(n) ? 'application/pdf' : /\.(png)$/.test(n) ? 'image/png' : /\.(jpe?g)$/.test(n) ? 'image/jpeg' : /\.webp$/.test(n) ? 'image/webp' : /\.heic$/.test(n) ? 'image/heic' : ''; }
+function hostOf(u){ try { return new URL(u).hostname.replace(/^www\./, ''); } catch(e) { return u; } }
+
+/* ---------- Referee overlap: when the client and referee were at the same organisation ---------- */
+function orgNorm(s){ return String(s || '').toLowerCase().replace(/\b(ltd|limited|llc|inc|plc|gmbh|llp|corp|corporation|co|the|group|holdings?|ооо|ао|пао)\b\.?/g, '').replace(/[^a-z0-9а-яё]+/g, ' ').trim(); }
+function urlKey(u){ return String(u || '').toLowerCase().replace(/^https?:\/\/[^/]+/, '').replace(/[?#].*$/, '').replace(/\/+$/, ''); }
+function sameOrg(x, y){
+  if (x.companyId && y.companyId) return x.companyId === y.companyId;
+  if (x.companyUrl && y.companyUrl && urlKey(x.companyUrl) && urlKey(x.companyUrl) === urlKey(y.companyUrl)) return true;
+  const a = orgNorm(x.company || x.school), b = orgNorm(y.company || y.school);
+  return !!a && a === b;
+}
+function overlapOf(listA, listB){
+  const now = nowNum(); let best = null;
+  for (const x of listA || []) for (const y of listB || []) {
+    if (!sameOrg(x, y)) continue;
+    const s1 = ymNum(x.start), s2 = ymNum(y.start); if (!s1 || !s2) continue;
+    const e1 = x.current || !x.end ? now : ymNum(x.end), e2 = y.current || !y.end ? now : ymNum(y.end);
+    const s = Math.max(s1, s2), e = Math.min(e1, e2); if (s > e) continue;
+    if (!best || s < best.s) best = {s, org: x.company || x.school, since: numYM(s)};
+  }
+  return best;
+}
+function refOverlap(clientLi, refLi){
+  if (!clientLi || !refLi) return null;
+  const w = overlapOf(clientLi.experience, refLi.experience); if (w) return {...w, kind: 'work'};
+  const s = overlapOf(clientLi.education, refLi.education); if (s) return {...s, kind: 'study'};
+  return null;
+}
 
 /* ---------- State ---------- */
 const S = {
@@ -558,16 +881,19 @@ function trialBar(){
     </nav>
     <span class="spacer"></span>
     <span class="dbstate"><span class="dot ${st[0]}"></span>${st[1]}</span>
+    ${S.standalone ? `<a href="#crm" class="dbstate" data-act="setupTab" style="text-decoration:none"><span class="dot ${S.api && S.api.linkedin ? 'ok' : S.apiChecked ? 'bad' : 'wait'}"></span>${S.api && S.api.linkedin ? 'LinkedIn lookups on' : 'LinkedIn lookups off'}</a>` : ''}
   </div></div>`;
 }
 
 /* ---------- Client header ---------- */
 function clientHead(){
   const c = cur();
+  const a = gAuth();
+  const photo = (c && c.photo) || (a && c && a.email === c.email ? a.picture : '');
   return `<header class="chead"><div class="wrap">
     <a class="brand" href="#home" data-act="nav" data-v="home" aria-label="Global Talent Club home"><span class="mark">G</span><span class="words">global talent<br>club<br><span class="sub">${esc(t('brandSub'))}</span></span></a>
     <span class="spacer"></span>
-    ${c ? `<span class="who">${esc(t('you', {name: c.name}))}</span>` : ''}
+    ${c ? `<span class="row" style="gap:8px">${avatar(photo, c.name, 'sm')}<span class="who">${esc(c.name)}</span></span><button class="btn link sm" data-act="signOut">${esc(t('signOut'))}</button>` : ''}
     <button class="btn link sm" data-act="newClient">${esc(t('newClient'))}</button>
     <div class="langs" role="group" aria-label="Language"><button data-act="lang" data-v="en" class="${S.lang === 'en' ? 'on' : ''}">EN</button><button data-act="lang" data-v="ru" class="${S.lang === 'ru' ? 'on' : ''}">RU</button></div>
   </div></header>`;
@@ -604,40 +930,59 @@ function viewHome(){
 
 /* ---------- Register ---------- */
 function openRegister(){
-  const firms = activeFirms().map(f => f.name).join(', ') || 'the panel firms';
+  S.pendingUser = null;
+  const a = gAuth();
+  if (googleOn() && a && a.email && gToken()) { afterSignIn({provider: 'google', name: a.name, email: a.email, photo: a.picture, sub: a.sub}); return; }
+  const meBtn = !S.standalone && S.me && S.me.email;
   openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="regt">
     <h2 id="regt">${esc(t('regTitle'))}</h2>
     <p class="muted" style="margin-top:6px">${esc(t('regLead'))}</p>
+    <div class="gbtn" id="gbtn">${meBtn ? `<button class="btn primary" data-act="ssoMe">${esc((S.lang === 'ru' ? 'Продолжить как ' : 'Continue as ') + (S.me.name || S.me.email))}</button>` : ''}</div>
+    <details id="emailAlt" style="margin-top:14px" ${googleOn() || meBtn ? '' : 'open'}><summary>${esc(t('noGoogle'))}</summary>
+      <div class="grid2">
+        <div class="field"><label for="r_name">${esc(t('name'))}</label><input id="r_name" type="text" autocomplete="name"></div>
+        <div class="field"><label for="r_email">${esc(t('email'))}</label><input id="r_email" type="email" autocomplete="email"></div>
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn primary sm" data-act="regEmail">${esc(t('next'))}</button></div>
+    </details>
+    <p class="err" id="r_err" role="alert"></p>
+    <div class="navrow"><button class="btn" data-act="closeModal">${esc(t('cancel'))}</button><span></span></div>
+  </div>`);
+  if (!meBtn) mountGoogle($('#gbtn'));
+}
+function afterSignIn(p){
+  const ex = p.provider !== 'email' && clientsArr().find(c => (p.sub && c.googleSub === p.sub) || (c.authProvider === p.provider && (c.email || '').toLowerCase() === String(p.email).toLowerCase()));
+  if (ex) {
+    S.currentId = ex.id; lsSet('gtc_client', ex.id); closeModal();
+    const patch = {}; if (p.photo && !ex.photo) patch.photo = p.photo; if (p.sub && !ex.googleSub) patch.googleSub = p.sub;
+    if (Object.keys(patch).length) updClient(ex.id, patch);
+    toast(t('welcomeBack', {name: String(ex.name || '').split(' ')[0]})); go('app'); return;
+  }
+  S.pendingUser = p;
+  const firms = activeFirms().map(f => f.name).join(', ') || 'the panel firms';
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="regt">
+    <h2 id="regt">${esc(t('almost'))}</h2>
+    <div class="me">${avatar(p.photo, p.name)}<div style="min-width:0"><strong>${esc(p.name)}</strong><div class="small muted">${esc(p.email)}</div></div></div>
     <div class="stack" style="margin-top:18px;gap:12px">
       <label class="check"><input type="checkbox" id="c_terms"><span>${esc(t('cTerms'))}<span class="req">${esc(t('required'))}</span></span></label>
       <label class="check"><input type="checkbox" id="c_share"><span>${esc(t('cShare', {firms}))}<span class="req">${esc(t('required'))}</span></span></label>
       <label class="check"><input type="checkbox" id="c_news"><span>${esc(t('cNews'))}<span class="req">${esc(t('optional'))}</span></span></label>
     </div>
-    <div class="sso">
-      <button class="btn" data-act="sso" data-p="google"><span class="ico">G</span>${esc(t('google'))}</button>
-      <button class="btn" data-act="sso" data-p="apple"><span class="ico">A</span>${esc(t('apple'))}</button>
-    </div>
-    <p class="hint" style="margin-top:8px">${esc(t('demoAuth'))}</p>
-    <div class="or">${esc(t('orEmail'))}</div>
-    <p class="hint" id="ssonote" hidden></p>
-    <div class="grid2">
-      <div class="field"><label for="r_name">${esc(t('name'))}</label><input id="r_name" type="text" autocomplete="name" value="${esc(S.me && S.me.name || '')}"></div>
-      <div class="field"><label for="r_email">${esc(t('email'))}</label><input id="r_email" type="email" autocomplete="email" value="${esc(S.me && S.me.email || '')}"></div>
-    </div>
     <p class="err" id="r_err" role="alert"></p>
-    <div class="navrow"><button class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button class="btn primary" data-act="regEmail" data-p="email">${esc(t('createAcc'))}</button></div>
+    <div class="navrow"><button class="btn" data-act="regBack">${esc(t('back'))}</button><button class="btn primary" data-act="createFile">${esc(t('createFile'))}</button></div>
   </div>`);
 }
-function regSubmit(provider){
+function regEmail(){
+  const err = $('#r_err');
+  const name = $('#r_name').value.trim(), email = $('#r_email').value.trim();
+  if (!name || !validEmail(email)) { err.textContent = t('needName'); return; }
+  afterSignIn({provider: 'email', name, email});
+}
+function createFile(){
   const err = $('#r_err');
   if (!$('#c_terms').checked || !$('#c_share').checked) { err.textContent = t('needConsents'); return; }
-  const name = $('#r_name').value.trim(), email = $('#r_email').value.trim();
-  if (provider !== 'email' && (!name || !validEmail(email))) {
-    const n = $('#ssonote'); n.hidden = false; n.textContent = t('ssoFill', {p: provider === 'google' ? 'Google' : 'Apple'});
-    S.regProvider = provider; $('#r_name').focus(); return;
-  }
-  if (!name || !validEmail(email)) { err.textContent = t('needName'); return; }
-  createClient({provider: provider === 'email' ? (S.regProvider || 'email') : provider, name, email, news: $('#c_news').checked});
+  const p = S.pendingUser; if (!p) return;
+  createClient({...p, news: $('#c_news').checked});
 }
 async function createClient(p){
   if (!S.db) { toast(t('noDb')); return; }
@@ -645,7 +990,7 @@ async function createClient(p){
   const now = Date.now();
   const firms = activeFirms();
   const data = {
-    name: p.name, email: p.email, authProvider: p.provider, lang: S.lang, source: 'Instagram (Andrey)',
+    name: p.name, email: p.email, authProvider: p.provider, googleSub: p.sub || '', photo: p.photo || '', lang: S.lang, source: 'Instagram (Andrey)',
     createdAt: now, updatedAt: now, stage: 'Onboarding', stageHistory: [{stage: 'Onboarding', at: now}], step: 1,
     consents: {terms: now, share: now, shareWith: firms.map(f => f.name), newsletter: !!p.news, newsletterAt: p.news ? now : null},
     referees: [], evidence: [], requests: [], offers: {}, emails: [],
@@ -654,7 +999,7 @@ async function createClient(p){
   data.emails = [mkEmail(data, 'welcome')];
   S.clients[ref.id] = {...data, id: ref.id};
   S.currentId = ref.id; lsSet('gtc_client', ref.id);
-  S.regProvider = null; S.cvInfo = ''; S.pasteText = ''; S.aiError = ''; S.noAI = !!S.standalone;
+  S.pendingUser = null; S.cvInfo = ''; S.liError = ''; S.aiError = ''; S.noAI = false; S.showRoutePick = false;
   creating.add(ref.id);
   closeModal(); go('app');
   await writeDoc('clients/' + ref.id, () => ref.set(data));
@@ -683,40 +1028,42 @@ function viewApp(){
 
 function step1(c){
   const p = c.profile;
+  const liOn = !!(S.api && S.api.linkedin);
+  const busy = !!S.busy.li;
+  const showCv = (S.apiChecked && !liOn) || !!S.liError || (!!c.cv && !c.li);
   return `<div class="cols"><div class="stack">
     <section class="card">
       <h2>${esc(t('s1Title'))}</h2><p class="lead" style="margin-top:6px">${esc(t('s1Lead'))}</p>
-      <div class="field"><label for="li">${esc(t('liLabel'))}</label><input id="li" type="url" placeholder="https://www.linkedin.com/in/your-name" value="${esc(c.linkedinUrl || '')}" data-chg="li"><p class="hint">${esc(t('liNote'))}</p></div>
-      <div class="field"><label for="cv">${esc(t('cvLabel'))}</label>
-        <div class="drop"><input id="cv" type="file" accept=".pdf,.docx,.txt,.md" data-chg="cv"></div>
-        <p class="hint ${c.cv ? 'ok' : ''}">${c.cv ? esc(t('cvRead', {n: (c.cv.chars || 0).toLocaleString('en-GB'), f: c.cv.name})) : esc(t('cvHint'))}</p>
-        ${S.cvInfo ? `<p class="err">${esc(S.cvInfo)}</p>` : ''}
-      </div>
-      <details ${c.pasted ? 'open' : ''}><summary>${esc(t('paste'))}</summary><textarea id="paste" rows="6" data-chg="paste">${esc(c.pasted || '')}</textarea></details>
-      <fieldset class="field"><legend>${esc(t('prizeQ'))}</legend>
-        <div class="radios"><label class="check"><input type="radio" name="prize" value="yes" data-chg="prize" ${c.prize && c.prize.has ? 'checked' : ''}>${esc(t('yes'))}</label><label class="check"><input type="radio" name="prize" value="no" data-chg="prize" ${c.prize && c.prize.has === false ? 'checked' : ''}>${esc(t('no'))}</label></div>
-        ${c.prize && c.prize.has ? `<input type="text" id="prizeName" placeholder="${esc(t('prizeName'))}" value="${esc(c.prize.name || '')}" data-chg="prizeName" aria-label="${esc(t('prizeName'))}">` : ''}
-      </fieldset>
-      ${S.standalone ? `<p class="hint" style="margin-top:16px">${esc(S.lang === 'ru' ? 'В этой версии автоматическое чтение профиля отключено. Выберите сферу ниже.' : 'Automatic profile reading is switched off in this version. Choose your field below.')}</p>` : ''}
-      <div class="row" style="margin-top:20px" ${S.standalone ? 'hidden' : ''}>
-        <button class="btn primary" data-act="analyse" ${S.busy.analyse ? 'disabled' : ''}>${S.busy.analyse ? spin() + esc(t('thinking')) : esc(p ? t('reanalyse') : t('analyse'))}</button>
-      </div>
+      <form id="liForm" class="lookup" novalidate>
+        <input id="li" type="url" inputmode="url" autocomplete="url" placeholder="https://www.linkedin.com/in/your-name" value="${esc(c.linkedinUrl || '')}" aria-label="${esc(t('liLabel'))}" ${busy ? 'disabled' : ''}>
+        <button class="btn primary" type="submit" ${busy ? 'disabled' : ''}>${busy ? spin() + esc(t('liReadingShort')) : esc(c.li ? t('liAgain') : t('liRead'))}</button>
+      </form>
+      ${busy ? `<p class="hint" style="margin-top:8px">${esc(t('liReading'))}</p>` : ''}
+      ${c.li && !busy && !S.liError ? `<p class="hint ok" style="margin-top:8px">${esc(t('liDone', {date: fmtD(c.li.fetchedAt)}))}</p>` : ''}
+      ${S.liError ? `<p class="err" role="alert">${esc(S.liError)}</p>` : (S.apiChecked && !liOn ? `<p class="hint" style="margin-top:8px">${esc(t('liOff'))}</p>` : '')}
+      <details ${showCv ? 'open' : ''}><summary>${esc(t('cvAlt'))}</summary>
+        <div class="field"><label for="cv">${esc(t('cvLabel'))}</label>
+          <div class="drop"><input id="cv" type="file" accept=".pdf,.docx,.txt,.md" data-chg="cv"></div>
+          <p class="hint ${c.cv ? 'ok' : ''}">${S.busy.cv ? spin(true) + ' ' : ''}${c.cv ? esc(t('cvRead', {n: (c.cv.chars || 0).toLocaleString('en-GB'), f: c.cv.name})) : esc(t('cvHint'))}</p>
+          ${S.cvInfo ? `<p class="err">${esc(S.cvInfo)}</p>` : ''}
+        </div>
+      </details>
+      ${S.busy.analyse ? `<p class="hint" style="margin-top:12px">${spin(true)} ${esc(t('thinking'))}</p>` : ''}
       ${S.aiError ? `<p class="err" role="alert">${esc(S.aiError)}</p>` : ''}
     </section>
-    ${p ? profileCard(p) : ''}
-    ${(p || S.noAI || c.route) ? routeCard(c) : ''}
+    ${p && (p.name || (p.roles || []).length) ? profileCard(p, c) : ''}
+    ${(p || c.cv || c.route || S.showRoutePick) ? routeCard(c) : `<p class="small" style="margin:0 4px"><button class="btn link sm" data-act="routeOther">${esc(t('chooseSelf'))}</button></p>`}
     <div class="navrow"><span></span><button class="btn primary" data-act="goto" data-step="2" ${c.routeConfirmedAt ? '' : 'disabled'}>${esc(t('next'))}</button></div>
   </div>
   <aside class="side">${sideInfo(c)}</aside></div>`;
 }
-function profileCard(p){
-  const lists = ['founded','publications','awards','media','talks','judging','patents','open_source','other_highlights'].filter(k => (p[k] || []).length);
-  return `<section class="card"><h3>${esc(t('found'))}</h3>
+function profileCard(p, c){
+  const lists = ['founded','awards','publications','patents','education','certifications','media','talks','judging','open_source','other_highlights','languages'].filter(k => (p[k] || []).length);
+  const span = r => [fmtYM(r.from) || r.from, r.to === 'present' ? t('present') : (fmtYM(r.to) || r.to)].filter(Boolean).join(' - ');
+  return `<section class="card"><h3>${esc(t('found'))}${c && c.li ? '<span class="auto">LinkedIn</span>' : ''}</h3>
+    ${p.name || p.headline ? `<div class="pcard">${avatar(p.photo || (c && c.photo), p.name, 'lg')}<div class="body"><div style="font-weight:800;font-size:17px">${esc(p.name || '')}</div>${p.headline ? `<div class="muted">${esc(p.headline)}</div>` : ''}${p.location ? `<div class="small muted">${esc(p.location)}</div>` : ''}</div></div>` : ''}
     <dl class="kv">
-      ${p.name ? `<dt>${esc(t('name'))}</dt><dd>${esc(p.name)}</dd>` : ''}
-      ${p.headline ? `<dt>Headline</dt><dd>${esc(p.headline)}</dd>` : ''}
-      ${p.location ? `<dt>Location</dt><dd>${esc(p.location)}</dd>` : ''}
-      ${(p.roles || []).length ? `<dt>${esc(t('roles'))}</dt><dd>${p.roles.map(r => `<div>${esc(r.title)}${r.org ? ', ' + esc(r.org) : ''} <span class="muted small">${esc([r.from, r.to].filter(Boolean).join(' to '))}</span></div>`).join('')}</dd>` : ''}
+      ${(p.roles || []).length ? `<dt>${esc(t('roles'))}</dt><dd>${p.roles.map(r => `<div>${esc(r.title)}${r.org ? ', ' + esc(r.org) : ''} <span class="muted small">${esc(span(r))}</span></div>`).join('')}</dd>` : ''}
       ${lists.map(k => `<dt>${esc(t(k))}</dt><dd><div class="chips">${p[k].map(x => `<span class="chip">${esc(x)}</span>`).join('')}</div></dd>`).join('')}
     </dl></section>`;
 }
@@ -725,10 +1072,10 @@ function routeCard(c){
   const confirmed = !!c.routeConfirmedAt;
   const picker = `<div class="field"><label for="routePick">${esc(t('pickRoute'))}</label><select id="routePick" data-chg="route"><option value="">-</option>${Object.keys(ROUTES).map(k => `<option value="${k}" ${k === key ? 'selected' : ''}>${esc(routeName(k))}: ${esc(routeBody(k))}</option>`).join('')}</select></div>`;
   return `<section class="card ${confirmed ? '' : 'tint'}"><h3>${esc(t('routeTitle'))}</h3>
-    ${key ? `<div class="routebox" style="margin-top:12px"><div style="flex:1;min-width:220px"><div class="big">${esc(routeName(key))}</div><div class="muted">${esc(routeBody(key))}</div>
+    ${key ? `<div class="routebox" style="margin-top:12px"><div style="flex:1;min-width:220px"><div class="big">${esc(routeName(key))}${!confirmed && c.routeSuggested === key ? `<span class="auto">${esc(t('routeAuto'))}</span>` : ''}</div><div class="muted">${esc(routeBody(key))}</div>
       ${c.routeReason && !S.showRoutePick ? `<p style="margin-top:8px">${esc(L(c.routeReason))}</p>` : ''}</div>
       ${confirmed ? `<span class="pill green">${esc(t('routeConfirmed'))}</span>` : ''}</div>` : ''}
-    ${(!key || S.showRoutePick || S.noAI) ? picker : ''}
+    ${(!key || S.showRoutePick) ? picker : ''}
     <div class="row" style="margin-top:14px">
       ${!confirmed && key && !S.showRoutePick ? `<button class="btn primary sm" data-act="routeYes">${esc(t('routeYes'))}</button>` : ''}
       ${!S.showRoutePick && key ? `<button class="btn sm" data-act="routeOther">${esc(confirmed ? t('routeChange') : t('routeOther'))}</button>` : ''}
@@ -769,8 +1116,8 @@ function step2(c){
       <h2>${esc(t('s2Title'))}</h2>
       <p class="lead" style="margin-top:6px">${esc(t('s2Lead', {route: routeName(c.route), n: r.min}))} ${esc(t('s2More'))}</p>
       <div class="list">
-        ${refs.map(x => `<div class="ritem"><div class="body">
-            <div class="title">${esc(x.name)}</div>
+        ${refs.map(x => `<div class="ritem">${avatar(x.photo, x.name)}<div class="body">
+            <div class="title">${esc(x.name)}${x.liAuto ? '<span class="auto">LinkedIn</span>' : ''}</div>
             <div class="meta">${esc([x.title, x.org].filter(Boolean).join(', '))}${x.country ? ' · ' + esc(x.country) : ''}${isUK(x) ? ' · ' + esc(t('ukBased')) : ''}</div>
             <div class="meta">${x.since ? esc(t('months', {n: Math.max(0, monthsSince(x.since))})) : ''}${x.rel ? ' · ' + esc(x.rel) : ''}</div>
             <div class="row" style="margin-top:6px;gap:8px">${x.agreed ? `<span class="pill green">${esc(t('agreed'))}</span>` : `<span class="pill grey">${esc(t('notYet'))}</span>`}${safeUrl(x.linkedin) ? `<a class="small" href="${esc(safeUrl(x.linkedin))}" target="_blank" rel="noopener">LinkedIn</a>` : ''}${x.cvAsset && blobHref(x.cvAsset) ? `<a class="small" href="${esc(blobHref(x.cvAsset))}" target="_blank" rel="noopener">CV</a>` : ''}</div>
@@ -789,39 +1136,81 @@ function step2(c){
 }
 function refModal(id){
   const c = cur(); const x = (c.referees || []).find(r => r.id === id) || {};
+  const liOn = !!(S.api && S.api.linkedin);
+  S.refLi = x.liAuto ? {photo: x.photo, url: x.linkedin, overlap: x.overlap || null} : null;
   openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="reft">
     <h2 id="reft">${esc(id ? t('editRef') : t('addRef'))}</h2>
+    <form id="refLookup" class="lookup" novalidate><input id="f_li" type="url" inputmode="url" placeholder="https://www.linkedin.com/in/..." value="${esc(x.linkedin || '')}" aria-label="${esc(t('refLi'))}"><button class="btn primary" type="submit" id="refLookBtn">${esc(t('refLook'))}</button></form>
+    <p class="hint" style="margin-top:6px" id="f_lhint">${esc(liOn || !S.apiChecked ? t('refLiLead') : t('refOffLi'))}</p>
+    <p class="err" id="f_lerr" role="alert"></p>
+    <div id="refPrev">${x.name ? refPreview(x) : ''}</div>
     <form id="refForm" data-id="${esc(id || '')}">
+    <div class="field" id="sinceWrap" ${x.name ? '' : 'hidden'}><label for="f_since">${esc(t('refSince'))}</label><input id="f_since" type="month" value="${esc(x.since || '')}" style="max-width:220px"><p class="hint" id="sinceHint">${x.overlap ? esc(t(x.overlap.kind === 'study' ? 'refStudyAuto' : 'refSinceAuto', {org: x.overlap.org})) : ''}</p></div>
+    <details id="refDetails" ${(x.name && !x.liAuto) || (S.apiChecked && !liOn) ? 'open' : ''}><summary id="refDetSum">${esc(x.name ? t('refEditD') : t('refManual'))}</summary>
     <div class="grid2">
-      <div class="field"><label for="f_name">${esc(t('refName'))}</label><input id="f_name" type="text" required value="${esc(x.name || '')}"></div>
+      <div class="field"><label for="f_name">${esc(t('refName'))}</label><input id="f_name" type="text" value="${esc(x.name || '')}"></div>
       <div class="field"><label for="f_title">${esc(t('refTitle'))}</label><input id="f_title" type="text" value="${esc(x.title || '')}"></div>
       <div class="field"><label for="f_org">${esc(t('refOrg'))}</label><input id="f_org" type="text" value="${esc(x.org || '')}"></div>
       <div class="field"><label for="f_country">${esc(t('refCountry'))}</label><input id="f_country" type="text" value="${esc(x.country || '')}"></div>
-      <div class="field"><label for="f_since">${esc(t('refSince'))}</label><input id="f_since" type="month" value="${esc(x.since || '')}"></div>
       <div class="field"><label for="f_email">${esc(t('refEmail'))}</label><input id="f_email" type="email" value="${esc(x.email || '')}"></div>
+      <div class="field"><label for="f_rel">${esc(t('refRel'))}</label><input id="f_rel" type="text" value="${esc(x.rel || '')}"></div>
     </div>
     <label class="check" style="margin-top:14px"><input type="checkbox" id="f_uk" ${isUK(x) ? 'checked' : ''}>${esc(t('refUK'))}</label>
-    <div class="field"><label for="f_rel">${esc(t('refRel'))}</label><input id="f_rel" type="text" value="${esc(x.rel || '')}"></div>
-    <div class="field"><label for="f_li">${esc(t('refLi'))}</label><input id="f_li" type="url" placeholder="https://www.linkedin.com/in/..." value="${esc(x.linkedin || '')}"></div>
-    <div class="field"><label for="f_desc">${esc(t('refDesc'))}</label><textarea id="f_desc" rows="3">${esc(x.desc || '')}</textarea></div>
+    <div class="field"><label for="f_desc">${esc(t('refDesc'))}</label><textarea id="f_desc" rows="2">${esc(x.desc || '')}</textarea></div>
     <div class="field"><label for="f_cv">CV (PDF)</label><input id="f_cv" type="file" accept=".pdf"></div>
-    <label class="check" style="margin-top:14px"><input type="checkbox" id="f_agreed" ${x.agreed ? 'checked' : ''}>${esc(t('refAgreed'))}</label>
+    </details>
+    <label class="check" style="margin-top:16px"><input type="checkbox" id="f_agreed" ${x.agreed ? 'checked' : ''}>${esc(t('refAgreed'))}</label>
     <p class="err" id="f_err" role="alert"></p>
     <div class="navrow"><button type="button" class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button type="submit" class="btn primary" id="refSave">${esc(t('save'))}</button></div>
     </form></div>`);
-  setTimeout(() => $('#f_name') && $('#f_name').focus(), 30);
+  $('#refDetails').addEventListener('toggle', () => { if ($('#refDetails').open) $('#sinceWrap').hidden = false; });
+  $('#f_li').addEventListener('paste', () => setTimeout(() => { if (liSlug($('#f_li').value)) lookupRef(); }, 30));
+  setTimeout(() => { const el = $('#f_li'); if (el && !x.name) el.focus(); }, 30);
+}
+function refPreview(x){
+  const meta = [x.title, x.org].filter(Boolean).join(', ');
+  return `<div class="pcard">${avatar(x.photo, x.name, 'lg')}<div class="body"><div style="font-weight:800">${esc(x.name || '')}${x.liAuto ? '<span class="auto">LinkedIn</span>' : ''}</div>${meta ? `<div class="small">${esc(meta)}</div>` : ''}
+    <div class="small muted">${esc(x.country || '')}${isUK(x) ? ' · ' + esc(t('ukBased')) : ''}</div>${x.rel ? `<div class="small muted">${esc(x.rel)}</div>` : ''}</div></div>`;
+}
+async function lookupRef(){
+  const url = ($('#f_li').value || '').trim(); const err = $('#f_lerr'); err.textContent = '';
+  if (!liSlug(url)) { err.textContent = t('liBad'); return; }
+  if (!(S.api && S.api.linkedin)) { err.textContent = t('refOffLi'); $('#refDetails').open = true; return; }
+  const btn = $('#refLookBtn'); if (btn.disabled) return;
+  btn.disabled = true; btn.innerHTML = spin() + esc(t('refReading'));
+  try {
+    const li = await api('/linkedin', {url});
+    if (!$('#refForm')) return;
+    const c = cur(); const cj = li.current || {};
+    const setv = (sel, v) => { const el = $(sel); if (el && v) el.value = v; };
+    setv('#f_name', li.name); setv('#f_title', cj.title || li.headline); setv('#f_org', cj.company); setv('#f_country', liCountry(li));
+    $('#f_uk').checked = liUK(li);
+    const ov = refOverlap(c.li, li);
+    if (ov) { $('#f_since').value = ov.since; setv('#f_rel', t(ov.kind === 'study' ? 'refStudyAuto' : 'refRelAuto', {org: ov.org})); }
+    S.refLi = {url, photo: li.photo || '', headline: li.headline || '', location: li.location || '', overlap: ov ? {org: ov.org, since: ov.since, kind: ov.kind} : null};
+    $('#refPrev').innerHTML = refPreview({name: li.name, title: cj.title || li.headline, org: cj.company, country: liCountry(li), uk: liUK(li), photo: li.photo, rel: ov ? t(ov.kind === 'study' ? 'refStudyAuto' : 'refRelAuto', {org: ov.org}) : '', liAuto: true});
+    $('#sinceWrap').hidden = false;
+    $('#sinceHint').textContent = ov ? t(ov.kind === 'study' ? 'refStudyAuto' : 'refSinceAuto', {org: ov.org}) : t('refNoOverlap');
+    $('#refDetSum').textContent = t('refEditD'); $('#refDetails').open = false;
+  } catch(e) {
+    err.textContent = e && e.code === 'not_found' ? t('liNotFound') : e && e.code === 'bad_url' ? t('liBad') : t('liFail');
+    $('#refDetails').open = true;
+  } finally { if (btn.isConnected) { btn.disabled = false; btn.textContent = t('refLook'); } }
 }
 async function saveRef(form){
   const c = cur(); const id = form.dataset.id;
   const name = $('#f_name').value.trim();
-  if (!name) { $('#f_err').textContent = t('refName') + '?'; return; }
+  if (!name) { $('#f_err').textContent = t('refNeedLook'); $('#refDetails').open = true; return; }
   const list = clone(c.referees || []);
   const old = list.find(r => r.id === id);
+  const li = $('#f_li').value.trim(); const auto = S.refLi && S.refLi.url === li ? S.refLi : null;
   const x = {id: id || uid(), name, title: $('#f_title').value.trim(), org: $('#f_org').value.trim(), country: $('#f_country').value.trim(), uk: $('#f_uk').checked,
-    since: $('#f_since').value, email: $('#f_email').value.trim(), rel: $('#f_rel').value.trim(), linkedin: $('#f_li').value.trim(), desc: $('#f_desc').value.trim(), agreed: $('#f_agreed').checked, cvAsset: old ? old.cvAsset || '' : ''};
+    since: $('#f_since').value, email: $('#f_email').value.trim(), rel: $('#f_rel').value.trim(), linkedin: li, desc: $('#f_desc').value.trim(), agreed: $('#f_agreed').checked,
+    cvAsset: old ? old.cvAsset || '' : '', photo: auto ? auto.photo : (old && old.linkedin === li ? old.photo || '' : ''), liAuto: !!auto, overlap: auto ? auto.overlap : null, headline: auto ? auto.headline : (old ? old.headline || '' : '')};
   const f = $('#f_cv').files[0];
   if (f && S.assets) { $('#refSave').disabled = true; try { const up = await S.assets.upload(f, {type: 'application/pdf'}); x.cvAsset = up.id; } catch(e) { toast('The CV could not be uploaded. The referee is saved without it.'); } }
   if (old) Object.assign(old, x); else list.push(x);
+  S.refLi = null;
   closeModal(); updClient(c.id, {referees: list});
 }
 
@@ -858,41 +1247,44 @@ function evRow(c, e, editable){
   const link = e.assetId ? blobHref(e.assetId) : safeUrl(e.url);
   const lang = S.view === 'app' ? S.lang : 'en';
   const fNote = e.format ? (e.format[lang] || e.format.en) : '';
-  const rNote = e.relevance && e.relevance.rag !== 'pending' ? [e.relevance.category ? catName(e.relevance.category, lang) : '', e.relevance[lang] || e.relevance.en].filter(Boolean).join(': ') : '';
+  const rNote = e.relevance && e.relevance.rag !== 'pending' ? [e.relevance.category && !(editable && e.relevance.rag === 'green') ? catName(e.relevance.category, lang) : '', e.relevance[lang] || e.relevance.en].filter(Boolean).join(': ') : '';
+  const cats = [...((ROUTES[c.route] || {cats: []}).cats), 'other'];
+  const src = [e.source, e.date ? fmtD(Date.parse(e.date)) : ''].filter(Boolean).join(', ');
   return `<div class="evrow">
     <div class="top"><div style="flex:1;min-width:0"><div class="title" style="font-weight:700">${esc(e.title)}</div>
-      <div class="meta small muted">${esc(catName(e.category, lang))}${e.fileName ? ' · ' + esc(e.fileName) : ''}${e.late ? ' · ' + esc(lang === 'ru' ? I18N.ru.late : I18N.en.late) : ''}</div>
-      ${e.desc ? `<div class="small" style="margin-top:4px">${esc(e.desc)}</div>` : ''}</div>
+      <div class="meta small muted">${editable ? '' : esc(catName(e.category, lang)) + ' · '}${esc([e.fileName, src].filter(Boolean).join(' · '))}${e.late ? ' · ' + esc(lang === 'ru' ? I18N.ru.late : I18N.en.late) : ''}</div>
+      ${editable ? `<div class="inl"><select data-chg="evCat" data-id="${esc(e.id)}" aria-label="${esc(t('evCatL'))}">${cats.map(k => `<option value="${k}" ${e.category === k ? 'selected' : ''}>${esc(catName(k))}</option>`).join('')}</select>
+        <input type="text" data-chg="evDesc" data-id="${esc(e.id)}" value="${esc(e.desc || '')}" placeholder="${esc(t('evWhat'))}" aria-label="${esc(t('evWhat'))}"></div>` : (e.desc ? `<div class="small" style="margin-top:4px">${esc(e.desc)}</div>` : '')}</div>
       ${link ? `<a class="btn sm" href="${esc(link)}" target="_blank" rel="noopener">${esc(S.view === 'app' ? t('open') : 'Open')}</a>` : ''}
-      ${editable ? `<button class="btn link sm" data-act="delEv" data-id="${esc(e.id)}" style="color:var(--bad)" aria-label="Remove ${esc(e.title)}">${esc(S.view === 'app' ? t('remove') : 'Remove')}</button>` : ''}
+      ${editable ? `<button class="btn link sm" data-act="delEv" data-id="${esc(e.id)}" style="color:var(--bad)" aria-label="${esc(t('remove'))}: ${esc(e.title)}">${esc(t('remove'))}</button>` : ''}
     </div>
     <div class="checksline">
-      ${ragPill(e.format, 'format')}<span>${esc((lang === 'ru' ? I18N.ru.format : 'Format') + ': ' + fNote)}</span>
+      ${ragPill(e.format, 'format')}<span>${esc((lang === 'ru' ? I18N.ru.format : 'Format') + ': ' + fNote)}${editable && e.kind === 'link' ? ` <span class="btn link sm filebtn">${esc(t('evPdf'))}<input type="file" accept=".pdf,.png,.jpg,.jpeg" data-chg="evAttach" data-id="${esc(e.id)}" aria-label="${esc(t('evPdf'))}"></span>` : ''}</span>
       ${ragPill(e.relevance, 'relevance')}<span>${esc((lang === 'ru' ? I18N.ru.relevance : 'Relevance') + (rNote ? ': ' + rNote : ''))}${e.relevance && e.relevance.failed && editable ? ` <button class="btn link sm" data-act="recheck" data-id="${esc(e.id)}">${esc(t('retry'))}</button>` : ''}</span>
     </div></div>`;
 }
 function evModal(reqId){
-  const c = cur(); const r = ROUTES[c.route] || {cats: []};
+  const c = cur();
   const q = (c.requests || []).find(x => x.id === reqId);
-  const cats = [...r.cats, 'other'];
+  S.evFiles = [];
   openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="evt">
     <h2 id="evt">${esc(t('addEv'))}</h2>
     ${q ? `<p class="muted" style="margin-top:6px">${esc(L(q))}</p>` : ''}
-    <form id="evForm" data-req="${esc(reqId || '')}">
-      <div class="field"><label for="e_title">${esc(t('evTitle'))}</label><input id="e_title" type="text" required></div>
-      <div class="field"><label for="e_cat">${esc(t('evCat'))}</label><select id="e_cat">${cats.map(k => `<option value="${k}" ${q && q.category === k ? 'selected' : ''}>${esc(catName(k))}</option>`).join('')}</select></div>
-      <div class="field"><label for="e_desc">${esc(t('evDesc'))}</label><textarea id="e_desc" rows="2"></textarea></div>
-      <fieldset class="field"><legend>${esc(t('evKind'))}</legend><div class="radios">
-        <label class="check"><input type="radio" name="e_kind" value="file" checked data-act="evKind">${esc(t('kFile'))}</label>
-        <label class="check"><input type="radio" name="e_kind" value="link" data-act="evKind">${esc(t('kLink'))}</label>
-        <label class="check"><input type="radio" name="e_kind" value="note" data-act="evKind">${esc(t('kNote'))}</label></div></fieldset>
-      <div class="field" id="e_fileWrap"><label for="e_file">${esc(t('kFile'))}</label><input id="e_file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.docx,.doc,.mp4,.mov,.mp3"><p class="hint">${esc(t('evFileHint'))}</p></div>
-      <div class="field" id="e_urlWrap" hidden><label for="e_url">${esc(t('evUrl'))}</label><input id="e_url" type="url" placeholder="https://"></div>
+    <form id="evForm" data-req="${esc(reqId || '')}" novalidate>
+      <label class="dropzone" id="evDrop"><input id="e_files" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.heic,.docx,.doc,.mp4,.mov,.mp3" data-chg="evFiles">
+        <strong>${esc(t('evDrop'))}</strong><div class="hint" style="margin-top:4px">${esc(t('evDropHint'))}</div><div class="files" id="evList"></div></label>
+      <div class="or">${esc(t('or'))}</div>
+      <div class="field" style="margin-top:4px"><label for="e_url">${esc(t('evOrLink'))}</label><input id="e_url" type="url" inputmode="url" placeholder="https://"><p class="hint">${esc(t('evLinkHint'))}</p></div>
+      <div class="field"><label for="e_desc">${esc(t('evNoteOpt'))}</label><input id="e_desc" type="text"></div>
       <p class="err" id="e_err" role="alert"></p>
-      <div class="navrow"><button type="button" class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button type="submit" class="btn primary" id="evSave">${esc(t('save'))}</button></div>
+      <div class="navrow"><button type="button" class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button type="submit" class="btn primary" id="evSave">${esc(t('evAdd'))}</button></div>
     </form></div>`);
-  setTimeout(() => $('#e_title') && $('#e_title').focus(), 30);
+  const dz = $('#evDrop');
+  ['dragenter','dragover'].forEach(n => dz.addEventListener(n, ev => { ev.preventDefault(); dz.classList.add('over'); }));
+  ['dragleave','drop'].forEach(n => dz.addEventListener(n, ev => { ev.preventDefault(); dz.classList.remove('over'); }));
+  dz.addEventListener('drop', ev => { S.evFiles = [...(ev.dataTransfer && ev.dataTransfer.files || [])]; showEvFiles(); });
 }
+function showEvFiles(){ const el = $('#evList'); if (el) el.innerHTML = (S.evFiles || []).map(f => `<div>${esc(f.name)} <span class="muted">${Math.max(1, Math.round(f.size / 1024))} KB</span></div>`).join(''); }
 function formatCheck(e){
   const M = (en, ru, rag) => ({rag, en, ru});
   if (e.kind === 'link') return M('A web link alone is not accepted. Upload a PDF or screenshot of the page with its address visible.', 'Одна ссылка не принимается. Загрузите PDF или скриншот страницы с видимым адресом.', 'red');
@@ -907,39 +1299,46 @@ function formatCheck(e){
 }
 async function saveEv(form){
   const c = cur(); const err = $('#e_err');
-  const kind = (form.querySelector('input[name=e_kind]:checked') || {}).value || 'file';
-  const title = $('#e_title').value.trim();
-  if (!title) { err.textContent = t('needTitle'); return; }
-  const e = {id: uid(), title, category: $('#e_cat').value, desc: $('#e_desc').value.trim(), kind, addedAt: Date.now(), late: !!c.submittedAt, relevance: {rag: 'pending'}};
-  let text = '';
-  if (kind === 'file') {
-    const f = $('#e_file').files[0];
-    if (!f) { err.textContent = t('needFile'); return; }
-    if (/\.docx?$/i.test(f.name)) { err.textContent = t('wordFile'); return; }
-    e.fileName = f.name; e.mime = f.type || (/\.pdf$/i.test(f.name) ? 'application/pdf' : ''); e.size = f.size;
+  const files = S.evFiles || []; const url = ($('#e_url').value || '').trim(); const desc = $('#e_desc').value.trim();
+  if (!files.length && !url) { err.textContent = t('evNothing'); return; }
+  if (url && !safeUrl(url)) { err.textContent = t('needUrl'); return; }
+  if (files.some(f => /\.docx?$/i.test(f.name))) { err.textContent = t('wordFile'); return; }
+  const q = (c.requests || []).find(x => x.id === form.dataset.req);
+  const btn = $('#evSave'); btn.disabled = true; btn.innerHTML = spin() + esc(t('saving'));
+  const items = [], texts = {};
+  const base = () => ({id: uid(), category: q ? q.category : '', desc, addedAt: Date.now(), late: !!c.submittedAt, relevance: {rag: 'pending'}, reqId: q ? q.id : '', auto: true});
+  for (const f of files.slice(0, 12)) {
+    const e = {...base(), kind: 'file', title: cleanTitle(f.name), fileName: f.name, mime: f.type || guessMime(f.name), size: f.size};
     const media = /^(video|audio)\//.test(e.mime) || /\.(mp4|mov|mp3)$/i.test(f.name);
-    $('#evSave').disabled = true; $('#evSave').innerHTML = spin() + esc(t('saving'));
+    let text = '';
     if (!media) {
-      if (S.assets) {
-        try { const up = e.mime === 'application/pdf' ? await S.assets.upload(f, {type: 'application/pdf'}) : await S.assets.upload(f); e.assetId = up.id; }
-        catch(x) { e.uploadFailed = true; }
-      }
+      if (S.assets) { try { const up = e.mime === 'application/pdf' ? await S.assets.upload(f, {type: 'application/pdf'}) : await S.assets.upload(f); e.assetId = up.id; } catch(x) { e.uploadFailed = true; } }
       if (e.mime === 'application/pdf') text = await pdfText(f, 4).catch(() => '');
     }
-  } else if (kind === 'link') {
-    const u = $('#e_url').value.trim(); if (!u) { err.textContent = t('needUrl'); return; } e.url = u;
+    if (text) { e.lang = detectLang(text); if (junkTitle(e.title) || e.title.split(' ').length < 2) e.title = pdfTitle(text) || e.title; }
+    if (!e.title) e.title = f.name;
+    texts[e.id] = text; items.push(e);
   }
-  e.format = formatCheck(e);
-  const list = [...(c.evidence || []), e];
-  const patch = {evidence: list};
-  if (form.dataset.req) patch.requests = (c.requests || []).map(q => q.id === form.dataset.req ? {...q, done: true} : q);
+  if (url) {
+    const e = {...base(), kind: 'link', url, title: hostOf(url)};
+    if (S.api && S.api.ok) {
+      try { const m = await api('/meta', {url}); e.title = m.title || e.title; e.source = m.site || hostOf(url); e.date = m.date || ''; if (m.lang) e.lang = /^en/.test(m.lang) ? 'en' : 'other'; texts[e.id] = [m.title, m.description].filter(Boolean).join('\n'); }
+      catch(x) { e.source = hostOf(url); }
+    } else e.source = hostOf(url);
+    items.push(e);
+  }
+  items.forEach(e => { if (!e.category) { const b = bestCat(e, texts[e.id], c.route); e.category = b.red ? 'other' : (b.cat || 'other'); } e.format = formatCheck(e); });
+  const fresh = cur();
+  const patch = {evidence: [...(fresh.evidence || []), ...items]};
+  if (q) patch.requests = (fresh.requests || []).map(x => x.id === q.id ? {...x, done: true} : x);
+  S.evFiles = [];
   closeModal(); await updClient(c.id, patch);
-  runRelevance(c.id, e.id, text);
+  items.forEach(e => runRelevance(c.id, e.id, texts[e.id] || ''));
 }
 async function runRelevance(cid, eid, text){
   const setRel = (rel, extra = {}) => { const c = S.clients[cid]; if (!c) return; const list = clone(c.evidence || []); const e = list.find(x => x.id === eid); if (!e) return; e.relevance = rel; Object.assign(e, extra); e.format = formatCheck(e); updClient(cid, {evidence: list}); };
-  if (!S.sample) { setRel({rag: 'yellow', en: 'Automatic check unavailable here; the lawyer reviews it.', ru: 'Автоматическая проверка недоступна; документ проверит юрист.'}); return; }
   const c = S.clients[cid]; const e = (c.evidence || []).find(x => x.id === eid); if (!e) return;
+  if (!S.sample) { const r = kwRelevance(c, e, text); setRel({rag: r.rag, category: r.category, en: r.en, ru: r.ru}, e.catManual ? {} : {category: r.category}); return; }
   const r = ROUTES[c.route] || {cats: []};
   const cats = [...r.cats, 'other'].map(k => `${k}: ${catName(k, 'en')}`).join('\n');
   const prompt = `You check uploads for a UK Global Talent visa intake platform that only COLLECTS documents for a regulated law firm.
@@ -963,7 +1362,7 @@ Example: {"fit":"green","category":"recognition","note_en":"Invitation to speak 
     const cat = r.cats.includes(res && res.category) ? res.category : (res && res.category === 'other' ? 'other' : e.category);
     setRel({rag: fit, category: cat, en: str(res && res.note_en, 200), ru: str(res && res.note_ru, 200)}, {lang: ['en','other','unknown'].includes(res && res.language) ? res.language : 'unknown'});
   } catch(x) {
-    if (x && (x.code === 'not_granted' || x.code === 'sampling_disabled')) { S.sample = null; setRel({rag: 'yellow', en: 'Automatic check unavailable here; the lawyer reviews it.', ru: 'Автоматическая проверка недоступна; документ проверит юрист.'}); return; }
+    if (x && (x.code === 'not_granted' || x.code === 'sampling_disabled' || x.code === 'not_configured')) { S.sample = null; const r = kwRelevance(c, e, text); setRel({rag: r.rag, category: r.category, en: r.en, ru: r.ru}); return; }
     setRel({rag: 'yellow', failed: true, en: x && x.code === 'rate_limited' ? 'Too many checks at once. Try again in a minute.' : 'The check did not finish.', ru: x && x.code === 'rate_limited' ? 'Слишком много проверок. Попробуйте через минуту.' : 'Проверка не завершилась.'});
   }
 }
@@ -1031,10 +1430,50 @@ function stepCase(c){
 }
 function hoursBetween(a, b){ return Math.max(0, (b - a) / 36e5); }
 
+/* ---------- LinkedIn: read the profile from its link ---------- */
+async function readLinkedIn(){
+  const c = cur(); if (!c || S.busy.li) return;
+  const inp = $('#li'); const url = (inp ? inp.value : c.linkedinUrl || '').trim();
+  if (inp) inp.blur();
+  S.liError = '';
+  if (!liSlug(url)) { S.liError = t('liBad'); scheduleRender(); return; }
+  if (url !== c.linkedinUrl) updClient(c.id, {linkedinUrl: url});
+  if (!(S.api && S.api.linkedin)) { if (!S.apiChecked) await checkApi(); if (!(S.api && S.api.linkedin)) { S.liError = t('liOff'); scheduleRender(); return; } }
+  S.busy.li = true; scheduleRender();
+  try {
+    const li = await api('/linkedin', {url});
+    applyLinkedIn(c.id, li);
+  } catch(e) {
+    S.liError = e && e.code === 'not_found' ? t('liNotFound') : e && e.code === 'bad_url' ? t('liBad') : e && e.code === 'auth_required' ? t('reauthB') : t('liFail');
+  } finally { S.busy.li = false; scheduleRender(); }
+}
+function applyLinkedIn(cid, li){
+  const c = S.clients[cid]; if (!c) return;
+  const prof = liToProfile(li);
+  const patch = {li, profile: prof, profileSource: 'linkedin', ...stageAtLeast(c, 'Collecting'),
+    crm: {...(c.crm || {}), nextAction: c.crm && c.crm.nextAction && !/Step 1/.test(c.crm.nextAction) ? c.crm.nextAction : 'Follow up on referees and evidence'}};
+  if (!c.photo && li.photo) patch.photo = li.photo;
+  if (!c.routeConfirmedAt) {
+    const m = matchField(liSegments(li), li);
+    patch.routeSuggested = m.key || ''; patch.route = m.key || ''; patch.routeReason = m.reason;
+    S.showRoutePick = !m.key;
+  }
+  updClient(cid, patch);
+  if (S.sample) analyse();
+}
+function applyCvText(cid){
+  const c = S.clients[cid]; if (!c || !c.cv || !c.cv.text) return;
+  if (S.sample) { analyse(); return; }
+  if (c.routeConfirmedAt || c.li) return;
+  const m = matchField(textSegments(c.cv.text));
+  S.showRoutePick = !m.key;
+  updClient(cid, {routeSuggested: m.key || '', route: m.key || '', routeReason: m.reason});
+}
+
 /* ---------- AI: profile ---------- */
 async function analyse(){
   const c = cur();
-  const text = [c.cv && c.cv.text || '', c.pasted || '', c.linkedinUrl ? 'LinkedIn: ' + c.linkedinUrl : '', c.prize && c.prize.has ? 'Prize won: ' + (c.prize.name || 'yes') : ''].filter(Boolean).join('\n\n');
+  const text = [c.li ? 'LINKEDIN PROFILE\n' + [c.li.name, c.li.headline, c.li.location].filter(Boolean).join(' | ') + '\n' + liText(c.li) : '', c.cv && c.cv.text || '', c.pasted || '', c.linkedinUrl ? 'LinkedIn: ' + c.linkedinUrl : ''].filter(Boolean).join('\n\n');
   if (text.replace(/LinkedIn:.*/, '').trim().length < 40) { S.aiError = t('needText'); scheduleRender(); return; }
   if (!S.sample) { S.noAI = true; S.aiError = t('noAI'); scheduleRender(); return; }
   S.busy.analyse = true; S.aiError = ''; scheduleRender();
@@ -1066,6 +1505,7 @@ ${text.slice(0, 30000)}
     const allowed = ROUTES[field].cats;
     const requests = (Array.isArray(res.requests) ? res.requests : []).slice(0, 7).map(q => ({id: uid(), category: allowed.includes(q && q.category) ? q.category : allowed[0], en: str(q && q.text_en, 240), ru: str(q && q.text_ru, 240) || str(q && q.text_en, 240), done: false})).filter(q => q.en);
     const c2 = cur();
+    if (c2.li) { prof.photo = c2.profile && c2.profile.photo || ''; Object.keys(c2.profile || {}).forEach(k => { if (Array.isArray(c2.profile[k]) && c2.profile[k].length) prof[k] = c2.profile[k]; else if (!prof[k] && c2.profile[k]) prof[k] = c2.profile[k]; }); }
     updClient(c2.id, {profile: prof, routeSuggested: field, route: c2.routeConfirmedAt ? c2.route : field, routeReason: {en: str(res.field_reason_en, 300), ru: str(res.field_reason_ru, 300)}, requests, ...stageAtLeast(c2, 'Collecting'),
       crm: {...(c2.crm || {}), nextAction: c2.crm && c2.crm.nextAction && !/Step 1/.test(c2.crm.nextAction) ? c2.crm.nextAction : 'Follow up on referees and evidence'}});
     S.showRoutePick = false;
@@ -1095,7 +1535,7 @@ async function docxText(file){
 }
 async function onCV(input){
   const c = cur(); const f = input.files[0]; if (!f) return;
-  S.cvInfo = ''; S.busy.cv = true;
+  S.cvInfo = ''; S.busy.cv = true; scheduleRender();
   let text = '';
   try {
     if (/\.pdf$/i.test(f.name) || f.type === 'application/pdf') text = await pdfText(f, 30);
@@ -1112,7 +1552,8 @@ async function onCV(input){
   }
   if (!text) S.cvInfo = t('cvFail');
   S.busy.cv = false;
-  updClient(c.id, {cv, ...stageAtLeast(c, 'Collecting')});
+  await updClient(c.id, {cv, ...stageAtLeast(c, 'Collecting')});
+  if (text) applyCvText(c.id);
 }
 
 /* ---------- Downloads ---------- */
@@ -1120,7 +1561,7 @@ function fileSummary(c){
   const lines = [`# ${c.name}: Global Talent file`, '', `Email: ${c.email}`, `Field: ${routeName(c.route, 'en')} (${(ROUTES[c.route] || {en: {}}).en.body || ''})`, `LinkedIn: ${c.linkedinUrl || '-'}`, ''];
   if (c.profile) { lines.push('## Profile', c.profile.headline || '', ''); (c.profile.roles || []).forEach(r => lines.push(`- ${r.title}, ${r.org} (${[r.from, r.to].filter(Boolean).join(' to ')})`)); lines.push(''); }
   lines.push('## Referees'); (c.referees || []).forEach(r => lines.push(`- ${r.name}, ${r.title}, ${r.org}, ${r.country}${r.email ? ', ' + r.email : ''}${r.linkedin ? ', ' + r.linkedin : ''}`)); lines.push('');
-  lines.push('## Evidence'); (c.evidence || []).forEach(e => lines.push(`- ${e.title} [${catName(e.category, 'en')}] format: ${e.format ? e.format.rag : '-'}, relevance: ${e.relevance ? e.relevance.rag : '-'}${e.url ? ', ' + e.url : ''}`));
+  lines.push('## Evidence'); (c.evidence || []).forEach(e => lines.push(`- ${e.title} [${catName(e.category, 'en')}]${e.source ? ' ' + e.source : ''}${e.date ? ' ' + e.date : ''} format: ${e.format ? e.format.rag : '-'}, relevance: ${e.relevance ? e.relevance.rag : '-'}${e.url ? ', ' + e.url : ''}${e.desc ? '. ' + e.desc : ''}`));
   if (c.note) lines.push('', '## Note', c.note);
   return lines.join('\n');
 }
@@ -1160,13 +1601,13 @@ function fileBody(c){
     <div class="stack" style="gap:12px">
       <div><h3>Profile</h3><dl class="kv"><dt>Field</dt><dd>${esc(routeName(c.route, 'en'))}<div class="small muted">${esc((ROUTES[c.route] || {en: {}}).en.body || '')}</div></dd>
         ${p.headline ? `<dt>Headline</dt><dd>${esc(p.headline)}</dd>` : ''}${p.location ? `<dt>Location</dt><dd>${esc(p.location)}</dd>` : ''}
-        <dt>LinkedIn</dt><dd>${safeUrl(c.linkedinUrl) ? `<a href="${esc(safeUrl(c.linkedinUrl))}" target="_blank" rel="noopener">${esc(c.linkedinUrl)}</a>` : esc(c.linkedinUrl || '-')}</dd>
+        <dt>LinkedIn</dt><dd>${c.li ? '<span class="pill plain green" style="margin-right:6px">Read ' + esc(fmtD(c.li.fetchedAt)) + '</span>' : ''}${safeUrl(c.linkedinUrl) ? `<a href="${esc(safeUrl(c.linkedinUrl))}" target="_blank" rel="noopener">${esc(c.linkedinUrl)}</a>` : esc(c.linkedinUrl || '-')}</dd>
         <dt>CV</dt><dd>${c.cv ? (c.cv.assetId && blobHref(c.cv.assetId) ? `<a href="${esc(blobHref(c.cv.assetId))}" target="_blank" rel="noopener">${esc(c.cv.name)}</a>` : esc(c.cv.name)) : '-'}</dd>
         ${c.prize && c.prize.has ? `<dt>Prize</dt><dd>${esc(c.prize.name)}</dd>` : ''}</dl>
-        ${(p.roles || []).length ? `<ul class="rules">${p.roles.map(r => `<li>${esc(r.title)}, ${esc(r.org)} <span class="muted small">${esc([r.from, r.to].filter(Boolean).join(' to '))}</span></li>`).join('')}</ul>` : ''}
-        ${['founded','publications','awards','media','talks','judging','patents','open_source'].filter(k => (p[k] || []).length).map(k => `<div class="small" style="margin-top:6px"><strong>${esc(I18N.en[k])}:</strong> ${esc(p[k].join('; '))}</div>`).join('')}
+        ${(p.roles || []).length ? `<ul class="rules">${p.roles.map(r => `<li>${esc(r.title)}, ${esc(r.org)} <span class="muted small">${esc([fmtYM(r.from, 'en') || r.from, r.to === 'present' ? 'present' : (fmtYM(r.to, 'en') || r.to)].filter(Boolean).join(' - '))}</span></li>`).join('')}</ul>` : ''}
+        ${['founded','awards','publications','patents','education','certifications','media','talks','judging','open_source'].filter(k => (p[k] || []).length).map(k => `<div class="small" style="margin-top:6px"><strong>${esc(I18N.en[k])}:</strong> ${esc(p[k].join('; '))}</div>`).join('')}
       </div>
-      <div><h3>Referees (${(c.referees || []).length})</h3><div class="list">${(c.referees || []).map(r => `<div class="ritem"><div class="body"><div class="title">${esc(r.name)}</div><div class="meta">${esc([r.title, r.org, r.country].filter(Boolean).join(', '))}${isUK(r) ? ' · UK-based' : ''}${r.since ? ' · ' + Math.max(0, monthsSince(r.since)) + ' months' : ''}</div>
+      <div><h3>Referees (${(c.referees || []).length})</h3><div class="list">${(c.referees || []).map(r => `<div class="ritem">${avatar(r.photo, r.name, 'sm')}<div class="body"><div class="title">${esc(r.name)}${r.liAuto ? ' <span class="pill plain grey">from LinkedIn</span>' : ''}</div><div class="meta">${esc([r.title, r.org, r.country].filter(Boolean).join(', '))}${isUK(r) ? ' · UK-based' : ''}${r.since ? ' · ' + Math.max(0, monthsSince(r.since)) + ' months' : ''}</div>
         <div class="meta">${esc(r.rel || '')}</div>${r.desc ? `<div class="small">${esc(r.desc)}</div>` : ''}
         <div class="row small" style="gap:10px;margin-top:4px">${r.email ? esc(r.email) : ''}${safeUrl(r.linkedin) ? `<a href="${esc(safeUrl(r.linkedin))}" target="_blank" rel="noopener">LinkedIn</a>` : ''}${r.cvAsset && blobHref(r.cvAsset) ? `<a href="${esc(blobHref(r.cvAsset))}" target="_blank" rel="noopener">CV</a>` : ''}${r.agreed ? '<span class="pill green">Agreed</span>' : '<span class="pill grey">Not confirmed</span>'}</div></div></div>`).join('') || '<p class="muted small">None</p>'}</div>
         ${ROUTES[c.route] && ROUTES[c.route].min ? `<ul class="checks">${(() => { const sl = S.lang; S.lang = 'en'; const ch = refChecks(c); S.lang = sl; return ch; })().map(x => `<li><span class="ic ${x.ok ? 'ok' : 'no'}">${x.ok ? '✓' : '!'}</span><span class="small">${esc(x.txt)}</span></li>`).join('')}</ul>` : ''}
@@ -1233,11 +1674,11 @@ function viewCRM(){
   const n = s => all.filter(c => c.stage === s).length;
   const k = [['Clients', all.length], ['Collecting', n('Onboarding') + n('Collecting')], ['With firms', n('With firms')], ['Firm chosen', all.filter(c => c.chosenFirmId).length], ['Endorsed', n('Endorsed') + n('Visa applied') + n('Visa granted') + n('In the UK')], ['Newsletter opt-ins', all.filter(c => c.consents && c.consents.newsletter).length]];
   let body = '';
-  if (S.crmTab === 'firms') body = crmFirms(); else if (S.crmTab === 'outbox') body = crmOutbox(); else body = crmClients();
+  if (S.crmTab === 'firms') body = crmFirms(); else if (S.crmTab === 'outbox') body = crmOutbox(); else if (S.crmTab === 'setup') body = crmSetup(); else body = crmClients();
   return `<div class="wrap"><div class="ophead"><div class="row"><h1>CRM</h1><span class="spacer"></span>${S.standalone ? '<button class="btn sm" data-act="resetLocal">Reset demo data</button>' : ''}<button class="btn sm" data-act="export">Export to Excel</button></div>
     <p class="muted" style="margin-top:6px">Linked to the client platform: every registration, upload, submission and offer shows here live. In the live version only your team can open this view.</p></div>
     <div class="kpis">${k.map(([l, v]) => `<div class="kpi"><div class="v tabnum">${v}</div><div class="l">${esc(l)}</div></div>`).join('')}</div>
-    <div class="tabs" role="tablist">${[['clients','Clients'],['firms','Panel firms'],['outbox','Email outbox']].map(([id, l]) => `<button role="tab" aria-selected="${S.crmTab === id}" class="${S.crmTab === id ? 'on' : ''}" data-act="crmTab" data-v="${id}">${l}</button>`).join('')}</div>
+    <div class="tabs" role="tablist">${[['clients','Clients'],['firms','Panel firms'],['outbox','Email outbox'],['setup','Setup']].map(([id, l]) => `<button role="tab" aria-selected="${S.crmTab === id}" class="${S.crmTab === id ? 'on' : ''}" data-act="crmTab" data-v="${id}">${l}</button>`).join('')}</div>
     ${body}</div>${S.drawerId && S.clients[S.drawerId] ? drawer(S.clients[S.drawerId]) : ''}`;
 }
 function crmClients(){
@@ -1333,6 +1774,38 @@ function crmOutbox(){
   return `<p class="muted small" style="margin-bottom:12px">Trial: these emails are recorded here instead of being sent. The live version sends them through an email service.</p>
   <div class="list">${mails.slice(0, 200).map(m => `<details class="mail"><summary><span class="subj">${esc(m.subject)}</span> <span class="small muted">to ${esc(m.to)} · ${esc(m.client)} · ${esc(fmtDT(m.at))}</span></summary><pre>${esc(m.body)}</pre></details>`).join('') || '<div class="card empty">No emails yet.</div>'}</div>`;
 }
+function crmSetup(){
+  const st = S.api || {}; const g = cfg('googleClientId'), a = cfg('apiBase');
+  const row = (ok, label, note) => `<li><span class="ic ${ok ? 'ok' : 'no'}">${ok ? '✓' : '!'}</span><span><strong>${esc(label)}</strong><div class="small muted">${note}</div></span></li>`;
+  const apiNote = !a ? 'Add the Worker address on the right.' : !S.apiChecked ? 'Checking ' + esc(a) : st.ok ? 'Connected to <code>' + esc(a) + '</code>' : 'Not reachable at <code>' + esc(a) + '</code>. Check the address and that the Worker is deployed.';
+  return `<div class="grid2 setup" style="align-items:start">
+    <div class="card"><h3>Connections</h3><ul class="checks">
+      ${row(!!g && S.standalone, 'Google sign-in', !g ? 'Add the Google Client ID on the right.' : S.standalone ? 'Client ID set. Visitors sign in with their Google account.' : 'Client ID set. Google sign-in works on the GitHub Pages version, not inside claude.ai.')}
+      ${row(!!st.ok, 'Lookup service (Cloudflare Worker)', apiNote)}
+      ${row(!!st.linkedin, 'LinkedIn reading (Apify)', st.linkedin ? 'On. Each profile read costs about 0.4p from your Apify credit.' : 'Off. Add <code>APIFY_TOKEN</code> as a secret in the Worker settings.')}
+      ${row(!!st.ok, 'Link titles, sources and dates', st.ok ? 'On.' : 'Comes with the Worker.')}
+      ${row(!!st.auth, 'Lookups locked to signed-in users', st.auth ? 'On. Only people signed in with Google can use your Apify credit.' : 'Off. Add <code>GOOGLE_CLIENT_ID</code> as a variable in the Worker so strangers cannot use your credit.')}
+      ${row(!!S.sample, 'AI checks', S.sample ? (S.sample._worker ? 'On, through Claude in the Worker.' : 'On, through Claude in claude.ai.') : 'Off, so keyword rules sort fields and evidence. Add <code>ANTHROPIC_API_KEY</code> in the Worker to switch on.')}
+    </ul></div>
+    <div class="card"><h3>Settings for this browser</h3>
+      <p class="small muted" style="margin-top:6px">For testing before the values are built into the page. Only public values go here. They are saved in this browser only.</p>
+      <form id="cfgForm" novalidate>
+        <div class="field"><label for="cfg_g">Google Client ID</label><input id="cfg_g" type="text" value="${esc(lsGet('gtc_cfg_googleClientId') || '')}" placeholder="${esc(CONFIG.googleClientId || '1234-abc.apps.googleusercontent.com')}"></div>
+        <div class="field"><label for="cfg_a">Worker address</label><input id="cfg_a" type="url" value="${esc(lsGet('gtc_cfg_apiBase') || '')}" placeholder="${esc(CONFIG.apiBase || 'https://gtc-api.yourname.workers.dev')}"></div>
+        <p class="err" id="cfg_err" role="alert"></p>
+        <div class="navrow"><button type="button" class="btn" data-act="cfgClear">Clear</button><button type="submit" class="btn primary">Save and test</button></div>
+      </form>
+      <p class="small" style="margin-top:14px;color:var(--bad)">Never paste the Apify token or any other secret key here. Secret keys go only into Cloudflare.</p>
+    </div></div>`;
+}
+function saveCfg(){
+  const g = $('#cfg_g').value.trim(), a = $('#cfg_a').value.trim().replace(/\/+$/, ''); const err = $('#cfg_err'); err.textContent = '';
+  if (/^apify_api_|^sk-ant-|secret/i.test(g + ' ' + a)) { err.textContent = 'That looks like a secret key. It must go into Cloudflare, not here. Nothing was saved.'; return; }
+  if (g && !/\.apps\.googleusercontent\.com$/.test(g)) { err.textContent = 'A Google Client ID ends with .apps.googleusercontent.com'; return; }
+  if (a && !/^https:\/\/[^\s/]+\.[^\s/]+/.test(a)) { err.textContent = 'The Worker address starts with https://, for example https://gtc-api.yourname.workers.dev'; return; }
+  lsSet('gtc_cfg_googleClientId', g || null); lsSet('gtc_cfg_apiBase', a || null); gisInit = null;
+  toast('Saved. Testing the connection.'); checkApi();
+}
 async function exportXlsx(){
   try { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'); } catch(e) { toast('The Excel library did not load.'); return; }
   const rows = clientsArr().map(c => { const cr = c.crm || {}; const ev = c.evidence || []; const fc = c.chosenFirmId ? (S.firms[c.chosenFirmId] || {}).name || ((c.offers || {})[c.chosenFirmId] || {}).firmName : ''; const fo = c.chosenFirmId ? (c.offers || {})[c.chosenFirmId] : null;
@@ -1354,7 +1827,7 @@ async function exportXlsx(){
 
 /* ---------- Modal ---------- */
 function openModal(html){ $('#modal').innerHTML = `<div class="backdrop" data-act="backdrop">${html}</div>`; }
-function closeModal(){ $('#modal').innerHTML = ''; }
+function closeModal(){ $('#modal').innerHTML = ''; if (S.reauth) { const r = S.reauth; S.reauth = null; r(''); } }
 function confirmModal(title, body, act, id, danger){
   openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="cft"><h2 id="cft">${esc(title)}</h2>${body ? `<p style="margin-top:10px">${esc(body)}</p>` : ''}
     <div class="navrow"><button class="btn" data-act="closeModal">${esc(S.view === 'app' ? t('cancel') : 'Cancel')}</button><button class="btn ${danger ? 'danger' : 'primary'}" data-act="${act}" data-id="${esc(id || '')}">${esc(S.view === 'app' ? t('confirm') : 'Confirm')}</button></div></div>`);
@@ -1367,14 +1840,18 @@ const ACT = {
   register: () => openRegister(),
   goApp: () => go('app'),
   nav: el => go(el.dataset.v),
-  sso: el => regSubmit(el.dataset.p),
-  regEmail: () => regSubmit('email'),
+  ssoMe: () => afterSignIn({provider: 'claude', name: S.me.name || S.me.email, email: S.me.email}),
+  regEmail: () => regEmail(),
+  regBack: () => { S.pendingUser = null; S.gauth = null; lsSet('gtc_gauth', null); openRegister(); },
+  createFile: () => createFile(),
+  signOut: () => signOut(),
+  cfgClear: () => { lsSet('gtc_cfg_googleClientId', null); lsSet('gtc_cfg_apiBase', null); gisInit = null; toast('Cleared. Using the values built into the page.'); checkApi(); },
   closeModal: () => closeModal(),
   backdrop: (el, e) => { if (e.target === el) closeModal(); },
-  newClient: () => { S.currentId = null; lsSet('gtc_client', null); S.aiError = ''; S.noAI = !!S.standalone; S.cvInfo = ''; S.justSubmitted = false; go('home'); setTimeout(openRegister, 50); },
+  newClient: () => { S.currentId = null; lsSet('gtc_client', null); S.gauth = null; lsSet('gtc_gauth', null); S.aiError = ''; S.liError = ''; S.noAI = false; S.cvInfo = ''; S.justSubmitted = false; S.showRoutePick = false; go('home'); setTimeout(openRegister, 50); },
   goto: el => { const c = cur(); const n = Number(el.dataset.step); S.justSubmitted = false; S.keepScroll = false; updClient(c.id, {step: n}); window.scrollTo(0, 0); },
   analyse: () => analyse(),
-  routeYes: () => { const c = cur(); updClient(c.id, {route: c.route || c.routeSuggested, routeConfirmedAt: Date.now(), ...stageAtLeast(c, 'Collecting')}); },
+  routeYes: () => { const c = cur(); const route = c.route || c.routeSuggested; updClient(c.id, {route, routeConfirmedAt: Date.now(), requests: c.li && !S.sample ? buildRequests(c, route) : (c.requests || []), ...stageAtLeast(c, 'Collecting')}); },
   routeOther: () => { S.showRoutePick = true; scheduleRender(); },
   addRef: () => refModal(null),
   editRef: el => refModal(el.dataset.id),
@@ -1395,6 +1872,7 @@ const ACT = {
   firmBack: () => { S.firmOpen = null; scheduleRender(); },
   offerModal: el => offerModal(el.dataset.id),
   crmTab: el => { S.crmTab = el.dataset.v; scheduleRender(); },
+  setupTab: () => { S.crmTab = 'setup'; go('crm'); },
   openDrawer: (el, e) => { if (e.target.closest('select,input,a,button')) return; S.drawerId = el.dataset.id; scheduleRender(); },
   closeDrawer: () => { S.drawerId = null; scheduleRender(); },
   openAsClient: el => { S.currentId = el.dataset.id; lsSet('gtc_client', S.currentId); S.drawerId = null; go('app'); },
@@ -1407,14 +1885,22 @@ const ACT = {
   doResetLocal: async () => { closeModal(); await resetLocal(); }
 };
 document.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el) return; const f = ACT[el.dataset.act]; if (!f) return; if (el.tagName === 'A') e.preventDefault(); f(el, e); });
-document.addEventListener('submit', e => { e.preventDefault(); const f = e.target; if (f.id === 'refForm') saveRef(f); else if (f.id === 'evForm') saveEv(f); else if (f.id === 'offerForm') saveOffer(f); else if (f.id === 'firmForm') saveFirm(f); });
+document.addEventListener('submit', e => { e.preventDefault(); const f = e.target; if (f.id === 'refForm') saveRef(f); else if (f.id === 'refLookup') lookupRef(); else if (f.id === 'liForm') readLinkedIn(); else if (f.id === 'evForm') saveEv(f); else if (f.id === 'offerForm') saveOffer(f); else if (f.id === 'firmForm') saveFirm(f); else if (f.id === 'cfgForm') saveCfg(); });
+document.addEventListener('paste', e => { if (e.target && e.target.id === 'li') setTimeout(() => { const el = $('#li'); if (el && liSlug(el.value)) readLinkedIn(); }, 30); });
 const CHG = {
   li: el => { const c = cur(); if ((c.linkedinUrl || '') !== el.value.trim()) updClient(c.id, {linkedinUrl: el.value.trim()}); },
   cv: el => onCV(el),
   paste: el => { const c = cur(); if ((c.pasted || '') !== el.value) updClient(c.id, {pasted: el.value.slice(0, 40000), ...stageAtLeast(c, 'Collecting')}); },
   prize: el => { const c = cur(); updClient(c.id, {prize: {...(c.prize || {}), has: el.value === 'yes'}}); },
   prizeName: el => { const c = cur(); updClient(c.id, {prize: {...(c.prize || {}), name: el.value.trim()}}); },
-  route: el => { const c = cur(); if (!el.value) return; S.showRoutePick = false; updClient(c.id, {route: el.value, routeConfirmedAt: Date.now(), routeReason: null, ...stageAtLeast(c, 'Collecting')}); },
+  route: el => { const c = cur(); if (!el.value) return; S.showRoutePick = false; updClient(c.id, {route: el.value, routeConfirmedAt: Date.now(), routeReason: el.value === c.routeSuggested ? c.routeReason : null, requests: c.li && !S.sample ? buildRequests(c, el.value) : (c.requests || []), ...stageAtLeast(c, 'Collecting')}); },
+  evFiles: el => { S.evFiles = [...(el.files || [])]; showEvFiles(); },
+  evCat: el => { const c = cur(); const list = clone(c.evidence || []); const e = list.find(x => x.id === el.dataset.id); if (!e) return; e.category = el.value; e.catManual = true; e.relevance = {rag: 'pending'}; updClient(c.id, {evidence: list}); runRelevance(c.id, e.id, ''); },
+  evDesc: el => { const c = cur(); const list = clone(c.evidence || []); const e = list.find(x => x.id === el.dataset.id); if (!e || (e.desc || '') === el.value.trim()) return; e.desc = el.value.trim().slice(0, 300); e.relevance = {rag: 'pending'}; updClient(c.id, {evidence: list}); runRelevance(c.id, e.id, ''); },
+  evAttach: async el => { const f = el.files && el.files[0]; if (!f) return; const c = cur(); const list = clone(c.evidence || []); const e = list.find(x => x.id === el.dataset.id); if (!e) return;
+    e.kind = 'file'; e.fileName = f.name; e.mime = f.type || guessMime(f.name); e.size = f.size; e.uploadFailed = false;
+    if (S.assets) { try { const up = e.mime === 'application/pdf' ? await S.assets.upload(f, {type: 'application/pdf'}) : await S.assets.upload(f); e.assetId = up.id; } catch(x) { e.uploadFailed = true; } }
+    e.format = formatCheck(e); updClient(c.id, {evidence: list}); },
   note: el => { const c = cur(); updClient(c.id, {note: el.value.slice(0, 4000)}); },
   firmPick: el => { S.firmId = el.value; S.firmOpen = null; lsSet('gtc_firm', el.value); scheduleRender(); },
   q: el => { S.q = el.value; scheduleRender(); },
@@ -1505,7 +1991,7 @@ function sampleData(){
     evidence: [{id: 'e1', title: 'PyData Berlin 2024 talk listing (sample)', category: 'recognition', desc: 'Speaker page', kind: 'note', addedAt: c1 + D, late: false, format: desc, relevance: {rag: 'green', category: 'recognition', en: 'A conference talk fits recognition beyond the job.', ru: 'Выступление на конференции подходит под признание вне работы.'}}],
     offers: {}, emails: [{id: 'w1', kind: 'welcome', to: 'dmitry.sample@example.com', subject: 'Добро пожаловать: ваше досье открыто', body: 'Здравствуйте, Dmitry!\n\nВаше досье на визу Global Talent открыто.\n\nGlobal Talent Club', at: c1}],
     crm: {owner: 'Andrey', nextAction: 'Chase the 3rd referee', nextDate: '', family: 'yes', children: 'no', notes: 'Sample record for the demo.', upsells: {}}};
-  out['clients/sample-elena'] = {name: 'Sample: Elena Sokolova', email: 'elena.sample@example.com', authProvider: 'apple', lang: 'en', source: 'Instagram (Andrey)', createdAt: c2, updatedAt: now - 2 * H,
+  out['clients/sample-elena'] = {name: 'Sample: Elena Sokolova', email: 'elena.sample@example.com', authProvider: 'email', lang: 'en', source: 'Instagram (Andrey)', createdAt: c2, updatedAt: now - 2 * H,
     stage: 'With firms', stageHistory: [{stage: 'Onboarding', at: c2}, {stage: 'Collecting', at: c2 + H}, {stage: 'With firms', at: sub}], step: 5, submittedAt: sub, sharedWith: ['f1','f2','f3'],
     consents: {terms: c2, share: c2, shareWith: names, newsletter: false, newsletterAt: null}, linkedinUrl: 'https://www.linkedin.com/in/example-elena',
     route: 'ace', routeSuggested: 'ace', routeConfirmedAt: c2 + 2 * H, routeReason: {en: 'Her work is in contemporary dance and choreography.', ru: 'Её работа связана с современным танцем и хореографией.'},
@@ -1525,7 +2011,7 @@ async function startStandalone(){
   S.standalone = true; S.dbState = 'local';
   S.db = makeLocalDB();
   S.assets = await makeLocalAssets();
-  S.sample = null; S.downloads = null; S.user = null; S.noAI = true;
+  S.sample = null; S.downloads = null; S.user = null; S.noAI = false;
   if (S.db._isEmpty()) S.db._seed(sampleData());
 }
 async function resetLocal(){
@@ -1557,13 +2043,13 @@ function subscribeAll(db){
 (async function boot(){
   onHash(); renderAll();
   const C = window.claude;
-  if (!C || typeof C.use !== 'function') { await startStandalone(); subscribeAll(S.db); return; }
+  if (!C || typeof C.use !== 'function') { await startStandalone(); subscribeAll(S.db); checkApi(); return; }
   const use = n => C.use(n).catch(() => null);
   const [db, user, assets, sample, downloads] = await Promise.all([use('db'), use('user'), use('assets'), use('sample'), use('downloads')]);
   Object.assign(S, {db, user, assets, sample, downloads});
   if (user) { try { const me = await user.me(); S.me = me ? {name: me.name || '', email: me.email || ''} : null; } catch(e) {} }
   if (!db) { S.dbState = 'off'; scheduleRender(); return; }
-  subscribeAll(db);
+  subscribeAll(db); checkApi();
 })();
 </script>
 </body>
