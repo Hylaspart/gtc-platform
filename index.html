@@ -397,7 +397,9 @@ en:{
  needTitle:'Give it a title.', needFile:'Choose a file.', needUrl:'Paste the link.', wordFile:'Word files cannot go to the endorsing body. Save it as PDF and upload that.',
  evDrop:'Drop files here, or click to choose', evDropHint:'PDF or images. Add several at once: we fill in the title and category for each.', evOrLink:'Or paste a link to an article or page',
  evLinkHint:'We read its title, source and date. A link alone cannot go to the endorsing body, so you will also be asked for a PDF of the page.',
- evNoteOpt:'What it shows (optional)', evAdd:'Add', evNothing:'Choose a file or paste a link.', evPdf:'Upload a PDF of this page', evWhat:'What it shows, in one line', evCatL:'Category',
+ evNoteOpt:'What it shows (optional)', evAdd:'Add',
+ editEvT:'Edit evidence', evSource:'Source', evDate:'Date', evLang:'Language', langEn:'English', langOther:'Another language (needs a certified translation)', langUnknown:'Not sure',
+ evFileNow:'Current file: {f}', evReplace:'Replace the file', evAddFile:'Upload the document (PDF or image)', evLinkL:'Link (optional for files)', evNothing:'Choose a file or paste a link.', evPdf:'Upload a PDF of this page', evWhat:'What it shows, in one line', evCatL:'Category',
  kwGreen:'Matches this category from its title and content.', kwYellow:'We could not tell which category this fits. Add one line on what it shows.', kwRed:'Looks like a guest pass, ticket or personal document. It fits no published category.', kwReq:'Uploaded for: {req}',
  format:'Format', relevance:'Relevance', checking:'Checking', retry:'Check again', late:'Added after submission', open:'Open', bizPrompt:'If you founded, owned or dissolved a digital business in the last 5 years, the endorsing body needs evidence of it.',
  s4Title:'Ready to submit?', s4Lead:'Your file goes to every law firm on the panel. They reply with offers within 24-48 hours.',
@@ -471,7 +473,9 @@ ru:{
  needTitle:'Укажите название.', needFile:'Выберите файл.', needUrl:'Вставьте ссылку.', wordFile:'Файлы Word нельзя отправить в эндорсинг-орган. Сохраните в PDF и загрузите его.',
  evDrop:'Перетащите файлы сюда или нажмите, чтобы выбрать', evDropHint:'PDF или изображения. Можно сразу несколько: мы сами заполним название и категорию.', evOrLink:'Или вставьте ссылку на статью или страницу',
  evLinkHint:'Мы прочитаем заголовок, источник и дату. Одна ссылка не принимается эндорсинг-органом, поэтому понадобится и PDF страницы.',
- evNoteOpt:'Что это подтверждает (по желанию)', evAdd:'Добавить', evNothing:'Выберите файл или вставьте ссылку.', evPdf:'Загрузить PDF этой страницы', evWhat:'Что это подтверждает, одной строкой', evCatL:'Категория',
+ evNoteOpt:'Что это подтверждает (по желанию)', evAdd:'Добавить',
+ editEvT:'Изменить доказательство', evSource:'Источник', evDate:'Дата', evLang:'Язык', langEn:'Английский', langOther:'Другой язык (нужен заверенный перевод)', langUnknown:'Не знаю',
+ evFileNow:'Текущий файл: {f}', evReplace:'Заменить файл', evAddFile:'Загрузить документ (PDF или изображение)', evLinkL:'Ссылка (для файлов по желанию)', evNothing:'Выберите файл или вставьте ссылку.', evPdf:'Загрузить PDF этой страницы', evWhat:'Что это подтверждает, одной строкой', evCatL:'Категория',
  kwGreen:'Подходит под эту категорию по названию и содержанию.', kwYellow:'Не удалось определить категорию. Добавьте одну строку о том, что это подтверждает.', kwRed:'Похоже на гостевой пропуск, билет или личный документ. Не подходит ни под одну категорию.', kwReq:'Загружено по запросу: {req}',
  format:'Формат', relevance:'Релевантность', checking:'Проверяем', retry:'Проверить снова', late:'Добавлено после отправки', open:'Открыть', bizPrompt:'Если за последние 5 лет вы основали, владели или закрыли цифровую компанию, эндорсинг-органу нужны подтверждения.',
  s4Title:'Готовы отправить?', s4Lead:'Ваше досье получат все юридические фирмы панели. Они пришлют предложения в течение 24-48 часов.',
@@ -1276,7 +1280,7 @@ function evRow(c, e, editable){
       ${editable ? `<div class="inl"><select data-chg="evCat" data-id="${esc(e.id)}" aria-label="${esc(t('evCatL'))}">${cats.map(k => `<option value="${k}" ${e.category === k ? 'selected' : ''}>${esc(catName(k))}</option>`).join('')}</select>
         <input type="text" data-chg="evDesc" data-id="${esc(e.id)}" value="${esc(e.desc || '')}" placeholder="${esc(t('evWhat'))}" aria-label="${esc(t('evWhat'))}"></div>` : (e.desc ? `<div class="small" style="margin-top:4px">${esc(e.desc)}</div>` : '')}</div>
       ${link ? `<a class="btn sm" href="${esc(link)}" target="_blank" rel="noopener">${esc(S.view === 'app' ? t('open') : 'Open')}</a>` : ''}
-      ${editable ? `<button class="btn link sm" data-act="delEv" data-id="${esc(e.id)}" style="color:var(--bad)" aria-label="${esc(t('remove'))}: ${esc(e.title)}">${esc(t('remove'))}</button>` : ''}
+      ${editable ? `<button class="btn link sm" data-act="editEv" data-id="${esc(e.id)}" aria-label="${esc(t('edit'))}: ${esc(e.title)}">${esc(t('edit'))}</button><button class="btn link sm" data-act="delEv" data-id="${esc(e.id)}" style="color:var(--bad)" aria-label="${esc(t('remove'))}: ${esc(e.title)}">${esc(t('remove'))}</button>` : ''}
     </div>
     <div class="checksline">
       ${ragPill(e.format, 'format')}<span>${esc((lang === 'ru' ? I18N.ru.format : 'Format') + ': ' + fNote)}${editable && e.kind === 'link' ? ` <span class="btn link sm filebtn">${esc(t('evPdf'))}<input type="file" accept=".pdf,.png,.jpg,.jpeg" data-chg="evAttach" data-id="${esc(e.id)}" aria-label="${esc(t('evPdf'))}"></span>` : ''}</span>
@@ -1303,6 +1307,57 @@ function evModal(reqId){
   ['dragenter','dragover'].forEach(n => dz.addEventListener(n, ev => { ev.preventDefault(); dz.classList.add('over'); }));
   ['dragleave','drop'].forEach(n => dz.addEventListener(n, ev => { ev.preventDefault(); dz.classList.remove('over'); }));
   dz.addEventListener('drop', ev => { S.evFiles = [...(ev.dataTransfer && ev.dataTransfer.files || [])]; showEvFiles(); });
+}
+function evEditModal(id){
+  const c = cur(); const e = (c.evidence || []).find(x => x.id === id); if (!e) return;
+  const cats = [...((ROUTES[c.route] || {cats: []}).cats), 'other'];
+  const lang = ['en','other'].includes(e.lang) ? e.lang : 'unknown';
+  openModal(`<div class="modal" role="dialog" aria-modal="true" aria-labelledby="eet">
+    <h2 id="eet">${esc(t('editEvT'))}</h2>
+    <form id="evEditForm" data-id="${esc(e.id)}" novalidate>
+      <div class="field"><label for="ee_title">${esc(t('evTitle'))}</label><input id="ee_title" type="text" value="${esc(e.title || '')}"></div>
+      <div class="field"><label for="ee_cat">${esc(t('evCat'))}</label><select id="ee_cat">${cats.map(k => `<option value="${k}" ${e.category === k ? 'selected' : ''}>${esc(catName(k))}</option>`).join('')}</select></div>
+      <div class="field"><label for="ee_desc">${esc(t('evDesc'))}</label><textarea id="ee_desc" rows="2">${esc(e.desc || '')}</textarea></div>
+      <div class="grid2">
+        <div class="field"><label for="ee_source">${esc(t('evSource'))}</label><input id="ee_source" type="text" value="${esc(e.source || '')}"></div>
+        <div class="field"><label for="ee_date">${esc(t('evDate'))}</label><input id="ee_date" type="date" value="${esc(/^\d{4}-\d{2}-\d{2}$/.test(e.date || '') ? e.date : '')}"></div>
+      </div>
+      <div class="field"><label for="ee_lang">${esc(t('evLang'))}</label><select id="ee_lang">${[['en','langEn'],['other','langOther'],['unknown','langUnknown']].map(([v, k]) => `<option value="${v}" ${lang === v ? 'selected' : ''}>${esc(t(k))}</option>`).join('')}</select></div>
+      <div class="field"><label for="ee_url">${esc(e.kind === 'link' ? t('evUrl') : t('evLinkL'))}</label><input id="ee_url" type="url" inputmode="url" placeholder="https://" value="${esc(e.url || '')}"></div>
+      <div class="field"><label for="ee_file">${esc(e.kind === 'file' ? t('evReplace') : t('evAddFile'))}</label>
+        ${e.fileName ? `<p class="hint">${esc(t('evFileNow', {f: e.fileName}))}</p>` : ''}
+        <input id="ee_file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.heic,.docx,.doc,.mp4,.mov,.mp3"><p class="hint">${esc(t('evFileHint'))}</p></div>
+      <p class="err" id="ee_err" role="alert"></p>
+      <div class="navrow"><button type="button" class="btn" data-act="closeModal">${esc(t('cancel'))}</button><button type="submit" class="btn primary" id="eeSave">${esc(t('save'))}</button></div>
+    </form></div>`);
+  setTimeout(() => { const el = $('#ee_title'); if (el) el.focus(); }, 30);
+}
+async function saveEvEdit(form){
+  const c = cur(); const list = clone(c.evidence || []); const e = list.find(x => x.id === form.dataset.id); if (!e) { closeModal(); return; }
+  const err = $('#ee_err'); err.textContent = '';
+  const title = $('#ee_title').value.trim(); if (!title) { err.textContent = t('needTitle'); return; }
+  const url = $('#ee_url').value.trim(); if (url && !safeUrl(url)) { err.textContent = t('needUrl'); return; }
+  const f = $('#ee_file').files[0];
+  if (f && /\.docx?$/i.test(f.name)) { err.textContent = t('wordFile'); return; }
+  if (e.kind === 'link' && !url && !f) { err.textContent = t('needUrl'); return; }
+  const cat = $('#ee_cat').value;
+  if (cat !== e.category) e.catManual = true;
+  Object.assign(e, {title: title.slice(0, 200), category: cat, desc: $('#ee_desc').value.trim().slice(0, 300), source: $('#ee_source').value.trim().slice(0, 120), date: $('#ee_date').value, lang: $('#ee_lang').value, url});
+  let text = '';
+  if (f) {
+    const btn = $('#eeSave'); btn.disabled = true; btn.innerHTML = spin() + esc(t('saving'));
+    const old = e.assetId;
+    e.kind = 'file'; e.fileName = f.name; e.mime = f.type || guessMime(f.name); e.size = f.size; e.uploadFailed = false; e.assetId = '';
+    const media = /^(video|audio)\//.test(e.mime) || /\.(mp4|mov|mp3)$/i.test(f.name);
+    if (!media) {
+      if (S.assets) { try { const up = e.mime === 'application/pdf' ? await S.assets.upload(f, {type: 'application/pdf'}) : await S.assets.upload(f); e.assetId = up.id; } catch(x) { e.uploadFailed = true; } }
+      if (e.mime === 'application/pdf') text = await pdfText(f, 4).catch(() => '');
+    }
+    if (old && old !== e.assetId && S.assets && S.assets.remove) { try { await S.assets.remove(old); } catch(x) {} }
+  }
+  e.format = formatCheck(e); e.relevance = {rag: 'pending'};
+  closeModal(); await updClient(c.id, {evidence: list});
+  runRelevance(c.id, e.id, text);
 }
 function showEvFiles(){ const el = $('#evList'); if (el) el.innerHTML = (S.evFiles || []).map(f => `<div>${esc(f.name)} <span class="muted">${Math.max(1, Math.round(f.size / 1024))} KB</span></div>`).join(''); }
 function formatCheck(e){
@@ -1881,7 +1936,8 @@ const ACT = {
   addEv: el => evModal(el.dataset.req || null),
   evKind: () => { const k = (document.querySelector('input[name=e_kind]:checked') || {}).value; $('#e_fileWrap').hidden = k !== 'file'; $('#e_urlWrap').hidden = k !== 'link'; },
   dismissReq: el => { const c = cur(); updClient(c.id, {requests: (c.requests || []).map(q => q.id === el.dataset.id ? {...q, done: true, dismissed: true} : q)}); },
-  delEv: el => { const c = cur(); updClient(c.id, {evidence: (c.evidence || []).filter(e => e.id !== el.dataset.id)}); },
+  editEv: el => evEditModal(el.dataset.id),
+  delEv: el => { const c = cur(); const gone = (c.evidence || []).find(e => e.id === el.dataset.id); updClient(c.id, {evidence: (c.evidence || []).filter(e => e.id !== el.dataset.id)}); if (gone && gone.assetId && S.assets && S.assets.remove) S.assets.remove(gone.assetId).catch(() => {}); },
   recheck: el => { const c = cur(); const list = clone(c.evidence); const e = list.find(x => x.id === el.dataset.id); if (!e) return; e.relevance = {rag: 'pending'}; updClient(c.id, {evidence: list}); runRelevance(c.id, e.id, ''); },
   submitFile: () => submitFile(),
   chooseFirm: el => chooseModal(el.dataset.id),
@@ -1907,7 +1963,7 @@ const ACT = {
   doResetLocal: async () => { closeModal(); await resetLocal(); }
 };
 document.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el) return; const f = ACT[el.dataset.act]; if (!f) return; if (el.tagName === 'A') e.preventDefault(); f(el, e); });
-document.addEventListener('submit', e => { e.preventDefault(); const f = e.target; if (f.id === 'refForm') saveRef(f); else if (f.id === 'refLookup') lookupRef(); else if (f.id === 'liForm') readLinkedIn(); else if (f.id === 'evForm') saveEv(f); else if (f.id === 'offerForm') saveOffer(f); else if (f.id === 'firmForm') saveFirm(f); else if (f.id === 'cfgForm') saveCfg(); });
+document.addEventListener('submit', e => { e.preventDefault(); const f = e.target; if (f.id === 'refForm') saveRef(f); else if (f.id === 'refLookup') lookupRef(); else if (f.id === 'liForm') readLinkedIn(); else if (f.id === 'evForm') saveEv(f); else if (f.id === 'evEditForm') saveEvEdit(f); else if (f.id === 'offerForm') saveOffer(f); else if (f.id === 'firmForm') saveFirm(f); else if (f.id === 'cfgForm') saveCfg(); });
 document.addEventListener('paste', e => { if (e.target && e.target.id === 'li') setTimeout(() => { const el = $('#li'); if (el && liSlug(el.value)) readLinkedIn(); }, 30); });
 const CHG = {
   li: el => { const c = cur(); if ((c.linkedinUrl || '') !== el.value.trim()) updClient(c.id, {linkedinUrl: el.value.trim()}); },
